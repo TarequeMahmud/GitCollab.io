@@ -2,6 +2,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import authRouter from "./src/routes/authRoutes.js";
 
 // Load environment variables
 dotenv.config();
@@ -11,6 +12,8 @@ const app = express();
 
 // Middleware to parse JSON data
 app.use(express.json());
+
+app.use("/", authRouter);
 
 // Connect to MongoDB
 const mongoUri = process.env.MONGO_URI;
