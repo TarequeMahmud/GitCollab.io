@@ -2,6 +2,10 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import session from "express-session";
+import passport from "passport";
+
+//import necessary routes
 import authRouter from "./src/routes/authRoutes.js";
 
 // Load environment variables
@@ -9,6 +13,17 @@ dotenv.config();
 
 // Initialize Express app
 const app = express();
+
+//using express session
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: { maxAge: 1000 * 60 * 60 },
+  })
+);
+app.use(passport.authenticate("session"));
 
 // Middleware to parse JSON data
 app.use(express.json());
