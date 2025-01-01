@@ -2,8 +2,8 @@ import mongoose from "mongoose";
 
 const projectSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  description: { type: String, required: true },
-  deadline: { type: Date, required: true },
+  description: { type: String, trim: true },
+  deadline: { type: Date, default: Date.now },
   people: [
     {
       user_id: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
