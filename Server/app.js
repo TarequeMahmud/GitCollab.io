@@ -7,6 +7,7 @@ import passport from "passport";
 
 //import necessary routes
 import authRouter from "./src/routes/authRoutes.js";
+import projectRouter from "./src/routes/projectRoute.js";
 
 // Load environment variables
 dotenv.config();
@@ -29,6 +30,7 @@ app.use(passport.authenticate("session"));
 app.use(express.json());
 
 app.use("/", authRouter);
+app.use("/project", projectRouter);
 
 // Connect to MongoDB
 const mongoUri = process.env.MONGO_URI;
