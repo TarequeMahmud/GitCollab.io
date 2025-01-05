@@ -1,0 +1,8 @@
+.container {
+  margin: 0 auto;
+  position: absolute;
+  top: 45vh;
+  width: 100vw;
+  height: 150vh;
+  background: linear-gradient(135deg, #95c46c 0%, #da9857 100%);
+}
