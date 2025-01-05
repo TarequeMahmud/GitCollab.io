@@ -1,0 +1,11 @@
+.container {
+  width: 50%;
+  height: 10px;
+  position: absolute;
+  top: 30vh;
+  margin: 0 auto;
+}
+
+.container h1 {
+  font-size: 1.5rem;
+}

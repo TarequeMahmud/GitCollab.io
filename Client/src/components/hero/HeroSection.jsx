@@ -1,5 +1,6 @@
 import styles from "../../styles/hero/HeroSection.module.css";
 import Account from "./Account";
+import HeroTitle from "./HeroTitle";
 import Logo from "./Logo";
 import Nav from "./Nav";
 
@@ -11,6 +12,7 @@ function HeroSection() {
         <Nav />
         <Account />
       </div>
+      <HeroTitle />
     </div>
   );
 }
