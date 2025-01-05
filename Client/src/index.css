@@ -3,6 +3,8 @@
 }
 html {
   margin: 0;
+  overflow-x: hidden;
+  scrollbar-width: none;
 }
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
