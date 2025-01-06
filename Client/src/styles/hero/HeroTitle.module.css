@@ -1,11 +1,9 @@
 .container {
-  width: 50%;
+  width: 60%;
   height: 10px;
-  position: absolute;
-  top: 30vh;
-  margin: 0 auto;
+  margin-top: 10px;
 }
 
 .container h1 {
-  font-size: 1.5rem;
+  font-size: 2rem;
 }
