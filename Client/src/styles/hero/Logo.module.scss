@@ -1,9 +1,8 @@
+@use "@styles/base" as *;
 .logo-container {
   height: 100%;
   width: 10%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  @include flex(row, space-between);
 }
 h1 {
   margin-left: 8%;

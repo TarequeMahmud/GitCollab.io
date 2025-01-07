@@ -1,11 +1,10 @@
+@use "@styles/base" as *;
 .container {
   border-radius: 50%;
   border: solid 2px white;
   height: 50%;
   aspect-ratio: 1/1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  @include flex;
   background-color: #ffffff;
   margin: 0 3px;
 }

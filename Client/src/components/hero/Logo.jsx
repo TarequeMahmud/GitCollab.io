@@ -1,5 +1,5 @@
 import logo from "../../assets/images/hero/logo.png";
-import styles from "../../styles/hero/Logo.module.scss";
+import styles from "@styles/hero/Logo.module.scss";
 function Logo() {
   return (
     <div className={styles["logo-container"]}>

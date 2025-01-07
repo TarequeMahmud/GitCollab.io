@@ -1,3 +1,4 @@
+@use "@styles/base" as *;
 .container {
   width: 100%;
   height: 18rem;
@@ -6,21 +7,16 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  @include flex;
   position: relative;
 }
 .logo-navbar-container {
   top: 5%;
   position: absolute;
-  width: 100%;
+  width: $full;
   height: 40%;
   margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-inline-start: 50px;
-  padding-inline-end: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
+  @include flex(row, space-between);
 }
