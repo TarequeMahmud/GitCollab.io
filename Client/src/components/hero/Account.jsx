@@ -1,5 +1,5 @@
 import icon from "../../assets/images/hero/user-regular.svg";
-import styles from "../../styles/hero/Account.module.css";
+import styles from "../../styles/hero/Account.module.scss";
 const Account = () => {
   return (
     <div className={styles.container}>

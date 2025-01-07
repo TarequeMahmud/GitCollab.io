@@ -1,4 +1,4 @@
-import styles from "../../styles/hero/HeroTitle.module.css";
+import styles from "../../styles/hero/HeroTitle.module.scss";
 function HeroTitle() {
   return (
     <div className={styles.container}>

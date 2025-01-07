@@ -1,4 +1,4 @@
-import styles from "../../styles/hero/HeroSection.module.css";
+import styles from "../../styles/hero/HeroSection.module.scss";
 import Account from "./Account";
 import HeroTitle from "./HeroTitle";
 import Logo from "./Logo";

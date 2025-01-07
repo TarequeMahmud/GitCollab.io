@@ -1,4 +1,4 @@
-import "./App.css";
+import "./App.scss";
 import FooterSection from "./components/footer/FooterSection";
 import HeroSection from "./components/hero/HeroSection";
 import MainSection from "./components/main/MainSection";

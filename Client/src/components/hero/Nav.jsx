@@ -1,4 +1,4 @@
-import style from "../../styles/hero/Nav.module.css";
+import style from "../../styles/hero/Nav.module.scss";
 const navbarItems = [
   "Home",
   "Projects",
