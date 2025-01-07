@@ -1,6 +1,9 @@
+@use "@styles/base" as *;
 .container {
   margin: 0;
   width: 100%;
   height: 60rem;
+  @include flex(row, flex-start);
+
   background: linear-gradient(135deg, #95c46c 0%, #da9857 100%);
 }

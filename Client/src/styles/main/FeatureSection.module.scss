@@ -1,0 +1,9 @@
+@use "@styles/base" as *;
+.container {
+  width: 60%;
+  @include flex;
+}
+.feature-container {
+  width: $full;
+  @include flex(row, space-between);
+}
