@@ -1,9 +1,34 @@
 @use "@styles/base" as *;
 .container {
-  width: 60%;
+  width: 50%;
   @include flex;
+  margin: 0 50px;
+  color: #000;
+}
+.heading {
+  text-align: center;
+  margin-left: -10%;
+  color: #000;
 }
 .feature-container {
-  width: $full;
+  margin: 30px 0;
+  width: 80%;
   @include flex(row, space-between);
+
+  &:nth-child(even) {
+    flex-direction: row-reverse;
+  }
+}
+.desc-container {
+  width: 50%;
+  @include flex($align: start);
+  h3 {
+    text-align: start;
+    font-size: 1.3rem;
+    margin-bottom: 3px;
+  }
+  p {
+    margin: 0;
+    text-align: start;
+  }
 }
