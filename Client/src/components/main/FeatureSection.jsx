@@ -9,12 +9,7 @@ const FeatureSection = () => {
         return (
           <div className={styles["feature-container"]}>
             <div className={styles["img-div"]}>
-              <img
-                src={feature.icon}
-                width={130}
-                height={130}
-                alt={feature.title}
-              />
+              <img src={feature.icon} alt={feature.title} />
             </div>
             <div className={styles["desc-container"]}>
               <h3>{feature.title}</h3>

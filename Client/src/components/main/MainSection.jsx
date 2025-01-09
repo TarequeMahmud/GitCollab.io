@@ -5,6 +5,7 @@ const MainSection = () => {
   return (
     <div className={styles.container}>
       <FeatureSection />
+      <hr />
       <SigninSection />
     </div>
   );
