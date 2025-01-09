@@ -1,0 +1,46 @@
+@use "@styles/base" as *;
+.container {
+  width: 40%;
+  height: $full;
+
+  @include flex($justify: flex-start);
+
+  .heading {
+    color: #000000;
+    margin-bottom: 55px;
+  }
+}
+.signin-form {
+  margin: 0 auto;
+  width: 85%;
+  aspect-ratio: 4/3;
+  background-color: #ffffff;
+  border-radius: 5px;
+  form {
+    margin: 0 auto;
+    padding: 2rem 2rem;
+    @include flex;
+    input {
+      width: $full;
+      height: 2.7rem;
+      padding-left: 10px;
+      background-color: #ffffff;
+      border: 1px solid #d9d9d9;
+      border-radius: 5px;
+      margin: 10px 0;
+      color: #000000;
+      font-size: 1.3rem;
+      font-weight: 300;
+    }
+    label {
+      color: #000000;
+      width: $full;
+      text-align: start;
+      font-size: 1.7rem;
+    }
+    button {
+      width: $full;
+      margin-top: 10px;
+    }
+  }
+}

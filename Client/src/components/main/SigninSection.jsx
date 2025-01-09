@@ -2,6 +2,7 @@ import styles from "@styles/main/SigninSection.module.scss";
 function SigninSection() {
   return (
     <div className={styles.container}>
+      <h1 className={styles.heading}>Start Project Now!</h1>
       <div className={styles["signin-form"]}>
         <form action="/" method="post">
           <label htmlFor="email">Email</label>
