@@ -1,17 +1,14 @@
 import style from "../../styles/hero/Nav.module.scss";
-const navbarItems = [
-  "Home",
-  "Projects",
-  "Tasks",
-  "Notification",
-  "Activity Feed",
-];
+import { navbarItems } from "@datas/navbar.json";
+import { NavLink } from "react-router-dom";
 const Nav = () => {
   return (
     <div className={style.container}>
       <ul>
         {navbarItems.map((items, index) => (
-          <li key={index}>{items}</li>
+          <NavLink to={items.link}>
+            <li key={index}>{items.name}</li>
+          </NavLink>
         ))}
       </ul>
     </div>
