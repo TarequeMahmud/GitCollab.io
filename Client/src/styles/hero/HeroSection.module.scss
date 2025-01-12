@@ -1,7 +1,7 @@
 @use "@styles/base" as *;
 .container {
   width: 100%;
-  height: 18rem;
+  height: 5rem;
   background-color: rgb(2, 22, 88);
   background-image: url("../../assets/images/hero/hero-background.jpg");
   background-size: cover;
@@ -10,13 +10,19 @@
   @include flex;
   position: relative;
 }
+.home {
+  height: 18rem;
+}
 .logo-navbar-container {
-  top: 5%;
+  top: 1%;
   position: absolute;
   width: $full;
-  height: 40%;
   margin: 0 auto;
   padding-left: 10px;
   padding-right: 10px;
   @include flex(row, space-between);
+}
+.home-lnc {
+  top: 5%;
+  height: 40%;
 }
