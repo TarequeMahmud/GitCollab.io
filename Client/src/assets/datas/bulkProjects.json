@@ -1,0 +1,90 @@
+[
+  {
+    "name": "Website Redesign",
+    "description": "A complete redesign of the corporate website to improve UX.",
+    "deadline": "2024-05-01T00:00:00Z",
+    "people": [
+      {
+        "role": "Admin",
+        "userId": "64f9c56e5f69d90017a4d12a"
+      },
+      {
+        "role": "Manager",
+        "userId": "64f9c56e5f69d90017a4d12b"
+      },
+      {
+        "role": "Member",
+        "userId": "64f9c56e5f69d90017a4d12c"
+      }
+    ],
+    "tasks": ["64f9c56e5f69d90017a4d12d", "64f9c56e5f69d90017a4d12e"],
+    "createdBy": "64f9c56e5f69d90017a4d12f",
+    "createdAt": "2024-01-15T14:30:00Z"
+  },
+  {
+    "name": "Mobile App Development",
+    "description": "Developing a cross-platform mobile application for the e-commerce platform.",
+    "deadline": "2024-06-15T00:00:00Z",
+    "people": [
+      {
+        "role": "Admin",
+        "userId": "64f9c56e5f69d90017a4d130"
+      },
+      {
+        "role": "Manager",
+        "userId": "64f9c56e5f69d90017a4d131"
+      },
+      {
+        "role": "Member",
+        "userId": "64f9c56e5f69d90017a4d132"
+      }
+    ],
+    "tasks": ["64f9c56e5f69d90017a4d133", "64f9c56e5f69d90017a4d134"],
+    "createdBy": "64f9c56e5f69d90017a4d135",
+    "createdAt": "2024-02-20T10:15:00Z"
+  },
+  {
+    "name": "Marketing Campaign",
+    "description": "Planning and executing the summer marketing campaign.",
+    "deadline": "2024-07-01T00:00:00Z",
+    "people": [
+      {
+        "role": "Admin",
+        "userId": "64f9c56e5f69d90017a4d136"
+      },
+      {
+        "role": "Manager",
+        "userId": "64f9c56e5f69d90017a4d137"
+      },
+      {
+        "role": "Member",
+        "userId": "64f9c56e5f69d90017a4d138"
+      }
+    ],
+    "tasks": ["64f9c56e5f69d90017a4d139", "64f9c56e5f69d90017a4d13a"],
+    "createdBy": "64f9c56e5f69d90017a4d13b",
+    "createdAt": "2024-03-10T09:00:00Z"
+  },
+  {
+    "name": "Cloud Migration",
+    "description": "Migrating the entire infrastructure to the cloud.",
+    "deadline": "2024-08-31T00:00:00Z",
+    "people": [
+      {
+        "role": "Admin",
+        "userId": "64f9c56e5f69d90017a4d13c"
+      },
+      {
+        "role": "Manager",
+        "userId": "64f9c56e5f69d90017a4d13d"
+      },
+      {
+        "role": "Member",
+        "userId": "64f9c56e5f69d90017a4d13e"
+      }
+    ],
+    "tasks": ["64f9c56e5f69d90017a4d13f", "64f9c56e5f69d90017a4d140"],
+    "createdBy": "64f9c56e5f69d90017a4d141",
+    "createdAt": "2024-04-05T16:00:00Z"
+  }
+]
