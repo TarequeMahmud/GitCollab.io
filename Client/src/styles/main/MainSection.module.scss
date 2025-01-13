@@ -10,3 +10,6 @@
 
   background: linear-gradient(135deg, #95c46c 0%, #da9857 100%);
 }
+.project {
+  @include flex(column, flex-start);
+}
