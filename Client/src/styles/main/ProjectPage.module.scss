@@ -1,0 +1,33 @@
+@use "@styles/base" as *;
+.container {
+  width: 80%;
+  border: 1px solid black;
+  height: 80%;
+  * {
+    color: black;
+  }
+
+  .edit-button {
+    background-color: #fff;
+    @include flex(row, space-between);
+
+    height: 40px;
+    width: 100px;
+    img {
+      margin-right: 5px;
+    }
+    p {
+      font-weight: 900;
+    }
+  }
+}
+.description-container {
+  border: 1px solid black;
+  width: 80%;
+  margin: 10px auto;
+  padding: 10px 20px;
+  height: max-content;
+  p {
+    text-align: start;
+  }
+}
