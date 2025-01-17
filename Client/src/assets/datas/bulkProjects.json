@@ -5,14 +5,17 @@
     "deadline": "2024-05-01T00:00:00Z",
     "people": [
       {
+        "name": "Alice Johnson",
         "role": "Admin",
         "userId": "64f9c56e5f69d90017a4d12a"
       },
       {
+        "name": "Bob Smith",
         "role": "Manager",
         "userId": "64f9c56e5f69d90017a4d12b"
       },
       {
+        "name": "Charlie Brown",
         "role": "Member",
         "userId": "64f9c56e5f69d90017a4d12c"
       }
@@ -27,14 +30,17 @@
     "deadline": "2024-06-15T00:00:00Z",
     "people": [
       {
+        "name": "David Miller",
         "role": "Admin",
         "userId": "64f9c56e5f69d90017a4d130"
       },
       {
+        "name": "Emma Davis",
         "role": "Manager",
         "userId": "64f9c56e5f69d90017a4d131"
       },
       {
+        "name": "Sophia Wilson",
         "role": "Member",
         "userId": "64f9c56e5f69d90017a4d132"
       }
@@ -49,14 +55,17 @@
     "deadline": "2024-07-01T00:00:00Z",
     "people": [
       {
+        "name": "Olivia Taylor",
         "role": "Admin",
         "userId": "64f9c56e5f69d90017a4d136"
       },
       {
+        "name": "Liam Moore",
         "role": "Manager",
         "userId": "64f9c56e5f69d90017a4d137"
       },
       {
+        "name": "Mason White",
         "role": "Member",
         "userId": "64f9c56e5f69d90017a4d138"
       }
@@ -71,14 +80,17 @@
     "deadline": "2024-08-31T00:00:00Z",
     "people": [
       {
+        "name": "Noah Harris",
         "role": "Admin",
         "userId": "64f9c56e5f69d90017a4d13c"
       },
       {
+        "name": "Ava Martin",
         "role": "Manager",
         "userId": "64f9c56e5f69d90017a4d13d"
       },
       {
+        "name": "Ethan Anderson",
         "role": "Member",
         "userId": "64f9c56e5f69d90017a4d13e"
       }
