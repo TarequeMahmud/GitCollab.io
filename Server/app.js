@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import session from "express-session";
 import passport from "passport";
-
+import cors from "cors";
 //import necessary routes
 import authRouter from "./src/routes/authRoutes.js";
 import projectRouter from "./src/routes/projectRoute.js";
@@ -14,6 +14,12 @@ dotenv.config();
 
 // Initialize Express app
 const app = express();
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 
 //using express session
 app.use(
