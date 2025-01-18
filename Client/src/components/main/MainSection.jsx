@@ -2,6 +2,7 @@ import styles from "@styles/main/MainSection.module.scss";
 import FeatureSection from "./FeatureSection.jsx";
 import SigninSection from "./SigninSection.jsx";
 import ProjectSection from "./ProjectSection.jsx";
+import ProjectForm from "./ProjectForm.jsx";
 
 const MainSection = ({ features = false, signin = false, project = false }) => {
   return (
@@ -13,7 +14,7 @@ const MainSection = ({ features = false, signin = false, project = false }) => {
           <SigninSection />
         </>
       )}
-      {project && <ProjectSection />}
+      {project && <ProjectForm />}
     </div>
   );
 };
