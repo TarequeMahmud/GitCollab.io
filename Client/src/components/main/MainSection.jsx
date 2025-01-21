@@ -4,7 +4,12 @@ import SigninSection from "./SigninSection.jsx";
 import ProjectSection from "./ProjectSection.jsx";
 import ProjectForm from "./ProjectForm.jsx";
 
-const MainSection = ({ features = false, signin = false, project = false }) => {
+const MainSection = ({
+  features = false,
+  signin = false,
+  project = false,
+  createProject = false,
+}) => {
   return (
     <div className={`${styles.container} ${project && styles.project}`}>
       {features && signin && (
@@ -14,7 +19,8 @@ const MainSection = ({ features = false, signin = false, project = false }) => {
           <SigninSection />
         </>
       )}
-      {project && <ProjectForm />}
+      {project && <ProjectSection />}
+      {createProject && <ProjectForm />}
     </div>
   );
 };

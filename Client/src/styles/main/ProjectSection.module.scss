@@ -24,7 +24,7 @@
   width: 80%;
   height: 30px;
 }
-hr {
+.card-separator {
   width: 80%;
   height: 0px;
   margin: 0;
@@ -34,4 +34,25 @@ hr {
   height: 60%;
   width: 80%;
   border: #000 solid 1px;
+  @include flex(column, flex-start);
+  flex-wrap: wrap;
+}
+
+.add-button {
+  position: fixed;
+  bottom: 50px;
+  right: 50px;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  background: rgb(199, 1, 173);
+  border: none;
+  font-size: 2rem;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: transform 0.2s ease-in-out;
 }

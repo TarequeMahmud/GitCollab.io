@@ -1,6 +1,10 @@
 import styles from "@styles/main/ProjectSection.module.scss";
+import { MdOutlineCreate } from "react-icons/md";
 import datas from "@datas/bulkProjects.json";
+import { useNavigate } from "react-router";
+
 const ProjectSection = () => {
+  const navigate = useNavigate();
   return (
     <>
       <h1>My Projects</h1>
@@ -14,10 +18,18 @@ const ProjectSection = () => {
                 ? `${data.description.slice(0, 50)}...`
                 : data.description}
             </p>
-            <hr />
-            <div className={styles["features-container"]}></div>
+            <hr className={styles["card-separator"]} />
+            <div className={styles["features-container"]}>\</div>
           </div>
         ))}
+      </div>
+      <div
+        class={styles["add-button"]}
+        onClick={() => {
+          navigate("/create");
+        }}
+      >
+        <MdOutlineCreate width={10} height={10} />
       </div>
     </>
   );
