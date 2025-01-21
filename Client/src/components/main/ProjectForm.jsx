@@ -17,7 +17,7 @@ const ProjectForm = () => {
 
   return (
     <div className={styles.container}>
-      <h1>Create A New Project</h1>
+      <h1>CREATE A NEW PROJECT</h1>
       <div className={styles["form-container"]}>
         <form action="" method="post">
           {/* title input section */}
@@ -28,9 +28,9 @@ const ProjectForm = () => {
             <input type="text" name="title" required />
           </div>
 
-          {/* name input section */}
+          {/* owner input section */}
 
-          <div className={`${styles["input-container"]} `}>
+          <div className={styles["input-container"]}>
             <p className={styles["input-title"]}>Project Owner:</p>
             <div className={`${styles["name-container"]} `}>
               <div className={styles["label-input-holder"]}>
@@ -43,35 +43,35 @@ const ProjectForm = () => {
                 <input type="text" required />
               </div>
             </div>
-            {/* deadline */}
-            <div className={`${styles["input-container"]} ${styles.deadline}`}>
-              <p className={styles["input-title"]}>Deadline:</p>
-              <div className={`${styles["name-container"]} `}>
-                <select name="day" id="day">
-                  <option value="0">Day</option>
-                  {[...Array(31).keys()].map((_, index) => (
-                    <option key={index + 1} value={index + 1}>
-                      {index + 1}
-                    </option>
-                  ))}
-                </select>
-                <select name="month" id="month">
-                  <option value="0">Month</option>
-                  {months.map((month, index) => (
-                    <option key={index} value={index}>
-                      {month}
-                    </option>
-                  ))}
-                </select>
-                <select name="years" id="years">
-                  <option value="0">Year</option>
-                  {[...Array(10).keys()].map((_, index) => (
-                    <option key={index + 2025} value={index + 2025}>
-                      {index + 2025}
-                    </option>
-                  ))}
-                </select>
-              </div>
+          </div>
+          {/* deadline */}
+          <div className={`${styles["input-container"]} ${styles.deadline}`}>
+            <p className={styles["input-title"]}>Deadline:</p>
+            <div className={`${styles["name-container"]} `}>
+              <select name="day" id="day">
+                <option value="0">Day</option>
+                {[...Array(31).keys()].map((_, index) => (
+                  <option key={index + 1} value={index + 1}>
+                    {index + 1}
+                  </option>
+                ))}
+              </select>
+              <select name="month" id="month">
+                <option value="0">Month</option>
+                {months.map((month, index) => (
+                  <option key={index} value={index}>
+                    {month}
+                  </option>
+                ))}
+              </select>
+              <select name="years" id="years">
+                <option value="0">Year</option>
+                {[...Array(10).keys()].map((_, index) => (
+                  <option key={index + 2025} value={index + 2025}>
+                    {index + 2025}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
           {/* description section */}
