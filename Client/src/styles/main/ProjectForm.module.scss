@@ -1,0 +1,132 @@
+@use "@styles/base" as *;
+.container {
+  width: 75%;
+  margin: 50px auto;
+  padding: 30px;
+  border-radius: 10px;
+  background-color: #e9e9e9;
+  height: 95%;
+  color: black;
+  h1 {
+    color: black;
+    margin: 30px auto;
+    font-size: 1.7rem;
+  }
+}
+
+// form section
+.form-container {
+  margin: 0 auto;
+  width: 80%;
+  height: $full;
+
+  form {
+    width: $full;
+  }
+}
+
+//titles and authors name input section
+.input-container {
+  @include flex($align: flex-start);
+  width: $full;
+  margin: 0 auto 15px;
+}
+
+input,
+select {
+  height: 2.8rem;
+  font-size: 1rem;
+  border-radius: 5px;
+
+  border: none;
+  border-radius: 0.8rem;
+  &[name="title"] {
+    width: $full;
+  }
+}
+
+.input-title {
+  font-weight: 800;
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+.name-container {
+  width: 100%;
+  @include flex(row, space-between);
+}
+
+.label-input-holder {
+  position: relative;
+  padding: 0;
+
+  &:first-of-type {
+    margin: 0 10% 0 0;
+    width: 55%;
+  }
+  &:last-of-type {
+    width: 40%;
+  }
+  label {
+    position: absolute;
+    left: 8px;
+    top: 10px;
+    width: 80px;
+    height: 20px;
+    font-weight: 600;
+    color: #fff;
+  }
+  input {
+    z-index: 2;
+    padding-left: 90px;
+    left: 0;
+    width: $full;
+    margin: 0;
+  }
+}
+//deadline section
+.deadline {
+  margin-top: 30px;
+  width: $full;
+}
+
+select {
+  &:first-of-type,
+  &:nth-of-type(2) {
+    width: 20%;
+  }
+  &:last-of-type {
+    width: 40%;
+  }
+  padding: 0 20px;
+}
+.project-description {
+  height: 300px;
+}
+
+textarea {
+  border-radius: 0.8rem;
+  width: $full;
+  resize: none;
+  overflow-y: scroll;
+  font-size: 1rem;
+  padding: 10px;
+}
+
+input,
+textarea,
+select {
+  background-color: #7e5252;
+}
+
+button[type="submit"] {
+  height: 2.8rem;
+  width: $full;
+  background-color: #0aa485;
+  margin-bottom: 40px;
+  color: #000;
+  font-size: 1.7rem;
+  text-align: center;
+  font-weight: 700;
+  padding: 0;
+}
