@@ -12,6 +12,7 @@ export default defineConfig({
       "@datas": path.resolve(__dirname, "./src/assets/datas"),
       "@icons": path.resolve(__dirname, "./src/assets/icons"),
       "@contexts": path.resolve(__dirname, "./src/contexts"),
+      "@utils": path.resolve(__dirname, "./src/utils"),
     },
   },
 });
