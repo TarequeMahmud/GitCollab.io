@@ -9,7 +9,9 @@ const ProjectSection = () => {
   const navigate = useNavigate();
   return (
     <>
-      <h1 className={styles.heading}>MY PROJECTS</h1>
+      <div className={styles.heading}>
+        <h1>MY PROJECTS</h1>
+      </div>
       <div className={styles.container}>
         {datas.map((data, index) => (
           <div key={index} className={styles["project-card"]}>
@@ -27,9 +29,16 @@ const ProjectSection = () => {
                   key={index}
                   icon={feature.icon}
                   info={feature.info}
+                  styles={{
+                    holder: styles["feature-holder"],
+                    title: styles["feature-title"],
+                    icon: styles["feature-icon"],
+                  }}
                 />
               ))}
             </div>
+            <hr className={styles["card-separator"]} />
+            <button className={styles["card-button"]}>See Project</button>
           </div>
         ))}
       </div>

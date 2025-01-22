@@ -21,6 +21,10 @@ function App() {
                 path="/projects"
                 element={<MainSection project={true} />}
               />
+              <Route
+                path="/create"
+                element={<MainSection createProject={true} />}
+              />
             </Route>
           </Routes>
         </div>

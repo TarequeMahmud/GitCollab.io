@@ -1,8 +1,8 @@
-const CardFeatures = ({ info, icon }) => {
+const CardFeatures = ({ info, icon, styles }) => {
   return (
-    <div className="feature-holder">
-      <img height={50} width={50} src={icon} alt="a" />
-      <p>{info}</p>
+    <div className={styles.holder}>
+      <img className={styles.icon} src={icon} alt="a" />
+      <p className={styles.title}>{info}</p>
     </div>
   );
 };

@@ -14,20 +14,20 @@ const generateFeatures = (data) => {
       info: `${data.people.length} total people`,
     },
     {
-      icon: cardIcons.deadline,
-      info: `Deadline: ${formatDate(data.deadline)}`,
+      icon: cardIcons.start,
+      info: formatDate(data.createdAt),
     },
     {
-      icon: cardIcons.percentage,
-      info: "5/10 tasks completed",
+      icon: cardIcons.deadline,
+      info: formatDate(data.deadline),
+    },
+    {
+      icon: cardIcons.percent,
+      info: "5/10 completed",
     },
     {
       icon: cardIcons.user,
       info: "Member",
-    },
-    {
-      icon: cardIcons.start,
-      info: `Created at ${formatDate(data.createdAt)}`,
     },
   ];
   return features;
