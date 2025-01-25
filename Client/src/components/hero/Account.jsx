@@ -6,14 +6,15 @@ import { useNavigate } from "react-router";
 
 const Account = () => {
   const navigate = useNavigate();
-
+  const ref = useRef();
   //Show or hide options
   const [showOptions, setShowOptions] = useState(false);
+  //if has user data
   const [hasUserData, setHasUserData] = useState(false);
   useEffect(() => {
     setHasUserData(!!localStorage.getItem("userdata"));
   });
-  const ref = useRef();
+
   useHideOutsideClick(ref, () => setShowOptions(false));
   //Add logout functionalities,
   const handleLogout = () => {

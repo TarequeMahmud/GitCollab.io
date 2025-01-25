@@ -1,17 +1,53 @@
 @use "@styles/base" as *;
 .container {
   border-radius: 50%;
-  border: solid 2px white;
+  border: solid 2px #04c289;
   height: 60px;
   min-height: 40px;
   aspect-ratio: 1/1;
   @include flex;
   background-color: #ffffff;
   margin: 0 3px;
+  cursor: pointer;
+  position: relative;
+  &:hover {
+    background-color: #04c289;
+  }
 }
 
 .img {
   width: 60%;
   height: 60%;
   margin: auto;
+}
+
+.option-container {
+  position: absolute;
+  width: 150px;
+  height: 100px;
+  top: 60px;
+  right: 50px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  border: 2px solid black;
+  box-shadow: 2px 2px 2px rgba($color: #000000, $alpha: 0.5);
+  overflow: hidden;
+  color: black;
+  cursor: pointer;
+  @include flex;
+  hr {
+    width: $full;
+    margin: 0;
+  }
+}
+.option {
+  width: $full;
+  height: 50%;
+  font-size: 1.3rem;
+  margin: 0;
+
+  padding: 5px;
+  &:hover {
+    background-color: #04c289;
+  }
 }
