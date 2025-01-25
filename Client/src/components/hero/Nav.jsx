@@ -6,8 +6,8 @@ const Nav = () => {
     <div className={style.container}>
       <ul>
         {navbarItems.map((items, index) => (
-          <NavLink to={items.link}>
-            <li key={index}>{items.name}</li>
+          <NavLink key={index} to={items.link}>
+            <li>{items.name}</li>
           </NavLink>
         ))}
       </ul>

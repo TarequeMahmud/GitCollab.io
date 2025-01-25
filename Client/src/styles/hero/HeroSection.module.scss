@@ -9,6 +9,7 @@
   background-repeat: no-repeat;
   @include flex;
   position: relative;
+  border-bottom: #05155e 1px solid;
 }
 .home {
   height: 18rem;

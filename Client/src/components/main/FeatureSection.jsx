@@ -5,9 +5,9 @@ const FeatureSection = () => {
   return (
     <div className={styles.container}>
       <h1 className={styles.heading}>Features of This App</h1>
-      {features.map((feature) => {
+      {features.map((feature, index) => {
         return (
-          <div className={styles["feature-container"]}>
+          <div key={index} className={styles["feature-container"]}>
             <div className={styles["img-div"]}>
               <img src={feature.icon} alt={feature.title} />
             </div>
