@@ -1,0 +1,23 @@
+.container {
+  width: 300px;
+  height: 200px;
+  position: fixed;
+  background-color: rgb(68, 227, 255);
+  top: 100px;
+  left: calc(50vw - 150px);
+  border-radius: 20px;
+  color: #000;
+  border: 1px rgb(206, 134, 0) solid;
+  box-shadow: 1px 1px 1px black;
+  padding-top: 10px;
+  h3 {
+    width: 100%;
+    font-size: 1.5rem;
+    margin: 0;
+  }
+  p {
+    width: 100%;
+    font-size: 1.1rem;
+    padding: 5px;
+  }
+}
