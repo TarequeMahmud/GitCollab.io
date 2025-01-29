@@ -32,18 +32,26 @@ router.post("/register", async (req, res) => {
 router.post("/login", (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
     if (err) {
-      return res.status(500).json({ message: "Server error", error: err });
+      return res
+        .status(500)
+        .json({ message: "Server error", loggedIn: false, error: err });
     }
     if (!user) {
       return res.status(401).json({ message: info.message || "Unauthorized" });
     }
     req.logIn(user, (err) => {
       if (err) {
-        return res.status(500).json({ message: "Login failed", error: err });
+        return res
+          .status(500)
+          .json({ message: "Login failed", loggedIn: false, error: err });
       }
       return res
         .status(200)
-        .json({ message: "Logged in successfully", user: req.user });
+        .json({
+          message: "Logged in successfully",
+          loggedIn: true,
+          user: req.user,
+        });
     });
   })(req, res, next);
 });

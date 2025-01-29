@@ -36,7 +36,7 @@ app.use(passport.authenticate("session"));
 app.use(express.json());
 
 app.use("/", authRouter);
-app.use("/project/", projectRouter);
+app.use("/:userId/project/", projectRouter);
 
 // Connect to MongoDB
 const mongoUri = process.env.MONGO_URI;
