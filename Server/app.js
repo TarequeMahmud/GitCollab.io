@@ -8,6 +8,8 @@ import cors from "cors";
 //import necessary routes
 import authRouter from "./src/routes/authRoutes.js";
 import projectRouter from "./src/routes/projectRoute.js";
+//Import middlewares
+import errorHandler from "./src/middlewares/errorHandler.js";
 
 // Load environment variables
 dotenv.config();
@@ -35,8 +37,13 @@ app.use(passport.authenticate("session"));
 // Middleware to parse JSON data
 app.use(express.json());
 
+//route setup
+
 app.use("/", authRouter);
 app.use("/:userId/project/", projectRouter);
+
+//middleware setup
+app.use(errorHandler);
 
 // Connect to MongoDB
 const mongoUri = process.env.MONGO_URI;

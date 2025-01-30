@@ -11,6 +11,7 @@ const projectSchema = new mongoose.Schema({
         type: String,
         enum: ["admin", "manager", "member"],
       },
+      _id: false,
     },
   ],
   tasks: [{ type: mongoose.Schema.Types.ObjectId, ref: "Task" }],

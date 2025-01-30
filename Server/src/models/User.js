@@ -11,6 +11,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         enum: ["admin", "manager", "member"],
       },
+      _id: false,
     },
   ],
 });
