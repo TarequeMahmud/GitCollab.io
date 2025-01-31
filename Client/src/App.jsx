@@ -22,6 +22,10 @@ function App() {
                 element={<MainSection project={true} />}
               />
               <Route
+                path="/projects/:id"
+                element={<MainSection showSingleProject={true} />}
+              />
+              <Route
                 path="/create"
                 element={<MainSection createProject={true} />}
               />
