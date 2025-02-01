@@ -34,10 +34,11 @@ const ProjectSection = () => {
           }
         );
         const projectData = await response.json();
-        console.log(projectData);
+
         if (projectData.error && !projectData.loggedIn) {
           localStorage.removeItem("userdata");
-          navigate("/");
+          setProjects([]);
+          return navigate("/");
         }
 
         setProjects(projectData);
@@ -50,6 +51,8 @@ const ProjectSection = () => {
     };
     fetchProjects();
   }, [userId]);
+
+  useEffect(() => {}, [projects]);
 
   //setup handleClick for the feature buttons
   const handleRedirect = (project) => {
