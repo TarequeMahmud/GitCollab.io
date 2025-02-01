@@ -2,32 +2,66 @@
 .container {
   width: 80%;
   border: 1px solid black;
-  height: 80%;
+  border-radius: 20px;
+  height: 100%;
+  padding: 20px;
+  background-color: #e9e9e9;
   * {
     color: black;
   }
+}
+.button {
+  background-color: #04c977;
+  @include flex(row, space-between);
 
-  .edit-button {
-    background-color: #fff;
-    @include flex(row, space-between);
-
+  border-radius: 4px;
+  &-edit {
     height: 40px;
     width: 100px;
-    img {
-      margin-right: 5px;
-    }
-    p {
-      font-weight: 900;
-    }
+  }
+  &-add {
+    height: 40px;
+    width: 150px;
+  }
+  img {
+    margin-right: 5px;
+  }
+  p {
+    font-weight: 900;
   }
 }
 .description-container {
-  border: 1px solid black;
+  background-color: #f7f7f7;
   width: 80%;
+  border: none;
+  border-radius: 5px;
   margin: 10px auto;
   padding: 10px 20px;
   height: max-content;
   p {
     text-align: start;
   }
+}
+
+.user-table-container {
+  background-color: #f7f7f7;
+  border: none;
+  border-radius: 5px;
+  width: 80%;
+  margin: 10px auto;
+
+  padding: 10px 20px;
+  table {
+    margin-bottom: 10px;
+
+    font-size: 1.5rem;
+  }
+  &:last-of-type {
+    @include flex;
+  }
+}
+
+.operation-column {
+  @include flex(row, space-around);
+  font-size: 1.8rem;
 }
