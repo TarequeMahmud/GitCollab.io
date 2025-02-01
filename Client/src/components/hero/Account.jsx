@@ -17,10 +17,23 @@ const Account = () => {
 
   useHideOutsideClick(ref, () => setShowOptions(false));
   //Add logout functionalities,
-  const handleLogout = () => {
-    setShowOptions(false);
-    localStorage.removeItem("userdata");
-    navigate("/");
+  const handleLogout = async () => {
+    try {
+      setShowOptions(false);
+
+      const response = await fetch("http://localhost:5000/logout", {
+        method: "GET",
+        credentials: "include",
+      });
+      const responseData = await response.json();
+
+      if (!responseData.loggedIn) {
+        localStorage.removeItem("userdata");
+        navigate("/");
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
   return (
     <>
