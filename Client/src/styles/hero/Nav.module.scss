@@ -21,4 +21,8 @@
   list-style-type: none;
   color: #ffffff;
   font-weight: 800;
+  cursor: pointer;
+  &:hover {
+    color: #04c289;
+  }
 }
