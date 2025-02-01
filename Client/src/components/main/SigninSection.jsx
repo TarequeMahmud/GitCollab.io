@@ -1,6 +1,9 @@
 import styles from "@styles/main/SigninSection.module.scss";
+import { useState } from "react";
 import { useNavigate } from "react-router";
+import Spinner from "./Spinner";
 function SigninSection() {
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const signin = async (event) => {
     event.preventDefault();
@@ -8,6 +11,7 @@ function SigninSection() {
     const email = formData.get("email");
     const password = formData.get("password");
     try {
+      setLoading(true);
       const response = await fetch("http://localhost:5000/login", {
         method: "post",
         headers: {
@@ -18,14 +22,19 @@ function SigninSection() {
       });
       if (!response.ok)
         throw new Error(`HTTP error! Status: ${response.status}`);
-      const result = await response.json;
-      navigate("/projects");
-      console.log("Signin successful:", result);
+      const userData = await response.json();
+
+      if (userData.loggedIn) {
+        navigate("/projects");
+        localStorage.setItem("userdata", JSON.stringify(userData));
+      }
     } catch (error) {
       console.log("Error during signing. ", error);
       alert(
         "Something happened wrong. Check out console to investigate what's wrong"
       );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -51,6 +60,7 @@ function SigninSection() {
           <button type="submit">Sign In</button>
         </form>
       </div>
+      {loading && <Spinner />}
     </div>
   );
 }
