@@ -85,7 +85,7 @@ const ProjectPage = () => {
             <p>Add Users</p>
           </button>
         </div>
-        {/* <div className={styles["user-table-container"]}>
+        <div className={styles["user-table-container"]}>
           <h3>Total tasks assigned</h3>
           <TaskList tasks={tasks} />;
           <button
@@ -95,7 +95,7 @@ const ProjectPage = () => {
             <img src={addIcon} alt="add user icon" height={20} width={20} />
             <p>Add Users</p>
           </button>
-        </div> */}
+        </div>
       </>
     </div>
   );
