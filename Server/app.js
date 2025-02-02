@@ -8,6 +8,7 @@ import cors from "cors";
 //import necessary routes
 import authRouter from "./src/routes/authRoutes.js";
 import projectRouter from "./src/routes/projectRoute.js";
+import taskRouter from "./src/routes/taskRoutes.js";
 //Import middlewares
 import errorHandler from "./src/middlewares/errorHandler.js";
 
@@ -41,6 +42,7 @@ app.use(express.json());
 
 app.use("/", authRouter);
 app.use("/:userId/project/", projectRouter);
+app.use("/project/:projectId/task", taskRouter);
 
 //middleware setup
 app.use(errorHandler);
