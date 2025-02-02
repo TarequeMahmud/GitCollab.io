@@ -59,9 +59,9 @@ const ProjectSection = () => {
     const projectId = project._id;
     sessionStorage.setItem(
       `project-${projectId}`,
-      JSON.stringify({ user: userId, project: project })
+      JSON.stringify({ userId: userId })
     );
-    navigate(`/projects/${projectId}`);
+    navigate(`/projects/${projectId}`, { state: { userId } });
   };
 
   return (

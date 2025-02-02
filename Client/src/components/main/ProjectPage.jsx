@@ -4,6 +4,9 @@ import editIcon from "@icons/edit-text.png";
 import addIcon from "@icons/add.png";
 import UserTable from "./UserTable";
 import TaskList from "./TaskCard";
+import { useEffect, useState } from "react";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
+import Spinner from "./Spinner";
 const sampleData = datas[0];
 const tasks = [
   {
@@ -42,24 +45,59 @@ const tasks = [
     dueDate: "Jan 30",
   },
 ];
+
 const ProjectPage = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  //necessary states
+  const [loading, setLoading] = useState(true);
+  const [project, setProject] = useState({});
+  //project id
+  const { projectId } = useParams();
+
+  //retrieve the user id that passed from the project section
+  const userId =
+    location.state?.userId ||
+    (storedUserId
+      ? JSON.parse(sessionStorage.getItem(`project-${projectId}`)).userId
+      : null);
+
+  console.log(userId);
+  //make api request to retrieve project data from database.
+  useEffect(() => {
+    if (!projectId && !userId) return;
+    const fetchProject = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:5000/${userId}/project/${projectId}`,
+          {
+            method: "get",
+            credentials: "include",
+          }
+        );
+        const projectData = await response.json();
+        console.log(projectData);
+
+        setProject(projectData);
+      } catch (error) {
+        console.error("there was an error: ", error);
+        navigate("/");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProject();
+  }, [projectId, userId]);
+
+  if (loading) return <Spinner />;
+  if (!project) return <h1>Project not found</h1>;
+
   return (
     <div className={styles.container}>
       <>
-        <h1>{sampleData.name}</h1>
+        <h1>{project.name}</h1>
         <div className={styles["description-container"]}>
-          <p>{sampleData.description}</p>
-          <p>
-            Lorem Ipsum is simply dummy text of the printing and typesetting
-            industry. Lorem Ipsum has been the industry's standard dummy text
-            ever since the 1500s, when an unknown printer took a galley of type
-            and scrambled it to make a type specimen book. It has survived not
-            only five centuries, but also the leap into electronic typesetting,
-            remaining essentially unchanged. It was popularised in the 1960s
-            with the release of Letraset sheets containing Lorem Ipsum passages,
-            and more recently with desktop publishing software like Aldus
-            PageMaker including versions of Lorem Ipsum.
-          </p>
+          <p>{project.description}</p>
           <button
             className={`${styles.button} ${styles["button-edit"]}`}
             type="button"
