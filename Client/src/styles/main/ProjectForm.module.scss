@@ -12,6 +12,59 @@
     margin: 50px auto;
     font-size: 1.7rem;
   }
+  input,
+  select {
+    height: 2.8rem;
+    font-size: 1rem;
+    border-radius: 5px;
+
+    border: none;
+    border-radius: 0.8rem;
+    &[name="title"] {
+      width: $full;
+    }
+  }
+  textarea {
+    border-radius: 0.8rem;
+    width: $full;
+    resize: none;
+    overflow-y: scroll;
+    font-size: 1rem;
+    padding: 10px;
+  }
+  button[type="submit"] {
+    height: 3rem;
+    width: $full;
+    background-color: #0aa485;
+    margin-bottom: 40px;
+    color: #000;
+    font-size: 1.7rem;
+    text-align: center;
+    font-weight: 700;
+    padding: 0;
+  }
+
+  input,
+  textarea,
+  select {
+    background-color: #7e5252;
+  }
+  input[name="title"] {
+    padding: 0 10px;
+  }
+  select {
+    &:first-of-type,
+    &:nth-of-type(2) {
+      width: 20%;
+    }
+    &:last-of-type {
+      width: 40%;
+    }
+    padding: 0 20px;
+  }
+  .project-description {
+    height: 300px;
+  }
 }
 
 // form section
@@ -32,26 +85,10 @@
   margin: 5px auto 15px;
 }
 
-input,
-select {
-  height: 2.8rem;
-  font-size: 1rem;
-  border-radius: 5px;
-
-  border: none;
-  border-radius: 0.8rem;
-  &[name="title"] {
-    width: $full;
-  }
-}
-
 .input-title {
   font-weight: 800;
   font-size: 1.2rem;
   margin-bottom: 10px;
-}
-input[name="title"] {
-  padding: 0 10px;
 }
 
 .name-container {
@@ -91,45 +128,4 @@ input[name="title"] {
 //deadline section
 .deadline {
   width: $full;
-}
-
-select {
-  &:first-of-type,
-  &:nth-of-type(2) {
-    width: 20%;
-  }
-  &:last-of-type {
-    width: 40%;
-  }
-  padding: 0 20px;
-}
-.project-description {
-  height: 300px;
-}
-
-textarea {
-  border-radius: 0.8rem;
-  width: $full;
-  resize: none;
-  overflow-y: scroll;
-  font-size: 1rem;
-  padding: 10px;
-}
-
-input,
-textarea,
-select {
-  background-color: #7e5252;
-}
-
-button[type="submit"] {
-  height: 3rem;
-  width: $full;
-  background-color: #0aa485;
-  margin-bottom: 40px;
-  color: #000;
-  font-size: 1.7rem;
-  text-align: center;
-  font-weight: 700;
-  padding: 0;
 }
