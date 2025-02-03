@@ -7,6 +7,7 @@ const projectSchema = new mongoose.Schema({
   people: [
     {
       user_id: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+      name: { type: String },
       role: {
         type: String,
         enum: ["admin", "manager", "member"],
@@ -14,7 +15,12 @@ const projectSchema = new mongoose.Schema({
       _id: false,
     },
   ],
-  tasks: [{ type: mongoose.Schema.Types.ObjectId, ref: "Task" }],
+  tasks: [
+    {
+      task_id: { type: mongoose.Schema.Types.ObjectId, ref: "Task" },
+      _id: false,
+    },
+  ],
   created_by: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",

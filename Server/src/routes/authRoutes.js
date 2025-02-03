@@ -11,7 +11,7 @@ router.get("/", (req, res, next) => {
 
 // Register Route
 router.post("/register", async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, username, email, password } = req.body;
 
   try {
     const existingUser = await User.findOne({ email });
@@ -23,7 +23,12 @@ router.post("/register", async (req, res) => {
     const salt = await bcrypt.genSalt(10); // Generate a salt
     const hashedPassword = await bcrypt.hash(password, salt); // Hash the password
 
-    const newUser = new User({ name, email, password: hashedPassword });
+    const newUser = new User({
+      name,
+      username,
+      email,
+      password: hashedPassword,
+    });
     await newUser.save();
 
     res.status(201).json({ message: "User registered successfully" });
