@@ -23,6 +23,10 @@
     height: 40px;
     width: 150px;
   }
+  &-submit {
+    height: 40px;
+    width: 100px;
+  }
   img {
     margin-right: 5px;
   }
@@ -53,11 +57,43 @@
   padding: 10px 20px;
   table {
     margin-bottom: 10px;
-
+    border-collapse: collapse;
     font-size: 1.5rem;
+    border-radius: 10px;
+    th,
+    td {
+      border: 2px solid rgb(2, 69, 133); /* Increase thickness */
+      padding: 4px;
+      text-align: left;
+    }
+    th {
+      background-color: #e4e3e3;
+    }
   }
-  &:last-of-type {
-    @include flex;
+}
+
+.input-section {
+  width: $full;
+  @include flex(row, flex-start);
+  .input-container {
+    width: 50%;
+
+    @include flex(row, flex-start);
+    gap: 4px;
+  }
+  input,
+  select,
+  button {
+    height: 40px;
+  }
+  input,
+  select {
+    background-color: #f7f7f7;
+    border-radius: 10px;
+    font-size: 1rem;
+  }
+  input {
+    padding: 5px;
   }
 }
 
