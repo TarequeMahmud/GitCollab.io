@@ -1,5 +1,4 @@
 import styles from "@styles/main/ProjectPage.module.scss";
-import datas from "@datas/bulkProjects.json";
 import editIcon from "@icons/edit-text.png";
 import addIcon from "@icons/add.png";
 import UserTable from "./UserTable";
@@ -7,44 +6,6 @@ import TaskList from "./TaskCard";
 import { useEffect, useState } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import Spinner from "./Spinner";
-const sampleData = datas[0];
-const tasks = [
-  {
-    name: "Design Homepage",
-    assignee: "Alice",
-    status: "In Progress",
-    priority: "High",
-    dueDate: "Feb 5",
-  },
-  {
-    name: "API Development",
-    assignee: "Bob",
-    status: "To Do",
-    priority: "Medium",
-    dueDate: "Feb 7",
-  },
-  {
-    name: "Write Docs",
-    assignee: "Charlie",
-    status: "Completed",
-    priority: "Low",
-    dueDate: "Jan 30",
-  },
-  {
-    name: "Write Docs",
-    assignee: "Charlie",
-    status: "Completed",
-    priority: "Low",
-    dueDate: "Jan 30",
-  },
-  {
-    name: "Write Docs",
-    assignee: "Charlie",
-    status: "Completed",
-    priority: "Low",
-    dueDate: "Jan 30",
-  },
-];
 
 const ProjectPage = () => {
   const navigate = useNavigate();
@@ -52,6 +13,8 @@ const ProjectPage = () => {
   //necessary states
   const [loading, setLoading] = useState(true);
   const [project, setProject] = useState({});
+  const [people, setPeople] = useState([]);
+  const [tasks, setTasks] = useState([]);
   //project id
   const { projectId } = useParams();
 
@@ -62,23 +25,33 @@ const ProjectPage = () => {
       ? JSON.parse(sessionStorage.getItem(`project-${projectId}`)).userId
       : null);
 
-  console.log(userId);
   //make api request to retrieve project data from database.
   useEffect(() => {
     if (!projectId && !userId) return;
     const fetchProject = async () => {
       try {
-        const response = await fetch(
-          `http://localhost:5000/${userId}/project/${projectId}`,
-          {
-            method: "get",
+        const [projectResponse, taskResponse] = await Promise.all([
+          fetch(`http://localhost:5000/${userId}/project/${projectId}`, {
+            method: "GET",
             credentials: "include",
-          }
-        );
-        const projectData = await response.json();
+          }),
+          fetch(`http://localhost:5000/project/${projectId}/task`, {
+            method: "GET",
+            credentials: "include",
+          }),
+        ]);
+
+        const projectData = await projectResponse.json();
+        if (taskResponse.ok) {
+          const taskData = await taskResponse.json();
+          setTasks(taskData);
+        }
+
         console.log(projectData);
+        console.log(taskResponse);
 
         setProject(projectData);
+        setPeople(projectData.people);
       } catch (error) {
         console.error("there was an error: ", error);
         navigate("/");
@@ -109,7 +82,7 @@ const ProjectPage = () => {
         <div className={styles["user-table-container"]}>
           <h3>Total Users Working in this project</h3>
           <UserTable
-            projectUserData={sampleData.people}
+            projectUserData={people}
             className={{
               operationColumn: styles["operation-column"],
               table: styles.table,
@@ -125,7 +98,7 @@ const ProjectPage = () => {
         </div>
         <div className={styles["user-table-container"]}>
           <h3>Total tasks assigned</h3>
-          <TaskList tasks={tasks} />;
+          <TaskList tasks={tasks} />
           <button
             className={`${styles.button} ${styles["button-add"]}`}
             type="button"
