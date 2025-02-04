@@ -53,7 +53,6 @@ router.post("/login", (req, res, next) => {
       return res.status(200).json({
         message: "Logged in successfully",
         loggedIn: true,
-        user: req.user,
       });
     });
   })(req, res, next);
