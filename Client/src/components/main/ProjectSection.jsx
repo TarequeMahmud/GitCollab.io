@@ -5,6 +5,7 @@ import generateFeatures from "@utils/generateFeatures.js";
 import CardFeatures from "./CardFeatures";
 import { useEffect, useState } from "react";
 import Spinner from "./Spinner";
+import authFetch from "@services/fetch.js";
 
 //TODO: Fetch the project from server
 const ProjectSection = () => {
@@ -25,11 +26,14 @@ const ProjectSection = () => {
     if (!userId) return;
     const fetchProjects = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/project`, {
-          method: "get",
-          credentials: "include",
-        });
-        const projectData = await response.json();
+        const projectData = await authFetch(
+          "/project",
+          {
+            method: "get",
+          },
+          navigate
+        );
+        console.log(projectData);
 
         if (projectData.error && !projectData.loggedIn) {
           localStorage.removeItem("userdata");

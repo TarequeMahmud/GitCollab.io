@@ -2,6 +2,9 @@ import styles from "@styles/main/SigninSection.module.scss";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import Spinner from "./Spinner";
+import authFetch from "@services/fetch.js";
+
+//signin function
 function SigninSection() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -12,21 +15,19 @@ function SigninSection() {
     const password = formData.get("password");
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:5000/login", {
+      const userData = await authFetch("/login", {
         method: "post",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ email, password }),
-        credentials: "include",
       });
-      if (!response.ok)
+      if (!userData.loggedIn)
         throw new Error(`HTTP error! Status: ${response.status}`);
-      const userData = await response.json();
 
       if (userData.loggedIn) {
+        localStorage.removeItem("notLoggedIn");
         navigate("/projects");
-        localStorage.setItem("userdata", JSON.stringify(userData));
       }
     } catch (error) {
       console.log("Error during signing. ", error);

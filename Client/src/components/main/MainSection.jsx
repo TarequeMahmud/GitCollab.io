@@ -12,14 +12,15 @@ const MainSection = ({
   createProject = false,
   showSingleProject = false,
 }) => {
-  const user = JSON.parse(localStorage.getItem("userdata"));
+  const isNotLoggedin =
+    JSON.parse(localStorage.getItem("notLoggedIn")) || false;
   return (
     <div className={`${styles.container} ${project && styles.project}`}>
       {features && signin && (
         <>
           <FeatureSection />
           <hr />
-          {!user && <SigninSection />}
+          {isNotLoggedin && <SigninSection />}
         </>
       )}
       {project && <ProjectSection />}

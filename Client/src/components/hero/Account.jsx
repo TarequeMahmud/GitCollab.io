@@ -3,6 +3,7 @@ import icon from "../../assets/images/hero/user-regular.svg";
 import styles from "../../styles/hero/Account.module.scss";
 import useHideOutsideClick from "../../hooks/useHideOutsideClick";
 import { useNavigate } from "react-router";
+import authFetch from "@services/fetch.js";
 
 const Account = () => {
   const navigate = useNavigate();
@@ -21,18 +22,17 @@ const Account = () => {
     try {
       setShowOptions(false);
 
-      const response = await fetch("http://localhost:5000/logout", {
+      const responseData = await authFetch("/logout", {
         method: "GET",
-        credentials: "include",
       });
-      const responseData = await response.json();
 
       if (!responseData.loggedIn) {
-        localStorage.removeItem("userdata");
+        localStorage.setItem("notLoggedIn", JSON.stringify(true));
         navigate("/");
       }
     } catch (error) {
       console.error(error);
+      return;
     }
   };
   return (

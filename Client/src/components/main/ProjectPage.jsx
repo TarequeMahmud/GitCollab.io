@@ -6,6 +6,7 @@ import TaskList from "./TaskCard";
 import { useEffect, useState } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import Spinner from "./Spinner";
+import authFetch from "@services/fetch.js";
 
 const ProjectPage = () => {
   const navigate = useNavigate();
@@ -33,25 +34,21 @@ const ProjectPage = () => {
     if (!projectId && !userId) return;
     const fetchProject = async () => {
       try {
-        const [projectResponse, taskResponse] = await Promise.all([
-          fetch(`http://localhost:5000/project/${projectId}`, {
+        const [projectData, taskData] = await Promise.all([
+          authFetch(`/project/${projectId}`, {
             method: "GET",
-            credentials: "include",
           }),
-          fetch(`http://localhost:5000/project/${projectId}/task`, {
+          authFetch(`/project/${projectId}/task`, {
             method: "GET",
-            credentials: "include",
           }),
         ]);
 
-        const projectData = await projectResponse.json();
-        if (taskResponse.ok) {
-          const taskData = await taskResponse.json();
+        if (taskData.length !== 0) {
           setTasks(taskData);
         }
 
         console.log(projectData);
-        console.log(taskResponse);
+        console.log(taskData);
 
         setProject(projectData);
         setPeople(projectData.people);
@@ -72,17 +69,14 @@ const ProjectPage = () => {
       return;
     }
     try {
-      const response = await fetch(
-        `http://localhost:5000/project/${projectId}/users`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ username: username, role: role }),
-          credentials: "include",
-        }
-      );
+      const response = await authFetch(`/project/${projectId}/users`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username: username, role: role }),
+        credentials: "include",
+      });
       const userData = await response.json();
       setPeople(userData.people);
     } catch (error) {
