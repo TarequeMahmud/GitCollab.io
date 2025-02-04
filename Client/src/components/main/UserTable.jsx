@@ -1,6 +1,13 @@
 import { MdAssignmentAdd, MdInfo, MdRemoveCircle } from "react-icons/md";
 
 const UserTable = ({ projectUserData, className }) => {
+  //handle click functions
+
+  const handleShowInfo = (userId) => {
+    console.log(userId);
+  };
+  const handleAssignTask = (userId) => {};
+  const handleRemovePerson = (userId) => {};
   return (
     <table
       border="1"
@@ -21,9 +28,18 @@ const UserTable = ({ projectUserData, className }) => {
             <td>{userData.role}</td>
             <td>
               <div className={className.operationColumn}>
-                <MdInfo />
-                <MdAssignmentAdd />
-                <MdRemoveCircle />
+                <MdInfo
+                  onClick={() => handleShowInfo(userData.user_id)}
+                  style={{ fill: "#0e91e9" }}
+                />
+                <MdAssignmentAdd
+                  onClick={() => handleAssignTask(userData.user_id)}
+                  style={{ fill: "#08b86f" }}
+                />
+                <MdRemoveCircle
+                  onClick={() => handleRemovePerson(userData.user_id)}
+                  style={{ fill: "#e41010" }}
+                />
               </div>
             </td>
           </tr>

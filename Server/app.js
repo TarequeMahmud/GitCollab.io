@@ -41,7 +41,7 @@ app.use(express.json());
 //route setup
 
 app.use("/", authRouter);
-app.use("/:userId/project/", projectRouter);
+app.use("/project/", projectRouter);
 app.use("/project/:projectId/task", taskRouter);
 
 //middleware setup

@@ -1,6 +1,5 @@
 import styles from "@styles/main/ProjectSection.module.scss";
 import { MdOutlineCreate } from "react-icons/md";
-import datas from "@datas/bulkProjects.json";
 import { useNavigate } from "react-router";
 import generateFeatures from "@utils/generateFeatures.js";
 import CardFeatures from "./CardFeatures";
@@ -26,13 +25,10 @@ const ProjectSection = () => {
     if (!userId) return;
     const fetchProjects = async () => {
       try {
-        const response = await fetch(
-          `http://localhost:5000/${userId}/project`,
-          {
-            method: "get",
-            credentials: "include",
-          }
-        );
+        const response = await fetch(`http://localhost:5000/project`, {
+          method: "get",
+          credentials: "include",
+        });
         const projectData = await response.json();
 
         if (projectData.error && !projectData.loggedIn) {
@@ -51,8 +47,6 @@ const ProjectSection = () => {
     };
     fetchProjects();
   }, [userId]);
-
-  useEffect(() => {}, [projects]);
 
   //setup handleClick for the feature buttons
   const handleRedirect = (project) => {

@@ -34,7 +34,7 @@ const ProjectPage = () => {
     const fetchProject = async () => {
       try {
         const [projectResponse, taskResponse] = await Promise.all([
-          fetch(`http://localhost:5000/${userId}/project/${projectId}`, {
+          fetch(`http://localhost:5000/project/${projectId}`, {
             method: "GET",
             credentials: "include",
           }),
@@ -73,7 +73,7 @@ const ProjectPage = () => {
     }
     try {
       const response = await fetch(
-        `http://localhost:5000/${userId}/project/${projectId}/users`,
+        `http://localhost:5000/project/${projectId}/users`,
         {
           method: "POST",
           headers: {
@@ -93,8 +93,6 @@ const ProjectPage = () => {
     setUsername("");
     setRole("manager");
   };
-
-  //hand
 
   //conditional rendering
   if (loading) return <Spinner />;

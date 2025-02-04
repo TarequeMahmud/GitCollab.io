@@ -10,7 +10,7 @@ router.use(isAuthenticated);
 /*This Section is for admin*/
 
 router.get("/", async (req, res, next) => {
-  const userId = req.params.userId;
+  const userId = req.user._id;
   try {
     const response = await User.findById(userId).select("projects");
 
@@ -38,12 +38,13 @@ router.get("/", async (req, res, next) => {
 });
 
 router.get("/:projectId", async (req, res, next) => {
-  const { userId, projectId } = req.params;
+  const userId = req.user._id;
+  const { projectId } = req.params;
 
   try {
     const project = await Project.findById(projectId);
     const isEnrolledUser = project.people.some(
-      (person) => person.user_id.toString() === userId
+      (person) => person.user_id.toString() === userId.toString()
     );
     if (isEnrolledUser) {
       return res.status(200).json(project);
@@ -59,7 +60,7 @@ router.get("/:projectId", async (req, res, next) => {
 
 router.post("/", async (req, res, next) => {
   //Fetch the id of creator from parameters
-  const creator = req.params.userId;
+  const creator = req.user._id;
 
   //verify the creator, if it is valid account.
   const creatorInfo = await User.findById(creator);
@@ -155,5 +156,9 @@ router.post("/:projectId/users", async (req, res, next) => {
     next(error);
   }
 });
+
+router.delete("/:projectId/users/:userId", (req, res, next) => {});
+
+router.get("/:projectId/users/:userId", (req, res, next) => {});
 
 export default router;
