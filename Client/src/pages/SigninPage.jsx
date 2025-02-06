@@ -1,7 +1,7 @@
-import styles from "@styles/main/SigninSection.module.scss";
-import { useContext, useState } from "react";
+import styles from "./SigninPage.module.scss";
+import { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router";
-import Spinner from "./Spinner";
+import Spinner from "@comp/Spinner";
 import { AuthContext } from "@contexts/AuthContext.jsx";
 
 //Component

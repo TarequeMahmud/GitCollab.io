@@ -1,13 +1,13 @@
-import styles from "@styles/main/ProjectSection.module.scss";
-import { MdOutlineCreate } from "react-icons/md";
-import { useNavigate } from "react-router";
-import generateFeatures from "@utils/generateFeatures.js";
-import CardFeatures from "./CardFeatures";
 import { useEffect, useState } from "react";
-import Spinner from "./Spinner";
+import { useNavigate } from "react-router";
+import { MdOutlineCreate } from "react-icons/md";
+//Necessary Imports
+import styles from "./ProjectCardsPage.module.scss";
+import generateFeatures from "@utils/generateFeatures.js";
+import CardFeatures from "@comp/CardFeatures";
+import Spinner from "@comp/Spinner";
 import authFetch from "@services/fetch.js";
 
-//TODO: Fetch the project from server
 const ProjectSection = () => {
   //necessary hook variables
   const [userId, setUserId] = useState(null);

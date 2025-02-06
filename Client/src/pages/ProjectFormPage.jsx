@@ -1,4 +1,4 @@
-import styles from "@styles/main/ProjectForm.module.scss";
+import styles from "./ProjectFormPage.module.scss";
 const ProjectForm = () => {
   const months = [
     "January",

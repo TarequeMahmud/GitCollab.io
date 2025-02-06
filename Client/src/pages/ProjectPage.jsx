@@ -1,11 +1,11 @@
-import styles from "@styles/main/ProjectPage.module.scss";
+import styles from "./ProjectPage.module.scss";
 import editIcon from "@icons/edit-text.png";
 import addIcon from "@icons/add.png";
-import UserTable from "./UserTable";
-import TaskList from "./TaskCard";
+import UserTable from "@comp/UserTable";
+import TaskList from "@comp/TaskCard";
 import { useEffect, useState } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
-import Spinner from "./Spinner";
+import Spinner from "@comp/Spinner";
 import authFetch from "@services/fetch.js";
 
 const ProjectPage = () => {

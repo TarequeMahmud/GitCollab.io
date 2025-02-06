@@ -2,11 +2,11 @@ import { useContext } from "react";
 import { Routes, Route, useLocation } from "react-router";
 
 //imports
-import MainSection from "@comp/main/MainSection";
-import Layout from "@layouts/Layout";
-import ProtectedRoute from "@layouts/ProtectedRoute.jsx";
-import HomeContext from "@contexts/HomeContext";
-import { AuthContext } from "@contexts/AuthContext";
+import MainSection from "./layouts/MainSection";
+import Layout from "./layouts/Layout";
+import ProtectedRoute from "./layouts/ProtectedRoute";
+import HomeContext from "./contexts/HomeContext";
+import { AuthContext } from "./contexts/AuthContext";
 import "@styles/App.scss";
 
 function App() {

@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import styles from "../../styles/hero/HeroSection.module.scss";
+import styles from "./HeroSection.module.scss";
 import Account from "./Account";
 import HeroTitle from "./HeroTitle";
 import HomeContext from "@contexts/HomeContext";

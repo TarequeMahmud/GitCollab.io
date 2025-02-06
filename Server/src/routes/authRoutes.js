@@ -9,6 +9,12 @@ router.get("/", (req, res, next) => {
   return res.json("Please Login");
 });
 
+router.get("/auth/check", (req, res) => {
+  if (req.isAuthenticated()) {
+    return res.status(200).json({ loggedIn: true });
+  }
+});
+
 // Register Route
 router.post("/register", async (req, res) => {
   const { name, username, email, password } = req.body;

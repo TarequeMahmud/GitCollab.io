@@ -1,5 +1,5 @@
 import { Navigate, Outlet } from "react-router";
-import MainSection from "@comp/main/MainSection";
+import MainSection from "./MainSection";
 
 const ProtectedRoute = ({ isAuthenticated, redirectTo = "/auth" }) => {
   return (

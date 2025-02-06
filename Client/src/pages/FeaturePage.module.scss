@@ -1,6 +1,6 @@
 @use "@styles/base" as *;
 .container {
-  width: 50%;
+  width: 70%;
   height: $full;
   @include flex($justify: flex-start);
 

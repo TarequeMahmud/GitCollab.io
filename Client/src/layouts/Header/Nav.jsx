@@ -1,9 +1,9 @@
-import styles from "../../styles/hero/Nav.module.scss";
+import styles from "./Nav.module.scss";
 import { navbarItems } from "@datas/navbar.json";
 
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import AlertBar from "./AlertBar";
+import AlertBar from "@comp/AlertBar";
 const Nav = () => {
   const navigate = useNavigate();
   //if has user data

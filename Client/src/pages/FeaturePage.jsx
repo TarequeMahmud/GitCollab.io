@@ -1,7 +1,14 @@
-import styles from "@styles/main/FeatureSection.module.scss";
+import { useNavigate } from "react-router";
+import styles from "./FeaturePage.module.scss";
 import features from "@datas/features.js";
 
 const FeatureSection = () => {
+  const navigate = useNavigate();
+  //handle function
+  const handleAuthRedirect = () => {
+    navigate("/auth");
+  };
+
   return (
     <div className={styles.container}>
       <h1 className={styles.heading}>Features of This App</h1>
@@ -18,6 +25,9 @@ const FeatureSection = () => {
           </div>
         );
       })}
+      <button onClick={handleAuthRedirect}>
+        <p>Start Your Project</p>
+      </button>
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
-import HeroSection from "@comp/hero/HeroSection";
-import FooterSection from "@comp/footer/FooterSection";
+import HeroSection from "./Header/HeroSection";
+import FooterSection from "./FooterSection";
 
 const Layout = () => {
   return (

@@ -1,4 +1,4 @@
-import styles from "@styles/hero/AlertBar.module.scss";
+import styles from "./AlertBar.module.scss";
 const AlertBar = ({ title, data, onClick }) => {
   return (
     <div className={styles.container}>

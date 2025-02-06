@@ -1,7 +1,7 @@
-import { useState, useRef, useEffect, useContext } from "react";
-import icon from "../../assets/images/hero/user-regular.svg";
-import styles from "../../styles/hero/Account.module.scss";
-import useHideOutsideClick from "../../hooks/useHideOutsideClick";
+import { useState, useRef, useContext } from "react";
+import icon from "@/assets/images/hero/user-regular.svg";
+import styles from "./Account.module.scss";
+import useHideOutsideClick from "@/hooks/useHideOutsideClick";
 import { useNavigate } from "react-router";
 import { AuthContext } from "@contexts/AuthContext.jsx";
 

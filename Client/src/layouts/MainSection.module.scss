@@ -6,7 +6,7 @@
   width: 100%;
   min-height: 60rem;
   height: auto;
-  @include flex(row);
+  @include flex($justify: flex-start);
 
   background: linear-gradient(135deg, #95c46c 0%, #da9857 100%);
 }
