@@ -10,16 +10,18 @@ const MainSection = ({
   spin = false,
   features = false,
   authSection = false,
-  projectSection = false,
+  projectsCardPage = false,
   createProject = false,
   showSingleProject = false,
 }) => {
   return (
-    <div className={`${styles.container} ${projectSection && styles.project}`}>
+    <div
+      className={`${styles.container} ${projectsCardPage && styles.project}`}
+    >
       {authSection && <SigninPage />}
       {features && <FeaturePage />}
       {spin && <Spinner />}
-      {projectSection && <ProjectCardsPage />}
+      {projectsCardPage && <ProjectCardsPage />}
       {showSingleProject && <ProjectPage />}
       {createProject && <ProjectFormPage />}
     </div>

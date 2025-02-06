@@ -8,6 +8,7 @@ import ProtectedRoute from "./layouts/ProtectedRoute";
 import HomeContext from "./contexts/HomeContext";
 import { AuthContext } from "./contexts/AuthContext";
 import "@styles/App.scss";
+import { ProjectsProvider } from "./contexts/ProjectsContext";
 
 function App() {
   const { isAuthenticated } = useContext(AuthContext);
@@ -17,33 +18,35 @@ function App() {
   return (
     <>
       <HomeContext.Provider value={isHome}>
-        <div className="container">
-          <Routes>
-            <Route path="/" element={<Layout />}>
-              <Route index element={<MainSection features={true} />} />
-              <Route
-                path="/auth"
-                element={<MainSection authSection={true} />}
-              />
-              <Route
-                element={<ProtectedRoute isAuthenticated={isAuthenticated} />}
-              >
+        <ProjectsProvider>
+          <div className="container">
+            <Routes>
+              <Route path="/" element={<Layout />}>
+                <Route index element={<MainSection features={true} />} />
                 <Route
-                  path="/projects"
-                  element={<MainSection projectSection={true} />}
+                  path="/auth"
+                  element={<MainSection authSection={true} />}
                 />
                 <Route
-                  path="/projects/:projectId"
-                  element={<MainSection showSingleProject={true} />}
-                />
-                <Route
-                  path="/create"
-                  element={<MainSection createProject={true} />}
-                />
+                  element={<ProtectedRoute isAuthenticated={isAuthenticated} />}
+                >
+                  <Route
+                    path="/projects"
+                    element={<MainSection projectsCardPage={true} />}
+                  />
+                  <Route
+                    path="/projects/:projectId"
+                    element={<MainSection showSingleProject={true} />}
+                  />
+                  <Route
+                    path="/create"
+                    element={<MainSection createProject={true} />}
+                  />
+                </Route>
               </Route>
-            </Route>
-          </Routes>
-        </div>
+            </Routes>
+          </div>
+        </ProjectsProvider>
       </HomeContext.Provider>
     </>
   );

@@ -7,12 +7,13 @@ import generateFeatures from "@utils/generateFeatures.js";
 import CardFeatures from "@comp/CardFeatures";
 import Spinner from "@comp/Spinner";
 import authFetch from "@services/fetch.js";
+import { useProjects } from "@contexts/ProjectsContext.jsx";
 
 const ProjectSection = () => {
   //necessary hook variables
-  const [userId, setUserId] = useState(null);
+  const { projects, setProjects } = useProjects();
   const [loading, setLoading] = useState(true);
-  const [projects, setProjects] = useState([]);
+
   const navigate = useNavigate();
 
   //
@@ -41,17 +42,18 @@ const ProjectSection = () => {
         setLoading(false);
       }
     };
-    fetchProjects();
-  }, [userId]);
+    if (projects.length === 0) {
+      fetchProjects();
+    } else {
+      setLoading(false);
+    }
+  }, []);
 
   //setup handleClick for the feature buttons
   const handleRedirect = (project) => {
     const projectId = project._id;
-    sessionStorage.setItem(
-      `project-${projectId}`,
-      JSON.stringify({ userId: userId })
-    );
-    navigate(`/projects/${projectId}`, { state: { userId } });
+
+    navigate(`/projects/${projectId}`);
   };
 
   return (
