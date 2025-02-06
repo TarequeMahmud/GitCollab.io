@@ -15,15 +15,8 @@ const ProjectSection = () => {
   const [projects, setProjects] = useState([]);
   const navigate = useNavigate();
 
-  //find userdata from localStorage
+  //
   useEffect(() => {
-    const userData = JSON.parse(localStorage.getItem("userdata"));
-    if (!userData) navigate("/");
-    setUserId(userData.user._id);
-  }, []);
-
-  useEffect(() => {
-    if (!userId) return;
     const fetchProjects = async () => {
       try {
         const projectData = await authFetch(
@@ -36,7 +29,6 @@ const ProjectSection = () => {
         console.log(projectData);
 
         if (projectData.error && !projectData.loggedIn) {
-          localStorage.removeItem("userdata");
           setProjects([]);
           return navigate("/");
         }

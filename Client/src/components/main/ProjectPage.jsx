@@ -22,16 +22,9 @@ const ProjectPage = () => {
   //project id
   const { projectId } = useParams();
 
-  //--retrieve the user id that passed from the project section--
-  const userId =
-    location.state?.userId ||
-    (storedUserId
-      ? JSON.parse(sessionStorage.getItem(`project-${projectId}`)).userId
-      : null);
-
   //--make api request to retrieve project data from database.--
   useEffect(() => {
-    if (!projectId && !userId) return;
+    if (!projectId) return;
     const fetchProject = async () => {
       try {
         const [projectData, taskData] = await Promise.all([
@@ -46,10 +39,6 @@ const ProjectPage = () => {
         if (taskData.length !== 0) {
           setTasks(taskData);
         }
-
-        console.log(projectData);
-        console.log(taskData);
-
         setProject(projectData);
         setPeople(projectData.people);
       } catch (error) {
@@ -60,7 +49,7 @@ const ProjectPage = () => {
       }
     };
     fetchProject();
-  }, [projectId, userId]);
+  }, [projectId]);
 
   //--handle-click functions Here--
   const handleAddUser = async () => {
@@ -69,7 +58,7 @@ const ProjectPage = () => {
       return;
     }
     try {
-      const response = await authFetch(`/project/${projectId}/users`, {
+      const userData = await authFetch(`/project/${projectId}/users`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -77,7 +66,7 @@ const ProjectPage = () => {
         body: JSON.stringify({ username: username, role: role }),
         credentials: "include",
       });
-      const userData = await response.json();
+
       setPeople(userData.people);
     } catch (error) {
       console.log(error);

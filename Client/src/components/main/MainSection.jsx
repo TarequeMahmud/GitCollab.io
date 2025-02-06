@@ -4,26 +4,22 @@ import SigninSection from "./SigninSection.jsx";
 import ProjectSection from "./ProjectSection.jsx";
 import ProjectForm from "./ProjectForm.jsx";
 import ProjectPage from "./ProjectPage.jsx";
+import Spinner from "./Spinner.jsx";
 
 const MainSection = ({
+  spin = false,
   features = false,
-  signin = false,
-  project = false,
+  authSection = false,
+  projectSection = false,
   createProject = false,
   showSingleProject = false,
 }) => {
-  const isNotLoggedin =
-    JSON.parse(localStorage.getItem("notLoggedIn")) || false;
   return (
-    <div className={`${styles.container} ${project && styles.project}`}>
-      {features && signin && (
-        <>
-          <FeatureSection />
-          <hr />
-          {isNotLoggedin && <SigninSection />}
-        </>
-      )}
-      {project && <ProjectSection />}
+    <div className={`${styles.container} ${projectSection && styles.project}`}>
+      {authSection && <SigninSection />}
+      {features && <FeatureSection />}
+      {spin && <Spinner />}
+      {projectSection && <ProjectSection />}
       {showSingleProject && <ProjectPage />}
       {createProject && <ProjectForm />}
     </div>

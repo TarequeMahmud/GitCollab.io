@@ -29,14 +29,17 @@ const UserTable = ({ projectUserData, className }) => {
             <td>
               <div className={className.operationColumn}>
                 <MdInfo
+                  title="See More info"
                   onClick={() => handleShowInfo(userData.user_id)}
                   style={{ fill: "#0e91e9" }}
                 />
                 <MdAssignmentAdd
+                  title="Assign a task to him."
                   onClick={() => handleAssignTask(userData.user_id)}
                   style={{ fill: "#08b86f" }}
                 />
                 <MdRemoveCircle
+                  title="Remove from the project."
                   onClick={() => handleRemovePerson(userData.user_id)}
                   style={{ fill: "#e41010" }}
                 />

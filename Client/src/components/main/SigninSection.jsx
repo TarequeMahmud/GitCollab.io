@@ -1,34 +1,33 @@
 import styles from "@styles/main/SigninSection.module.scss";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router";
 import Spinner from "./Spinner";
-import authFetch from "@services/fetch.js";
+import { AuthContext } from "@contexts/AuthContext.jsx";
 
-//signin function
+//Component
 function SigninSection() {
+  //Necessary hooks and states
+  const { login } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const signin = async (event) => {
+
+  //Signin handler function
+  const handleSignin = async (event) => {
+    //prevent reload
     event.preventDefault();
+
+    //form inputs
     const formData = new FormData(event.target);
     const email = formData.get("email");
     const password = formData.get("password");
+
+    //try to login
     try {
       setLoading(true);
-      const userData = await authFetch("/login", {
-        method: "post",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
-      if (!userData.loggedIn)
-        throw new Error(`HTTP error! Status: ${response.status}`);
+      await login({ email, password });
 
-      if (userData.loggedIn) {
-        localStorage.removeItem("notLoggedIn");
-        navigate("/projects");
-      }
+      //navigate
+      navigate("/projects");
     } catch (error) {
       console.log("Error during signing. ", error);
       alert(
@@ -43,7 +42,7 @@ function SigninSection() {
     <div className={styles.container}>
       <h1 className={styles.heading}>Start Project Now!</h1>
       <div className={styles["signin-form"]}>
-        <form onSubmit={signin}>
+        <form onSubmit={handleSignin}>
           <label htmlFor="email">Email</label>
           <input
             type="email"

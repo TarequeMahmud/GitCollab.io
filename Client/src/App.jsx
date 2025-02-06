@@ -1,9 +1,17 @@
-import "./styles/App.scss";
-import MainSection from "./components/main/MainSection";
+import { useContext } from "react";
 import { Routes, Route, useLocation } from "react-router";
-import Layout from "./components/Layout";
+
+//imports
+import MainSection from "@comp/main/MainSection";
+import Layout from "@layouts/Layout";
+import ProtectedRoute from "@layouts/ProtectedRoute.jsx";
 import HomeContext from "@contexts/HomeContext";
+import { AuthContext } from "@contexts/AuthContext";
+import "@styles/App.scss";
+
 function App() {
+  const { isAuthenticated } = useContext(AuthContext);
+
   const location = useLocation();
   const isHome = location.pathname === "/";
   return (
@@ -12,23 +20,27 @@ function App() {
         <div className="container">
           <Routes>
             <Route path="/" element={<Layout />}>
+              <Route index element={<MainSection features={true} />} />
               <Route
-                index
-                element={<MainSection features={true} signin={true} />}
-              />
-
-              <Route
-                path="/projects"
-                element={<MainSection project={true} />}
+                path="/auth"
+                element={<MainSection authSection={true} />}
               />
               <Route
-                path="/projects/:projectId"
-                element={<MainSection showSingleProject={true} />}
-              />
-              <Route
-                path="/create"
-                element={<MainSection createProject={true} />}
-              />
+                element={<ProtectedRoute isAuthenticated={isAuthenticated} />}
+              >
+                <Route
+                  path="/projects"
+                  element={<MainSection projectSection={true} />}
+                />
+                <Route
+                  path="/projects/:projectId"
+                  element={<MainSection showSingleProject={true} />}
+                />
+                <Route
+                  path="/create"
+                  element={<MainSection createProject={true} />}
+                />
+              </Route>
             </Route>
           </Routes>
         </div>
