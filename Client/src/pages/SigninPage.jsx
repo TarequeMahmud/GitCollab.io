@@ -1,6 +1,6 @@
 import styles from "./SigninPage.module.scss";
 import { useContext, useState, useEffect } from "react";
-import { useNavigate } from "react-router";
+import { replace, useNavigate } from "react-router";
 import Spinner from "@comp/Spinner";
 import { AuthContext } from "@contexts/AuthContext.jsx";
 
@@ -27,7 +27,7 @@ function SigninSection() {
       await login({ email, password });
 
       //navigate
-      navigate("/projects");
+      navigate("/projects", { replace: true });
     } catch (error) {
       console.log("Error during signing. ", error);
       alert(

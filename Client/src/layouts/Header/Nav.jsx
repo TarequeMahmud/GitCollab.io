@@ -10,9 +10,13 @@ import { useAlert } from "@contexts/AlertContext";
 const Nav = () => {
   const navigate = useNavigate();
   const { isAuthenticated } = useContext(AuthContext);
-  const { alert, showAlert } = useAlert();
+  const { showAlert } = useAlert();
 
   const handleClick = (link, name) => {
+    if (name === "Home") {
+      navigate(link);
+      return;
+    }
     if (isAuthenticated) {
       navigate(link);
     } else {
