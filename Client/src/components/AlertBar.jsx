@@ -1,12 +1,16 @@
+import { useAlert } from "@contexts/AlertContext";
 import styles from "./AlertBar.module.scss";
-const AlertBar = ({ title, data, onClick }) => {
+
+const AlertBar = () => {
+  const { alert, setAlert } = useAlert();
+  if (!alert) return null;
   return (
     <div className={styles.container}>
-      <h3>{title}</h3>
+      <h3>{alert.title}</h3>
       <hr />
-      <p>{data}</p>
+      <p>{alert.message}</p>
       <hr />
-      <button onClick={onClick}>Ok</button>
+      <button onClick={() => setAlert(null)}>Ok</button>
     </div>
   );
 };

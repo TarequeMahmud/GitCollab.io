@@ -9,6 +9,8 @@ import HomeContext from "./contexts/HomeContext";
 import { AuthContext } from "./contexts/AuthContext";
 import "@styles/App.scss";
 import { ProjectsProvider } from "./contexts/ProjectsContext";
+import { AlertProvider } from "./contexts/AlertContext";
+import AlertBar from "@comp/AlertBar";
 
 function App() {
   const { isAuthenticated } = useContext(AuthContext);
@@ -16,7 +18,7 @@ function App() {
   const location = useLocation();
   const isHome = location.pathname === "/";
   return (
-    <>
+    <AlertProvider>
       <HomeContext.Provider value={isHome}>
         <ProjectsProvider>
           <div className="container">
@@ -25,7 +27,11 @@ function App() {
                 <Route index element={<MainSection features={true} />} />
                 <Route
                   path="/auth"
-                  element={<MainSection authSection={true} />}
+                  element={
+                    <MainSection
+                      authSection={isAuthenticated === false ? false : true}
+                    />
+                  }
                 />
                 <Route
                   element={<ProtectedRoute isAuthenticated={isAuthenticated} />}
@@ -46,9 +52,10 @@ function App() {
               </Route>
             </Routes>
           </div>
+          <AlertBar />
         </ProjectsProvider>
       </HomeContext.Provider>
-    </>
+    </AlertProvider>
   );
 }
 

@@ -1,30 +1,26 @@
 import styles from "./Nav.module.scss";
 import { navbarItems } from "@datas/navbar.json";
 
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import AlertBar from "@comp/AlertBar";
+
+import { AuthContext } from "@contexts/AuthContext";
+import { useAlert } from "@contexts/AlertContext";
+
 const Nav = () => {
   const navigate = useNavigate();
-  //if has user data
-  const [hasUserData, setHasUserData] = useState(false);
-  const [showAlert, setShowAlert] = useState(null);
-  useEffect(() => {
-    setHasUserData(!!localStorage.getItem("userdata"));
-  });
+  const { isAuthenticated } = useContext(AuthContext);
+  const { alert, showAlert } = useAlert();
 
-  const handleClick = (link, data) => {
-    if (hasUserData) {
+  const handleClick = (link, name) => {
+    if (isAuthenticated) {
       navigate(link);
     } else {
-      setShowAlert(data);
-      setTimeout(() => {
-        setShowAlert(null);
-      }, 3000);
+      showAlert(
+        "Login Required",
+        `To continue with ${name} you must be a valid user. Please login or Register to create an account.`
+      );
     }
-  };
-  const handleButtonClick = () => {
-    setShowAlert(null);
   };
 
   return (
@@ -36,13 +32,6 @@ const Nav = () => {
           </li>
         ))}
       </ul>
-      {showAlert && (
-        <AlertBar
-          title={"Login Required"}
-          data={`To continue with ${showAlert} you must be a valid user. Please login or Register to create an account.`}
-          onClick={handleButtonClick}
-        />
-      )}
     </div>
   );
 };
