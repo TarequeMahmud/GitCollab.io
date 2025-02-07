@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router";
 import styles from "./FeaturePage.module.scss";
 import features from "@datas/features.js";
+import { useAuth } from "@contexts/AuthContext";
 
 const FeatureSection = () => {
   const navigate = useNavigate();
@@ -25,6 +26,7 @@ const FeatureSection = () => {
           </div>
         );
       })}
+
       <button onClick={handleAuthRedirect}>
         <p>Start Your Project</p>
       </button>

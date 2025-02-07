@@ -6,14 +6,14 @@ import MainSection from "./layouts/MainSection";
 import Layout from "./layouts/Layout";
 import ProtectedRoute from "./layouts/ProtectedRoute";
 import HomeContext from "./contexts/HomeContext";
-import { AuthContext } from "./contexts/AuthContext";
+import { useAuth } from "./contexts/AuthContext";
 import "@styles/App.scss";
 import { ProjectsProvider } from "./contexts/ProjectsContext";
 import { AlertProvider } from "./contexts/AlertContext";
 import AlertBar from "@comp/AlertBar";
 
 function App() {
-  const { isAuthenticated } = useContext(AuthContext);
+  const { isAuthenticated } = useAuth();
 
   const location = useLocation();
   const isHome = location.pathname === "/";
@@ -24,29 +24,55 @@ function App() {
           <div className="container">
             <Routes>
               <Route path="/" element={<Layout />}>
-                <Route index element={<MainSection features={true} />} />
+                {/* homepage: feature & dashboard */}
                 <Route
-                  path="/auth"
+                  index
                   element={
                     <MainSection
-                      authSection={isAuthenticated === false ? false : true}
+                      homepage={isAuthenticated ? "dashboard" : "feature"}
                     />
                   }
                 />
+                {/* authentication page: login & register */}
+                <Route
+                  path="/auth"
+                  element={
+                    <MainSection authPage={!isAuthenticated ? true : false} />
+                  }
+                />
+                {/* route for project pages */}
                 <Route
                   element={<ProtectedRoute isAuthenticated={isAuthenticated} />}
                 >
+                  {/* show all projects in card */}
                   <Route
                     path="/projects"
                     element={<MainSection projectsCardPage={true} />}
                   />
+                  {/* show a specific project & fetch all data */}
                   <Route
                     path="/projects/:projectId"
-                    element={<MainSection showSingleProject={true} />}
+                    element={<MainSection projectPage={true} />}
                   />
+                  {/* route to create a new project */}
                   <Route
                     path="/create"
                     element={<MainSection createProject={true} />}
+                  />
+                  {/* page to show all tasks */}
+                  <Route
+                    path="/tasks"
+                    element={<MainSection taskPage={true} />}
+                  />
+                  {/* page to show notifications */}
+                  <Route
+                    path="/notifications"
+                    element={<MainSection notificationPage={true} />}
+                  />
+                  {/* page to show conversations */}
+                  <Route
+                    path="/conversations"
+                    element={<MainSection conversationPage={true} />}
                   />
                 </Route>
               </Route>

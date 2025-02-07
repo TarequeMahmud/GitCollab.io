@@ -4,6 +4,6 @@
     { "name": "Projects", "link": "/projects" },
     { "name": "Tasks", "link": "/tasks" },
     { "name": "Notification", "link": "/notifications" },
-    { "name": "Activity Feed", "link": "/activity-feed" }
+    { "name": "Conversations", "link": "/conversations" }
   ]
 }
