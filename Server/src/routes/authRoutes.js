@@ -16,13 +16,25 @@ router.get("/auth/check", (req, res) => {
 });
 
 // Register Route
-router.post("/register", async (req, res) => {
-  const { name, username, email, password } = req.body;
+router.post("/register", async (req, res, next) => {
+  const { name, username, email, password, about } = req.body;
+  console.log(req.body);
+
+  if (!name || !username || !email || !password) {
+    return res.status(400).json({
+      message:
+        "Incomplete request. At least Name, Username, Email and Password are needed.",
+    });
+  }
 
   try {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: "User already exists" });
+    }
+    const duplicateUsername = await User.findOne({ username });
+    if (duplicateUsername) {
+      return res.status(409).json({ message: "Duplicate username" });
     }
 
     // Hash the password before saving
@@ -34,10 +46,16 @@ router.post("/register", async (req, res) => {
       username,
       email,
       password: hashedPassword,
+      about,
     });
     await newUser.save();
 
-    res.status(201).json({ message: "User registered successfully" });
+    req.logIn(newUser, (err) => {
+      if (err) {
+        return next(err);
+      }
+      res.status(201).json({ message: "User registered successfully" });
+    });
   } catch (error) {
     next(error);
   }
@@ -54,11 +72,10 @@ router.post("/login", (req, res, next) => {
     }
     req.logIn(user, (err) => {
       if (err) {
-        return next(error);
+        return next(err);
       }
       return res.status(200).json({
         message: "Logged in successfully",
-        loggedIn: true,
       });
     });
   })(req, res, next);

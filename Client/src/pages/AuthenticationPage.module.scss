@@ -1,0 +1,128 @@
+@use "@styles/base" as *;
+.container {
+  margin-top: 50px;
+  width: 70%;
+  height: 500px;
+  max-height: auto;
+  border-radius: 20px;
+  border: #414141 solid 1px;
+  background-color: #e9e9e9;
+  box-shadow: 2px 2px 2px rgb(75, 75, 75);
+  transition: ease-in-out, 500ms;
+  @include flex(row);
+  z-index: 1;
+  overflow: hidden;
+}
+.container--register {
+  height: 1100px;
+  transition: ease-in-out, 500ms;
+}
+.signin-form-container {
+  width: 50%;
+  height: $full;
+  border-radius: 5px;
+  @include flex($justify: flex-start);
+  color: #000000;
+  h1 {
+    color: #000000;
+    font-weight: 700;
+  }
+}
+
+.registration-form-container {
+  width: 80%;
+  h1 {
+    color: #000000;
+    margin-bottom: 2rem;
+  }
+}
+
+.form {
+  margin: 0 auto;
+  width: $full;
+  height: 90%;
+  padding: 10px 20px;
+  @include flex($justify: flex-start);
+  gap: 20px;
+
+  label {
+    color: #000000;
+    width: $full;
+    text-align: start;
+    font-size: 1.4rem;
+  }
+  button {
+    width: $full;
+    background-color: rgb(12, 12, 209);
+    margin-top: 2rem;
+    font-size: 1.3rem;
+    color: #ffffff;
+  }
+}
+
+.input-container {
+  width: $full;
+  @include flex($align: flex-start);
+}
+
+.input {
+  width: $full;
+  height: 3rem;
+  padding-left: 10px;
+  background-color: #45705a;
+  border: none;
+  border-radius: 9px;
+  margin-bottom: 10px;
+  font-size: 1.3rem;
+  font-weight: 300;
+  color: #ffffff;
+
+  &::placeholder {
+    color: #fff;
+    opacity: 0.4;
+  }
+
+  &:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 1000px #45705a inset !important;
+    -webkit-text-fill-color: rgb(112, 231, 247);
+  }
+}
+.textarea {
+  height: 10rem;
+  max-width: 100%;
+  resize: none;
+}
+.avatar {
+  width: 70%;
+  padding: 10px;
+}
+
+.information {
+  width: 50%;
+  height: 100%;
+  flex: 1;
+  margin: 0;
+  color: #ffffff;
+  background: linear-gradient(170deg, #1f6fe7, #013d75);
+  @include flex;
+  p {
+    width: 80%;
+  }
+}
+
+//auth links section
+.auth-links {
+  width: 80%;
+  height: 10px;
+  margin: 30px auto;
+  color: #000000;
+  @include flex(row, space-between);
+
+  p {
+    cursor: pointer;
+    font-size: 1rem;
+    &:hover {
+      color: #1f6fe7;
+    }
+  }
+}

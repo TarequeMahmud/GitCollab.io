@@ -5,6 +5,7 @@ const userSchema = new mongoose.Schema({
   username: { type: String, require: true, unique: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
+  about: { type: String },
   projects: [
     {
       project_id: { type: mongoose.Schema.Types.ObjectId },
