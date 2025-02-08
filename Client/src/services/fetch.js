@@ -5,18 +5,15 @@ const authFetch = async (path, options = {}, navigate) => {
       ...options,
       credentials: "include",
     });
+    console.log(response);
 
     if (response.status === 401) {
-      localStorage.setItem("notLoggedIn", JSON.stringify(true));
-      navigate("/");
       console.log("authentication failed");
-      return null;
+      return { error: true, status: 401 };
     }
-    if (response.ok) {
-      localStorage.removeItem("notLoggedIn");
-    }
+
     const data = await response.json();
-    return data;
+    return { status: response.status, data: data };
   } catch (error) {
     console.error("Fetch error:", error);
     return null;

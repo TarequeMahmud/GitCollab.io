@@ -10,7 +10,7 @@ const AlertBar = () => {
       <hr />
       <p>{alert.message}</p>
       <hr />
-      <button onClick={() => setAlert(null)}>Ok</button>
+      <button onClick={() => setAlert(null)}>OK</button>
     </div>
   );
 };

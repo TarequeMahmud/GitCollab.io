@@ -9,8 +9,6 @@ import HomeContext from "./contexts/HomeContext";
 import { useAuth } from "./contexts/AuthContext";
 import "@styles/App.scss";
 import { ProjectsProvider } from "./contexts/ProjectsContext";
-import { AlertProvider } from "./contexts/AlertContext";
-import AlertBar from "@comp/AlertBar";
 
 function App() {
   const { isAuthenticated } = useAuth();
@@ -18,70 +16,62 @@ function App() {
   const location = useLocation();
   const isHome = location.pathname === "/";
   return (
-    <AlertProvider>
-      <HomeContext.Provider value={isHome}>
-        <ProjectsProvider>
-          <div className="container">
-            <Routes>
-              <Route path="/" element={<Layout />}>
-                {/* homepage: feature & dashboard */}
+    <HomeContext.Provider value={isHome}>
+      <ProjectsProvider>
+        <div className="container">
+          <Routes>
+            <Route path="/" element={<Layout />}>
+              {/* homepage: feature & dashboard */}
+              <Route
+                index
+                element={
+                  <MainSection
+                    homepage={isAuthenticated ? "dashboard" : "feature"}
+                  />
+                }
+              />
+              {/* authentication page: login & register */}
+              <Route path="/auth" element={<MainSection authPage={true} />} />
+              {/* route for project pages */}
+              <Route
+                element={<ProtectedRoute isAuthenticated={isAuthenticated} />}
+              >
+                {/* show all projects in card */}
                 <Route
-                  index
-                  element={
-                    <MainSection
-                      homepage={isAuthenticated ? "dashboard" : "feature"}
-                    />
-                  }
+                  path="/projects"
+                  element={<MainSection projectsCardPage={true} />}
                 />
-                {/* authentication page: login & register */}
+                {/* show a specific project & fetch all data */}
                 <Route
-                  path="/auth"
-                  element={
-                    <MainSection authPage={!isAuthenticated ? true : false} />
-                  }
+                  path="/projects/:projectId"
+                  element={<MainSection projectPage={true} />}
                 />
-                {/* route for project pages */}
+                {/* route to create a new project */}
                 <Route
-                  element={<ProtectedRoute isAuthenticated={isAuthenticated} />}
-                >
-                  {/* show all projects in card */}
-                  <Route
-                    path="/projects"
-                    element={<MainSection projectsCardPage={true} />}
-                  />
-                  {/* show a specific project & fetch all data */}
-                  <Route
-                    path="/projects/:projectId"
-                    element={<MainSection projectPage={true} />}
-                  />
-                  {/* route to create a new project */}
-                  <Route
-                    path="/create"
-                    element={<MainSection createProject={true} />}
-                  />
-                  {/* page to show all tasks */}
-                  <Route
-                    path="/tasks"
-                    element={<MainSection taskPage={true} />}
-                  />
-                  {/* page to show notifications */}
-                  <Route
-                    path="/notifications"
-                    element={<MainSection notificationPage={true} />}
-                  />
-                  {/* page to show conversations */}
-                  <Route
-                    path="/conversations"
-                    element={<MainSection conversationPage={true} />}
-                  />
-                </Route>
+                  path="/create"
+                  element={<MainSection createProject={true} />}
+                />
+                {/* page to show all tasks */}
+                <Route
+                  path="/tasks"
+                  element={<MainSection taskPage={true} />}
+                />
+                {/* page to show notifications */}
+                <Route
+                  path="/notifications"
+                  element={<MainSection notificationPage={true} />}
+                />
+                {/* page to show conversations */}
+                <Route
+                  path="/conversations"
+                  element={<MainSection conversationPage={true} />}
+                />
               </Route>
-            </Routes>
-          </div>
-          <AlertBar />
-        </ProjectsProvider>
-      </HomeContext.Provider>
-    </AlertProvider>
+            </Route>
+          </Routes>
+        </div>
+      </ProjectsProvider>
+    </HomeContext.Provider>
   );
 }
 
