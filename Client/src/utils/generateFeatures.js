@@ -7,11 +7,11 @@ const generateFeatures = (data) => {
   const features = [
     {
       icon: cardIcons.admin,
-      info: data.people.find((person) => person.role === "Admin")?.name,
+      info: data.people.find((person) => person.role === "admin")?.name,
     },
     {
       icon: cardIcons.total,
-      info: `${data.people.length} total people`,
+      info: `${data.people.length} Colaborator\/s`,
     },
     {
       icon: cardIcons.start,

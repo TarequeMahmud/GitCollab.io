@@ -1,4 +1,4 @@
-const authFetch = async (path, options = {}, navigate) => {
+const authFetch = async (path, options = {}, setIsAuthenticated) => {
   const baseUrl = "http://localhost:5000";
   try {
     const response = await fetch(`${baseUrl}${path}`, {
@@ -9,7 +9,7 @@ const authFetch = async (path, options = {}, navigate) => {
 
     if (response.status === 401) {
       console.log("authentication failed");
-      return { error: true, status: 401 };
+      setIsAuthenticated(false);
     }
 
     const data = await response.json();

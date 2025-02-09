@@ -8,33 +8,52 @@ import CardFeatures from "@comp/CardFeatures";
 import Spinner from "@comp/Spinner";
 import authFetch from "@services/fetch.js";
 import { useProjects } from "@contexts/ProjectsContext.jsx";
+import { useAlert } from "../contexts/AlertContext";
 
 const ProjectSection = () => {
   //necessary hook variables
+  const { showAlert } = useAlert();
   const { projects, setProjects } = useProjects();
   const [loading, setLoading] = useState(true);
-
   const navigate = useNavigate();
 
   //
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const projectData = await authFetch(
+        const projectResponse = await authFetch(
           "/project",
           {
             method: "get",
           },
           navigate
         );
-        console.log(projectData);
+        console.log("project data: ", projectResponse.data);
 
-        if (projectData.error && !projectData.loggedIn) {
+        if (!projectResponse) {
           setProjects([]);
-          return navigate("/");
+          showAlert(
+            "Error",
+            "Something error occured to make request. Server seems not to be working."
+          );
+          return null;
         }
 
-        setProjects(projectData);
+        if (projectResponse.status !== 200) {
+          setProjects([]);
+          showAlert("Error", "Something error occured fetching projects.");
+          return null;
+        }
+        if (projectResponse.data.length === 0) {
+          setProjects([]);
+          showAlert(
+            "No Project Found",
+            "Currently you have not created any project."
+          );
+          return null;
+        }
+
+        setProjects(projectResponse.data);
       } catch (error) {
         console.error("there was an error: ", error);
         navigate("/");
@@ -64,7 +83,7 @@ const ProjectSection = () => {
       <div className={styles.container}>
         {projects.map((data, index) => (
           <div key={index} className={styles["project-card"]}>
-            <h2>{data.name}</h2>
+            <h2>{data.title}</h2>
 
             <p className={styles.description}>
               {data.description.length > 100
@@ -99,7 +118,7 @@ const ProjectSection = () => {
       <div
         className={styles["add-button"]}
         onClick={() => {
-          navigate("/create");
+          navigate("/projects/create");
         }}
       >
         <MdOutlineCreate width={10} height={10} />
