@@ -48,7 +48,7 @@ function App() {
                 />
                 {/* route to create a new project */}
                 <Route
-                  path="/create"
+                  path="/projects/create"
                   element={<MainSection createProject={true} />}
                 />
                 {/* page to show all tasks */}

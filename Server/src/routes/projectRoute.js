@@ -66,17 +66,17 @@ router.post("/", async (req, res, next) => {
   const creatorInfo = await User.findById(creator);
   if (!creatorInfo) {
     return res.status(401).json({
-      loggedIn: false,
       message: "You must have an account to create a project!",
     });
   }
 
-  const { name, description, deadline } = req.body;
-  if (!name) return res.status(400).json({ message: "Insert a Name" });
+  const { title, description, deadline } = req.body;
+  if (!title || !deadline)
+    return res.status(400).json({ message: "Please insert required fields" });
 
   try {
     const newProject = new Project({
-      name,
+      title,
       description,
       deadline,
       people: [

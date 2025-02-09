@@ -1,4 +1,7 @@
+import { useNavigate } from "react-router";
+import { useAlert } from "../contexts/AlertContext";
 import styles from "./ProjectFormPage.module.scss";
+import authFetch from "@services/fetch.js";
 const ProjectForm = () => {
   const months = [
     "January",
@@ -14,12 +17,52 @@ const ProjectForm = () => {
     "November",
     "December",
   ];
+  const { showAlert } = useAlert();
+  const navigate = useNavigate();
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    const formData = new FormData(event.target);
+    const { title, day, month, year, description } = Object.fromEntries(
+      formData.entries()
+    );
+    const deadline = new Date(year, month - 1, day);
+    const formObject = { title, deadline, description };
+
+    try {
+      const createProjectResponse = await authFetch("/project/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formObject),
+      });
+
+      if (createProjectResponse.error) {
+        if (createProjectResponse.status === 200) {
+          showAlert("Missing Fields", "Please insert required fields");
+        }
+      }
+      if (createProjectResponse.status === 201) {
+        showAlert(
+          "Creation Success",
+          "Your Project created successfully. You have been headed to the project page."
+        );
+        window.location.href = "/projects";
+        return;
+      }
+    } catch (error) {
+      console.log(error);
+      return;
+    }
+  };
 
   return (
     <div className={styles.container}>
       <h1>CREATE A NEW PROJECT</h1>
       <div className={styles["form-container"]}>
-        <form action="" method="post">
+        <form onSubmit={handleSubmit}>
           {/* title input section */}
           <div className={styles["input-container"]}>
             <label htmlFor="title" className={styles["input-title"]}>
@@ -28,44 +71,28 @@ const ProjectForm = () => {
             <input type="text" name="title" required />
           </div>
 
-          {/* owner input section */}
-
-          <div className={styles["input-container"]}>
-            <p className={styles["input-title"]}>Project Owner:</p>
-            <div className={`${styles["name-container"]} `}>
-              <div className={styles["label-input-holder"]}>
-                <label htmlFor="full-name">Full Name:</label>
-                <input type="text" name="full-name" required />
-              </div>
-
-              <div className={styles["label-input-holder"]}>
-                <label htmlFor="username">Username:</label>
-                <input type="text" required />
-              </div>
-            </div>
-          </div>
           {/* deadline */}
           <div className={`${styles["input-container"]} ${styles.deadline}`}>
             <p className={styles["input-title"]}>Deadline:</p>
             <div className={`${styles["name-container"]} `}>
-              <select name="day" id="day">
-                <option value="0">Day</option>
+              <select name="day" id="day" required>
+                <option value="">Day</option>
                 {[...Array(31).keys()].map((_, index) => (
                   <option key={index + 1} value={index + 1}>
                     {index + 1}
                   </option>
                 ))}
               </select>
-              <select name="month" id="month">
-                <option value="0">Month</option>
+              <select name="month" id="month" required>
+                <option value="">Month</option>
                 {months.map((month, index) => (
                   <option key={index} value={index}>
                     {month}
                   </option>
                 ))}
               </select>
-              <select name="years" id="years">
-                <option value="0">Year</option>
+              <select name="year" id="year" required>
+                <option value="">Year</option>
                 {[...Array(10).keys()].map((_, index) => (
                   <option key={index + 2025} value={index + 2025}>
                     {index + 2025}
