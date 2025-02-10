@@ -12,6 +12,8 @@ router.get("/", (req, res, next) => {
 router.get("/auth/check", (req, res) => {
   if (req.isAuthenticated()) {
     return res.status(200).json({ loggedIn: true });
+  } else {
+    return res.status(401).json({ message: "You are currently unauthorized." });
   }
 });
 

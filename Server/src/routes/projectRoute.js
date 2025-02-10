@@ -117,7 +117,6 @@ router.post("/:projectId/users", async (req, res, next) => {
         message: "User not found",
       });
     }
-    console.log(user);
 
     const project = await Project.findById(projectId);
     if (!project) {
@@ -148,9 +147,6 @@ router.post("/:projectId/users", async (req, res, next) => {
     //update project
     project.people.push({ user_id: user._id, name: user.name, role: role });
     const updateProjectInfo = await project.save();
-    if (!updateProjectInfo) {
-      return res.json("not updated");
-    }
     res.status(201).json({ people: updateProjectInfo.people });
   } catch (error) {
     next(error);
