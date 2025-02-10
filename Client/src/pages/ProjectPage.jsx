@@ -7,10 +7,14 @@ import { useEffect, useState } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import Spinner from "@comp/Spinner";
 import authFetch from "@services/fetch.js";
+import { useAuth } from "../contexts/AuthContext";
+import { useAlert } from "../contexts/AlertContext";
 
 const ProjectPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { setIsAuthenticated } = useAuth();
+  const { showAlert } = useAlert();
   //necessary states
   const [loading, setLoading] = useState(true);
   const [project, setProject] = useState({});
@@ -27,7 +31,7 @@ const ProjectPage = () => {
     if (!projectId) return;
     const fetchProject = async () => {
       try {
-        const [projectData, taskData] = await Promise.all([
+        const [projectResponse, taskResponse] = await Promise.all([
           authFetch(`/project/${projectId}`, {
             method: "GET",
           }),
@@ -35,15 +39,22 @@ const ProjectPage = () => {
             method: "GET",
           }),
         ]);
+        console.log(projectResponse);
+        console.log(taskResponse);
 
-        if (taskData.length !== 0) {
-          setTasks(taskData);
+        if (taskResponse.status !== 200) {
+          setTasks([]);
         }
-        setProject(projectData);
-        setPeople(projectData.people);
+
+        if (taskResponse.status === 200 && taskResponse.data.length !== 0) {
+          setTasks(taskResponse.data);
+        }
+        setProject(projectResponse.data);
+        setPeople(projectResponse.data.people);
       } catch (error) {
         console.error("there was an error: ", error);
         navigate("/");
+        setLoading(false);
       } finally {
         setLoading(false);
       }
@@ -54,24 +65,45 @@ const ProjectPage = () => {
   //--handle-click functions Here--
   const handleAddUser = async () => {
     if (!username) {
-      console.log("please enter the name");
       return;
     }
     try {
-      const userData = await authFetch(`/project/${projectId}/users`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await authFetch(
+        `/project/${projectId}/users`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username: username, role: role }),
         },
-        body: JSON.stringify({ username: username, role: role }),
-        credentials: "include",
-      });
+        setIsAuthenticated
+      );
 
-      setPeople(userData.people);
+      if (!response) {
+        showAlert(
+          "Error",
+          "Something error occured to make request. Server seems not to be working."
+        );
+        return null;
+      }
+
+      if (response.status === 404) {
+        showAlert(
+          "Not Found",
+          "User not found. Please try to give a correct username."
+        );
+        return null;
+      }
+      if (response.status === 409) {
+        showAlert("Already Exists", "This user already exists in the project.");
+        return null;
+      }
+      setPeople(response.data.people);
     } catch (error) {
       console.log(error);
     }
-    console.log(username, role);
+    //after adding to user table reset the form
     setShowUserForm(false);
     setUsername("");
     setRole("manager");
@@ -84,7 +116,8 @@ const ProjectPage = () => {
   return (
     <div className={styles.container}>
       <>
-        <h1>{project.name}</h1>
+        {/* 1. title and description container */}
+        <h1>{project.title}</h1>
         <div className={styles["description-container"]}>
           <p>{project.description}</p>
           <button
@@ -95,15 +128,18 @@ const ProjectPage = () => {
             <p>Edit</p>
           </button>
         </div>
+        {/* 2. user table */}
         <div className={styles["user-table-container"]}>
           <h3>Total Users Working in this project</h3>
           <UserTable
             projectUserData={people}
+            taskState={{ tasks, setTasks }}
             className={{
               operationColumn: styles["operation-column"],
               table: styles.table,
             }}
           />
+          {/* add people to the user table */}
           <div className={styles["input-section"]}>
             {!showUserForm ? (
               <button
@@ -142,6 +178,7 @@ const ProjectPage = () => {
             )}
           </div>
         </div>
+        {/* 3. task container */}
         <div className={styles["user-table-container"]}>
           <h3>Total tasks assigned</h3>
           <TaskList tasks={tasks} />
