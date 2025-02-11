@@ -153,7 +153,33 @@ router.post("/:projectId/users", async (req, res, next) => {
   }
 });
 
-router.delete("/:projectId/users/:userId", (req, res, next) => {});
+router.delete("/:projectId/users/:userId", async (req, res, next) => {
+  const { projectId, userId } = req.params;
+  try {
+    const project = await Project.findById(projectId);
+    if (!project)
+      return res.status(404).json({
+        message: "Project is not found",
+      });
+    const isEnrolledUser = project.people.some(
+      (person) => person.user_id.toString() === userId.toString()
+    );
+    if (isEnrolledUser) {
+      const removedUserArray = project.people.filter(
+        (person) => person.user_id.toString() !== userId.toString()
+      );
+      project.people = removedUserArray;
+      await project.save();
+      return res.status(200).json(removedUserArray);
+    } else {
+      return res.status(404).json({
+        message: "User is not found in the project.",
+      });
+    }
+  } catch (error) {
+    next(error);
+  }
+});
 
 router.get("/:projectId/users/:userId", (req, res, next) => {});
 

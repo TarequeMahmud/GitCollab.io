@@ -134,6 +134,7 @@ const ProjectPage = () => {
           <UserTable
             projectUserData={people}
             taskState={{ tasks, setTasks }}
+            peopleState={setPeople}
             className={{
               operationColumn: styles["operation-column"],
               table: styles.table,

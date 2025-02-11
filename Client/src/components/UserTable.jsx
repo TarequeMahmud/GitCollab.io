@@ -1,8 +1,10 @@
 import { MdAssignmentAdd, MdInfo, MdRemoveCircle } from "react-icons/md";
 import TaskForm from "./TaskForm";
 import { useState } from "react";
-
-const UserTable = ({ projectUserData, className, taskState }) => {
+import authFetch from "@services/fetch.js";
+import { useParams } from "react-router";
+const UserTable = ({ projectUserData, className, taskState, peopleState }) => {
+  const { projectId } = useParams();
   const [showTaskForm, setShowTaskForm] = useState(false);
   const [userId, setUserId] = useState("");
   //handle click functions
@@ -14,7 +16,37 @@ const UserTable = ({ projectUserData, className, taskState }) => {
     setShowTaskForm(true);
     setUserId(userId);
   };
-  const handleRemovePerson = (userId) => {};
+  const handleRemovePerson = async (userId) => {
+    try {
+      const deleteResponse = await authFetch(
+        `/project/${projectId}/users/${userId}`,
+        {
+          method: "DELETE",
+        }
+      );
+      if (!deleteResponse) {
+        showAlert(
+          "Error",
+          "We are unable to make a request to delete this person. Check your connection!"
+        );
+        return;
+      }
+
+      if (deleteResponse.status === 404) {
+        showAlert("User Not Found", "This user seems to be wrong place.");
+        return;
+      }
+      if (deleteResponse.status === 500) {
+        showAlert("Server Error", "There was an error in the server");
+        return;
+      }
+      peopleState(deleteResponse.data);
+      return;
+    } catch (error) {
+      console.log("error deleting the user", error);
+      return;
+    }
+  };
   return (
     <>
       {" "}
