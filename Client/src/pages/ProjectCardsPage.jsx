@@ -8,11 +8,12 @@ import CardFeatures from "@comp/CardFeatures";
 import Spinner from "@comp/Spinner";
 import authFetch from "@services/fetch.js";
 import { useProjects } from "@contexts/ProjectsContext.jsx";
-import { useAlert } from "../contexts/AlertContext";
+import { useError } from "../contexts/ErrorContex";
 
 const ProjectSection = () => {
   //necessary hook variables
-  const { showAlert } = useAlert();
+
+  const alertOnError = useError();
   const { projects, setProjects } = useProjects();
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -30,32 +31,27 @@ const ProjectSection = () => {
         );
 
         if (!projectResponse) {
-          setProjects([]);
-          showAlert(
-            "Error",
-            "Something error occured to make request. Server seems not to be working."
-          );
+          alertOnError("Coudn't Fetch Projects", { status: 500 });
           return null;
         }
 
-        if (projectResponse.status !== 200) {
-          setProjects([]);
-          showAlert("Error", "Something error occured fetching projects.");
+        if (!projectResponse.ok) {
+          alertOnError("Coudn't Fetch Projects", projectResponse);
           return null;
         }
         if (projectResponse.data.length === 0) {
-          setProjects([]);
           return null;
         }
 
         setProjects(projectResponse.data);
       } catch (error) {
-        console.error("there was an error: ", error);
+        console.error("There was an error: ", error);
         navigate("/");
       } finally {
         setLoading(false);
       }
     };
+
     if (projects.length === 0) {
       fetchProjects();
     } else {

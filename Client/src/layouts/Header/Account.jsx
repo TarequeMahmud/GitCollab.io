@@ -4,9 +4,11 @@ import styles from "./Account.module.scss";
 import useHideOutsideClick from "@/hooks/useHideOutsideClick";
 import { useNavigate } from "react-router";
 import { AuthContext } from "@contexts/AuthContext.jsx";
+import { useProjects } from "../../contexts/ProjectsContext";
 
 const Account = () => {
   const { isAuthenticated, logout } = useContext(AuthContext);
+  const { setProjects } = useProjects();
   const navigate = useNavigate();
   const ref = useRef();
   //Show or hide options
@@ -18,6 +20,7 @@ const Account = () => {
     try {
       setShowOptions(false);
       logout();
+      setProjects([]);
       navigate("/auth");
     } catch (error) {
       console.error(error);
