@@ -13,12 +13,23 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await authFetch("/auth/check", {
-          method: "GET",
-        });
-        setIsAuthenticated(response.status === 200);
+        const response = await authFetch(
+          "/auth/check",
+          {
+            method: "GET",
+          },
+          setIsAuthenticated
+        );
+        console.log(response);
+
+        if (response) {
+          setIsAuthenticated(response.status === 200);
+        } else {
+          setIsAuthenticated(false);
+        }
       } catch (error) {
         setIsAuthenticated(false);
+        return;
       }
     };
     checkAuth();
@@ -26,26 +37,35 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (credentials) => {
     try {
-      const userData = await authFetch("/login", {
-        method: "post",
-        headers: {
-          "Content-Type": "application/json",
+      const loginResponse = await authFetch(
+        "/login",
+        {
+          method: "post",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(credentials),
+          credentials: "include",
         },
-        body: JSON.stringify(credentials),
-      });
-      console.log("userData: ---", userData);
+        setIsAuthenticated
+      );
 
-      if (userData.status === 200) {
-        setIsAuthenticated(true);
-        return userData.data;
-      }
-      if (userData.status !== 200) {
+      if (!loginResponse) {
         setIsAuthenticated(false);
-        return { status: userData.status, error: true };
+        return null;
+      }
+
+      if (loginResponse.status === 200) {
+        setIsAuthenticated(true);
+        return loginResponse;
+      }
+      if (loginResponse.status !== 200) {
+        setIsAuthenticated(false);
+        return loginResponse;
       }
     } catch (error) {
       console.log("Login Failed", error.message);
-
+      setIsAuthenticated(false);
       return null;
     }
   };
@@ -62,13 +82,14 @@ export const AuthProvider = ({ children }) => {
 
       if (registerResponse.status === 201) {
         setIsAuthenticated(true);
-        return registerResponse.data;
+        return registerResponse;
       } else {
         setIsAuthenticated(false);
-        return { status: registerResponse.status, error: true };
+        return registerResponse;
       }
     } catch (error) {
       showAlert("Login Failed", error.message);
+      setIsAuthenticated(false);
       return null;
     }
   };
@@ -81,7 +102,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout, register }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated, setIsAuthenticated, login, logout, register }}
+    >
       {children}
     </AuthContext.Provider>
   );

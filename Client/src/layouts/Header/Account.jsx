@@ -30,6 +30,9 @@ const Account = () => {
         className={styles.container}
         ref={ref}
         onClick={(e) => {
+          if (!isAuthenticated) {
+            navigate("/auth");
+          }
           setShowOptions(!showOptions);
         }}
       >

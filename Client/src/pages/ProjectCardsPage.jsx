@@ -28,7 +28,6 @@ const ProjectSection = () => {
           },
           navigate
         );
-        console.log("project data: ", projectResponse.data);
 
         if (!projectResponse) {
           setProjects([]);
@@ -46,10 +45,6 @@ const ProjectSection = () => {
         }
         if (projectResponse.data.length === 0) {
           setProjects([]);
-          showAlert(
-            "No Project Found",
-            "Currently you have not created any project."
-          );
           return null;
         }
 

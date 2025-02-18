@@ -3,14 +3,20 @@ import TaskForm from "./TaskForm";
 import { useState } from "react";
 import authFetch from "@services/fetch.js";
 import { useParams } from "react-router";
+import UserdataModal from "./UserdataModal";
 const UserTable = ({ projectUserData, className, taskState, peopleState }) => {
   const { projectId } = useParams();
   const [showTaskForm, setShowTaskForm] = useState(false);
   const [userId, setUserId] = useState("");
+  const { tasks } = taskState;
+  const [userdata, setUserdata] = useState(null);
   //handle click functions
 
-  const handleShowInfo = (userId) => {
-    console.log(userId);
+  const handleShowInfo = (userData) => {
+    setUserdata(userData);
+    //@TODO: fetch the user info from the api
+    //TODO: filter all the tasks user enrolled
+    //TODO: show userData in the modal
   };
   const handleAssignTask = (userId) => {
     setShowTaskForm(true);
@@ -75,7 +81,7 @@ const UserTable = ({ projectUserData, className, taskState, peopleState }) => {
                   {userData.role !== "admin" && (
                     <MdInfo
                       title="See More info"
-                      onClick={() => handleShowInfo(userData.user_id)}
+                      onClick={() => handleShowInfo(userData)}
                       style={{ fill: "#0e91e9" }}
                     />
                   )}
@@ -106,6 +112,7 @@ const UserTable = ({ projectUserData, className, taskState, peopleState }) => {
           taskState={taskState}
         />
       )}
+      {userdata && <UserdataModal userObject={{ userdata, setUserdata }} />}
     </>
   );
 };

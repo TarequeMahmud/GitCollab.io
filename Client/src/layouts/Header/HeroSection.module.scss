@@ -10,9 +10,11 @@
   @include flex;
   position: relative;
   border-bottom: #05155e 1px solid;
+  transition: ease-in-out, 500ms;
 }
 .home {
   height: 18rem;
+  transition: ease-in-out, 500ms;
 }
 .logo-navbar-container {
   top: 1%;

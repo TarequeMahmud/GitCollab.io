@@ -1,0 +1,34 @@
+@use "@styles/base" as *;
+.container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.2);
+  @include flex;
+  z-index: 900;
+}
+
+.data-container {
+  height: 500px;
+  width: 550px;
+  background: #e7dada;
+  margin: 0 15px;
+  border-radius: 45px;
+  border: 2px solid #ffffffb6;
+  color: #000000;
+  padding: 0 10px;
+  @include flex($justify: flex-start);
+  box-shadow: 4px 4px 4px rgba($color: #000000, $alpha: 0.5);
+  h2 {
+    color: #000000;
+    font-size: 1.6rem;
+  }
+}
+.card-separator {
+  width: 80%;
+  height: 0px;
+  margin: 0;
+  color: #727272;
+}

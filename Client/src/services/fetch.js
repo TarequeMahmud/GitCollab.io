@@ -7,16 +7,26 @@ const authFetch = async (path, options = {}, setIsAuthenticated) => {
     });
     console.log(response);
 
-    if (response.status === 401) {
-      console.log("authentication failed");
-      setIsAuthenticated(false);
+    if (!response.ok) {
+      if (response.status === 401) {
+        console.log("authentication failed", response);
+      }
+
+      const errorData = await response.json().catch(() => null);
+
+      return {
+        status: response.status,
+        message: errorData?.message || `${response.status}`,
+        ok: response.ok,
+      };
     }
 
     const data = await response.json();
-    return { status: response.status, data: data };
+    return { status: response.status, data: data, ok: response.ok };
   } catch (error) {
     console.error("Fetch error:", error);
-    return null;
+    setIsAuthenticated(false);
+    return;
   }
 };
 

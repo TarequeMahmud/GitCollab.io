@@ -5,14 +5,17 @@ import "@styles/index.scss";
 import App from "./App.jsx";
 import { AuthProvider } from "@contexts/AuthContext.jsx";
 import { AlertProvider } from "./contexts/AlertContext.jsx";
+import { ErrorProvider } from "./contexts/ErrorContex.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
       <AlertProvider>
-        <AuthProvider>
-          <App />
-        </AuthProvider>
+        <ErrorProvider>
+          <AuthProvider>
+            <App />
+          </AuthProvider>
+        </ErrorProvider>
       </AlertProvider>
     </BrowserRouter>
   </StrictMode>

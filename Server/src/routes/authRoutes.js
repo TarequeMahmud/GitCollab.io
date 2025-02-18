@@ -1,12 +1,23 @@
 import express from "express";
-import passport from "../config/passportConfig.js"; // Import passport config
-import User from "../models/User.js"; // Adjust path if needed
+import passport from "../config/passportConfig.js";
+import User from "../models/User.js";
 import bcrypt from "bcrypt";
 
 const router = express.Router();
 
-router.get("/", (req, res, next) => {
-  return res.json("Please Login");
+router.get("checkuser/:userId", async (req, res, next) => {
+  const userId = req.params.userId;
+  try {
+    const userData = await User.findById(userId);
+    if (!userData) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+    return res.status(200).json(userData);
+  } catch (error) {
+    next(error);
+  }
 });
 
 router.get("/auth/check", (req, res) => {
@@ -92,4 +103,6 @@ router.get("/logout", (req, res, next) => {
       .json({ message: "Logged out successfully", loggedIn: false });
   });
 });
+
+//manage cors
 export default router;

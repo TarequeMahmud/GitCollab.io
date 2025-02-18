@@ -52,7 +52,7 @@ const ProjectForm = () => {
       );
 
       if (createProjectResponse.error) {
-        if (createProjectResponse.status === 200) {
+        if (createProjectResponse.status === 400) {
           showAlert("Missing Fields", "Please insert required fields");
         }
       }

@@ -3,7 +3,8 @@ import { useContext, useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
 import Spinner from "@comp/Spinner";
 import { useAlert } from "@contexts/AlertContext";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "@contexts/AuthContext";
+import { useError } from "@contexts/ErrorContex";
 
 //Component
 function AuthenticationPage() {
@@ -11,6 +12,7 @@ function AuthenticationPage() {
 
   const { login, register } = useAuth();
   const { showAlert } = useAlert();
+  const alertOnError = useError();
   const [loading, setLoading] = useState(false);
   const [showSignin, setShowSingin] = useState(true);
   const navigate = useNavigate();
@@ -34,32 +36,21 @@ function AuthenticationPage() {
       if (!email || !password) {
         return;
       }
-      console.log(formData);
-
       const loginResponse = await login({ email, password });
-      console.log("logindata ----", loginResponse);
-      if (loginResponse.error === true) {
-        if (loginResponse.status === 500) {
-          showAlert(
-            "Server Error",
-            `Couldn't fetch login data. Please try again later.`
-          );
-          return;
-        }
-        showAlert(
-          "Login Failed",
-          `Invalid Credentials. Please provide correct login data or register.`
-        );
-        return;
-      }
+
       if (!loginResponse) {
-        showAlert(
-          "Server Error",
-          `Could'nt request to server. Please try again later.`
-        );
+        alertOnError("Login Failed", { status: 500 });
         return;
       }
 
+      if (!loginResponse.ok) {
+        alertOnError("Login Failed", {
+          ...loginResponse,
+          message: "Invalid login credential. Please provide correct info",
+        });
+
+        return;
+      }
       //navigate
       navigate("/projects", { replace: true });
       return;
@@ -77,7 +68,6 @@ function AuthenticationPage() {
     //form inputs
     const formData = new FormData(event.target);
     const formObject = Object.fromEntries(formData.entries());
-    console.log(formObject);
 
     // try to login
     try {
@@ -86,34 +76,15 @@ function AuthenticationPage() {
         showAlert("Fill The Form", "Mandatory data are missing.");
       }
       const registerResponse = await register(formObject);
-      console.log(registerResponse);
 
-      if (registerResponse.error === true) {
-        if (registerResponse.status === 500) {
-          showAlert(
-            "Server Error",
-            `Couldn't fetch login data. Please try again later.`
-          );
-          return;
-        }
-        if (registerResponse.status === 400) {
-          showAlert(
-            "User Exists",
-            `There is already an account created with this email.`
-          );
-          return;
-        }
-        if (registerResponse.status === 409) {
-          showAlert(
-            "Username Exists",
-            `Username is already exists. Please try another.`
-          );
-          return;
-        }
-        showAlert(
-          "Login Failed",
-          `Invalid Credentials. Please provide correct login data or register.`
-        );
+      if (!registerResponse) {
+        alertOnError("Register Failed", { status: 500 });
+        return;
+      }
+
+      if (!registerResponse.ok) {
+        alertOnError("Registration Failed", registerResponse);
+
         return;
       }
 

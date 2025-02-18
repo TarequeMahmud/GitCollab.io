@@ -67,7 +67,12 @@
       text-align: left;
     }
     th {
-      background-color: #e4e3e3;
+      background-color: #2eeb1d7e;
+    }
+    tbody {
+      td {
+        background-color: rgba(17, 190, 233, 0.082);
+      }
     }
   }
 }
@@ -100,4 +105,7 @@
 .operation-column {
   @include flex(row, space-around);
   font-size: 1.8rem;
+  * {
+    cursor: pointer;
+  }
 }
