@@ -13,22 +13,58 @@
 .data-container {
   height: 500px;
   width: 550px;
-  background: #e7dada;
+  background: #ffffff;
   margin: 0 15px;
-  border-radius: 45px;
+  border-radius: 25px;
   border: 2px solid #ffffffb6;
   color: #000000;
   padding: 0 10px;
   @include flex($justify: flex-start);
   box-shadow: 4px 4px 4px rgba($color: #000000, $alpha: 0.5);
-  h2 {
+  h1 {
     color: #000000;
-    font-size: 1.6rem;
+    font-size: 2.3rem;
   }
+}
+.features-container {
+  width: 80%;
+
+  h3 {
+    margin: 0;
+  }
+  div {
+    @include flex(row, flex-start);
+    gap: 20px;
+    margin: 10px 0;
+  }
+  p {
+    margin: 0;
+  }
+}
+
+.description {
+  width: 80%;
+  line-height: 1.8;
 }
 .card-separator {
   width: 80%;
   height: 0px;
   margin: 0;
   color: #727272;
+}
+
+.card-button {
+  background-color: rgb(231, 65, 223);
+  width: 60%;
+  height: 40px;
+  margin: 20px auto;
+  border-radius: 50px;
+  font-size: 1.2rem;
+  padding: 0;
+  font-weight: 700;
+}
+
+.loading {
+  margin-top: 40%;
+  font-size: 2rem;
 }

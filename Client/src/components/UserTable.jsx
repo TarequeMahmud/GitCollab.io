@@ -12,12 +12,10 @@ const UserTable = ({ projectUserData, className, taskState, peopleState }) => {
   const [userdata, setUserdata] = useState(null);
   //handle click functions
 
-  const handleShowInfo = (userData) => {
-    setUserdata(userData);
-    //@TODO: fetch the user info from the api
-    //TODO: filter all the tasks user enrolled
-    //TODO: show userData in the modal
-  };
+  //@TODO: fetch the user info from the api
+  //TODO: filter all the tasks user enrolled
+  //TODO: show userData in the modal
+
   const handleAssignTask = (userId) => {
     setShowTaskForm(true);
     setUserId(userId);
@@ -81,7 +79,7 @@ const UserTable = ({ projectUserData, className, taskState, peopleState }) => {
                   {userData.role !== "admin" && (
                     <MdInfo
                       title="See More info"
-                      onClick={() => handleShowInfo(userData)}
+                      onClick={() => setUserdata(userData)}
                       style={{ fill: "#0e91e9" }}
                     />
                   )}
@@ -112,7 +110,9 @@ const UserTable = ({ projectUserData, className, taskState, peopleState }) => {
           taskState={taskState}
         />
       )}
-      {userdata && <UserdataModal userObject={{ userdata, setUserdata }} />}
+      {userdata && (
+        <UserdataModal userObject={{ userdata, setUserdata }} tasks={tasks} />
+      )}
     </>
   );
 };

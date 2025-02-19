@@ -5,7 +5,7 @@ import bcrypt from "bcrypt";
 
 const router = express.Router();
 
-router.get("checkuser/:userId", async (req, res, next) => {
+router.get("/checkuser/:userId", async (req, res, next) => {
   const userId = req.params.userId;
   try {
     const userData = await User.findById(userId);
@@ -14,7 +14,13 @@ router.get("checkuser/:userId", async (req, res, next) => {
         message: "User not found",
       });
     }
-    return res.status(200).json(userData);
+    const { name, username, email, about } = userData;
+    return res.status(200).json({
+      name,
+      username,
+      email,
+      about,
+    });
   } catch (error) {
     next(error);
   }
