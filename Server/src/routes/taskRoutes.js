@@ -2,6 +2,7 @@ import express from "express";
 import Project from "../models/Project.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
 import Task from "../models/Task.js";
+import User from "../models/User.js";
 
 const router = express.Router({ mergeParams: true });
 
@@ -33,9 +34,27 @@ router.get("/", async (req, res, next) => {
   }
 });
 
+router.get("/:taskId", async (req, res, next) => {
+  const { taskId } = req.params;
+
+  try {
+    const task = await Task.findById(taskId);
+
+    if (task) {
+      return res.status(200).json(task);
+    } else {
+      return res.status(404).json({
+        message: "No task found in the database",
+      });
+    }
+  } catch (error) {
+    return next(error);
+  }
+});
+
 router.post("/", async (req, res, next) => {
   const projectId = req.params.projectId;
-  const { title, description, user_id, status, priority } = req.body;
+  const { title, description, deadline, user_id, status, priority } = req.body;
   //Fetch the id of creator from parameters
   const creator = req.user._id;
 
@@ -44,6 +63,13 @@ router.post("/", async (req, res, next) => {
   if (!projectInfo) {
     return res.status(404).json({
       message: "Project not found",
+    });
+  }
+
+  const assineeInfo = await User.findById(user_id).select("name username");
+  if (!assineeInfo) {
+    return res.status(404).json({
+      message: "User is not found",
     });
   }
 
@@ -64,8 +90,13 @@ router.post("/", async (req, res, next) => {
     const newTask = new Task({
       title,
       description,
+      deadline,
       project_id: projectId,
-      assigned_to: user_id,
+      assigned_to: {
+        _id: user_id,
+        name: assineeInfo.name,
+        username: assineeInfo.username,
+      },
       status: status || "to-do",
       priority: priority || "medium",
     });
