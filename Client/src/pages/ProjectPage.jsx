@@ -2,7 +2,7 @@ import styles from "./ProjectPage.module.scss";
 import editIcon from "@icons/edit-text.png";
 import addIcon from "@icons/add.png";
 import UserTable from "@comp/UserTable";
-import TaskList from "@comp/TaskCard";
+import TaskCard from "@comp/TaskCard";
 import { useEffect, useState } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import Spinner from "@comp/Spinner";
@@ -129,8 +129,8 @@ const ProjectPage = () => {
           </button>
         </div>
         {/* 2. user table */}
-        <div className={styles["user-table-container"]}>
-          <h3>Total Users Working in this project</h3>
+        <div className={styles.section}>
+          <h3>Collaborators Table</h3>
           <UserTable
             projectUserData={people}
             taskState={{ tasks, setTasks }}
@@ -180,9 +180,16 @@ const ProjectPage = () => {
           </div>
         </div>
         {/* 3. task container */}
-        <div className={styles["user-table-container"]}>
+        <div className={styles.section}>
           <h3>Total tasks assigned</h3>
-          <TaskList tasks={tasks} />
+          <TaskCard
+            tasks={tasks}
+            styles={{
+              card_container: styles["card-container"],
+              card: styles["task-card"],
+              features: styles["task-features"],
+            }}
+          />
         </div>
       </>
     </div>
