@@ -6,7 +6,8 @@ import ProjectFormPage from "@pages/ProjectFormPage";
 import ProjectPage from "@pages/ProjectPage";
 import Spinner from "@comp/Spinner";
 import Dashboard from "@pages/Dashboard";
-import TaskPage from "../pages/TaskPage";
+import TaskCardPage from "@pages/TaskCardPage";
+import TaskPage from "@pages/TaskPage";
 import NotificationPage from "../pages/NotificationPage";
 import ConversationPage from "../pages/ConversationPage";
 import AlertBar from "@comp/AlertBar";
@@ -19,6 +20,7 @@ const MainSection = ({
   projectsCardPage = false,
   createProject = false,
   projectPage = false,
+  taskCardPage = false,
   taskPage = false,
   notificationPage = false,
   conversationPage = false,
@@ -39,6 +41,7 @@ const MainSection = ({
       {projectsCardPage && <ProjectCardsPage />}
       {projectPage && <ProjectPage />}
       {createProject && <ProjectFormPage />}
+      {taskCardPage && <TaskCardPage />}
       {taskPage && <TaskPage />}
       {notificationPage && <NotificationPage />}
       {conversationPage && <ConversationPage />}

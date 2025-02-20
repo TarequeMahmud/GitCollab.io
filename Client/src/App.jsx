@@ -41,6 +41,10 @@ function App() {
                   path="/projects"
                   element={<MainSection projectsCardPage={true} />}
                 />
+                <Route
+                  path="/projects/:projectId/tasks/:taskId"
+                  element={<MainSection taskPage={true} />}
+                />
                 {/* show a specific project & fetch all data */}
                 <Route
                   path="/projects/:projectId"
@@ -54,8 +58,9 @@ function App() {
                 {/* page to show all tasks */}
                 <Route
                   path="/tasks"
-                  element={<MainSection taskPage={true} />}
+                  element={<MainSection taskCardPage={true} />}
                 />
+
                 {/* page to show notifications */}
                 <Route
                   path="/notifications"

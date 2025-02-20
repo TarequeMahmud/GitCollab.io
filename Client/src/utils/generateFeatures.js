@@ -1,8 +1,5 @@
 import cardIcons from "@datas/cardFeatures";
-const formatDate = (deadline) => {
-  const date = new Date(deadline);
-  return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
-};
+import formatDate from "./formatDate";
 const generateFeatures = (data) => {
   const features = [
     {

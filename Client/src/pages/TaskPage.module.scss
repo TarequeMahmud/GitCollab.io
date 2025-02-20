@@ -1,0 +1,132 @@
+@use "@styles/base" as *;
+.container {
+  width: 80%;
+  border: 1px solid black;
+  border-radius: 20px;
+  height: 100%;
+  padding: 40px;
+  background-color: #e9e9e9;
+  * {
+    color: black;
+  }
+  .heading {
+    font-size: 2.4rem;
+    text-align: center;
+    margin: 10px auto 0;
+  }
+  h1 {
+    text-align: center;
+    margin: 50px auto 20px;
+  }
+}
+.button {
+  background-color: #04c977;
+  @include flex(row, space-between);
+
+  border-radius: 4px;
+  &-edit {
+    height: 40px;
+    width: 100px;
+  }
+  &-add {
+    height: 40px;
+    width: 150px;
+  }
+  &-submit {
+    height: 40px;
+    width: 100px;
+  }
+  img {
+    margin-right: 5px;
+  }
+  p {
+    font-weight: 900;
+  }
+}
+.description-container {
+  background-color: #f7f7f7;
+  width: 80%;
+  border: none;
+  border-radius: 5px;
+  margin: 10px auto;
+  padding: 10px 20px;
+  height: max-content;
+  p {
+    text-align: start;
+  }
+}
+
+.section {
+  background-color: #f7f7f7;
+  border: none;
+  border-radius: 5px;
+  width: 80%;
+  margin: 10px auto;
+  padding: 10px 20px;
+}
+.info {
+  @include flex(row, space-around);
+  div {
+    @include flex(row);
+    gap: 10px;
+  }
+  img {
+    height: 40px;
+    width: 40px;
+  }
+  p {
+    font-size: 1.4rem;
+    b {
+      margin-right: 10px;
+    }
+  }
+}
+.assignee {
+  @include flex(row);
+  gap: 10px;
+  p {
+    font-size: 1.4rem;
+  }
+}
+
+.submission {
+  height: auto;
+  min-height: 400px;
+  h2 {
+    margin-top: 180px;
+    color: #848484;
+  }
+}
+
+.input-section {
+  width: $full;
+  @include flex(row, flex-start);
+  .input-container {
+    width: 50%;
+
+    @include flex(row, flex-start);
+    gap: 4px;
+  }
+  input,
+  select,
+  button {
+    height: 40px;
+  }
+  input,
+  select {
+    background-color: #f7f7f7;
+    border-radius: 10px;
+    font-size: 1rem;
+  }
+  input {
+    padding: 5px;
+  }
+}
+
+.operation-column {
+  @include flex(row, space-around);
+  font-size: 1.8rem;
+  * {
+    cursor: pointer;
+  }
+}
