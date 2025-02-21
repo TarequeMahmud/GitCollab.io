@@ -52,6 +52,39 @@ router.get("/:taskId", async (req, res, next) => {
   }
 });
 
+//Task submission path
+router.post("/:taskId", async (req, res, next) => {
+  const { taskId } = req.params;
+  const { _id, role } = req.user;
+  const { submissionText, submissionFile } = req.body;
+  try {
+    const task = await Task.findById(taskId);
+    if (!task) {
+      return res.status(404).json({
+        message: "No task found in the database",
+      });
+    }
+
+    if (task.assigned_to._id.toString() !== _id) {
+      return res.status(401).json({
+        message:
+          "You are not authorized to submit this this task. If you think there is an error, please contact admin.",
+      });
+    }
+    task.submission = {
+      text: submissionText,
+      file: submissionFile,
+    };
+    await task.save();
+    return res.status(201).json({
+      message: "Task submitted successfully",
+    });
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
 router.post("/", async (req, res, next) => {
   const projectId = req.params.projectId;
   const { title, description, deadline, user_id, status, priority } = req.body;

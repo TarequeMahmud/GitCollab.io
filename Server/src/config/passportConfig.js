@@ -29,17 +29,13 @@ passport.use(
 
 // Serialize user to session
 passport.serializeUser((user, done) => {
-  done(null, user.id);
+  done(null, { _id: user._id, role: user.role });
 });
 
 // Deserialize user from session
-passport.deserializeUser(async (id, done) => {
-  try {
-    const user = await User.findById(id);
-    done(null, user);
-  } catch (err) {
-    done(err);
-  }
+passport.deserializeUser((user, done) => {
+  if (!user) return done(new Error("No user found in this session"));
+  done(null, user);
 });
 
 export default passport;

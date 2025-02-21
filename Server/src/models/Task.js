@@ -27,6 +27,31 @@ const taskSchema = new mongoose.Schema({
   status: { type: String, enum: ["to-do", "in-progress", "completed"] },
   priority: { type: String, enum: ["high", "medium", "low"] },
 
+  //Submission Section
+
+  submission: {
+    text: { type: String, default: null },
+    file: { type: String, default: null },
+    submitted_at: { type: Date, default: Date.now },
+  },
+
+  review: {
+    reviewed_by: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
+    review_status: {
+      type: String,
+      enum: ["pending", "approved", "rejected"],
+      default: "pending",
+    },
+    feedback: {
+      type: String,
+      default: null,
+    },
+  },
+
   comments: [
     {
       comment: { type: String },
