@@ -1,0 +1,89 @@
+@use "@styles/base" as *;
+.container {
+  width: 80%;
+  border: 1px solid black;
+  border-radius: 20px;
+  height: auto;
+  min-height: 600px;
+  padding: 20px;
+  background-color: #e9e9e9;
+}
+.heading {
+  margin: 20px auto 0;
+  height: 2.5rem;
+  color: black;
+}
+
+.card-container {
+  margin: 50px auto;
+  width: 90%;
+  @include flex;
+  gap: 30px;
+}
+
+.card {
+  width: $full;
+  height: 250px;
+  background: linear-gradient(90deg, #32ade6 0%, #1c6080 100%);
+  border-radius: 35px;
+  @include flex(row, space-between);
+}
+.title-desc-holder {
+  height: $full;
+  width: 60%;
+  border-radius: 0 35px 35px 0;
+  clip-path: polygon(20% 0%, 100% 0%, 100% 100%, 0% 100%);
+  @include flex;
+  background-color: rgba($color: #212121, $alpha: 0.25);
+  padding-right: 20px;
+  div {
+    @include flex;
+    padding: 0;
+    margin-left: 15%;
+    height: 90%;
+    width: 80%;
+  }
+  p {
+    width: 100%;
+    text-align: justify;
+    font-size: 0.7;
+    font-weight: 400;
+    overflow: hidden;
+  }
+  h2 {
+    width: 100%;
+  }
+}
+.properties-holder {
+  @include flex;
+  height: 100%;
+  width: 40%;
+  gap: 5px;
+}
+.property {
+  @include flex(row, flex-start);
+  padding: 2px;
+  gap: 8px;
+  width: 80%;
+  height: 20%;
+  border-radius: 11px;
+  background-color: rgba($color: #000000, $alpha: 0.61);
+  img {
+    width: 45px;
+    height: 45px;
+    margin-right: 10px;
+    margin-left: 8px;
+  }
+}
+
+.high {
+  color: red;
+}
+.medium {
+  color: greenyellow;
+}
+
+.empty {
+  margin-top: 200px;
+  color: rgba(132, 132, 132, 0.671);
+}
