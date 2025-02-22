@@ -124,7 +124,7 @@ router.post("/", async (req, res, next) => {
       title,
       description,
       deadline,
-      project_id: projectId,
+      project: { project_id: projectId, project_title: projectInfo.title },
       assigned_to: {
         _id: user_id,
         name: assineeInfo.name,

@@ -6,9 +6,8 @@ import session from "express-session";
 import passport from "passport";
 import cors from "cors";
 //import necessary routes
-import authRouter from "./src/routes/authRoutes.js";
-import projectRouter from "./src/routes/projectRoute.js";
-import taskRouter from "./src/routes/taskRoutes.js";
+import mainRouter from "./src/routes/index.js";
+
 //Import middlewares
 import errorHandler from "./src/middlewares/errorHandler.js";
 
@@ -40,9 +39,7 @@ app.use(express.json());
 
 //route setup
 
-app.use("/", authRouter);
-app.use("/project/", projectRouter);
-app.use("/project/:projectId/task", taskRouter);
+app.use("/", mainRouter);
 
 //middleware setup
 app.use(errorHandler);

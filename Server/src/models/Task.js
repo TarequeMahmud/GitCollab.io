@@ -3,10 +3,13 @@ import mongoose from "mongoose";
 const taskSchema = new mongoose.Schema({
   title: { type: String, required: true },
   description: { type: String, trim: true },
-  project_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    required: true,
-    ref: "Project",
+  project: {
+    project_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "Project",
+    },
+    project_title: { type: String, required: true },
   },
   deadline: { type: Date, required: true },
   assigned_to: {
