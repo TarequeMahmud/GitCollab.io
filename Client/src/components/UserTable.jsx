@@ -4,7 +4,13 @@ import { useState } from "react";
 import authFetch from "@services/fetch.js";
 import { useParams } from "react-router";
 import UserdataModal from "./UserdataModal";
-const UserTable = ({ projectUserData, className, taskState, peopleState }) => {
+const UserTable = ({
+  projectUserData,
+  className,
+  taskState,
+  peopleState,
+  currentUser,
+}) => {
   const { projectId } = useParams();
   const [showTaskForm, setShowTaskForm] = useState(false);
   const [userId, setUserId] = useState("");
@@ -63,7 +69,7 @@ const UserTable = ({ projectUserData, className, taskState, peopleState }) => {
           <tr>
             <th>Person</th>
             <th>Role</th>
-            <th>Operation</th>
+            {currentUser.role === "admin" && <th>Operation</th>}
           </tr>
         </thead>
         <tbody>
@@ -74,31 +80,33 @@ const UserTable = ({ projectUserData, className, taskState, peopleState }) => {
             >
               <td>{userData.name}</td>
               <td>{userData.role}</td>
-              <td>
-                <div className={className.operationColumn}>
-                  {userData.role !== "admin" && (
-                    <MdInfo
-                      title="See More info"
-                      onClick={() => setUserdata(userData)}
-                      style={{ fill: "#0e91e9" }}
-                    />
-                  )}
+              {currentUser.role === "admin" && (
+                <td>
+                  <div className={className.operationColumn}>
+                    {userData.role !== "admin" && (
+                      <MdInfo
+                        title="See More info"
+                        onClick={() => setUserdata(userData)}
+                        style={{ fill: "#0e91e9" }}
+                      />
+                    )}
 
-                  <MdAssignmentAdd
-                    title="Assign a task to him."
-                    onClick={() => handleAssignTask(userData.user_id)}
-                    style={{ fill: "#08b86f" }}
-                  />
-
-                  {userData.role !== "admin" && (
-                    <MdRemoveCircle
-                      title="Remove from the project."
-                      onClick={() => handleRemovePerson(userData.user_id)}
-                      style={{ fill: "#e41010" }}
+                    <MdAssignmentAdd
+                      title="Assign a task to him."
+                      onClick={() => handleAssignTask(userData.user_id)}
+                      style={{ fill: "#08b86f" }}
                     />
-                  )}
-                </div>
-              </td>
+
+                    {userData.role !== "admin" && (
+                      <MdRemoveCircle
+                        title="Remove from the project."
+                        onClick={() => handleRemovePerson(userData.user_id)}
+                        style={{ fill: "#e41010" }}
+                      />
+                    )}
+                  </div>
+                </td>
+              )}
             </tr>
           ))}
         </tbody>

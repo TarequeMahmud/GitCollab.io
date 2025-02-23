@@ -27,6 +27,7 @@
   background: linear-gradient(90deg, #32ade6 0%, #1c6080 100%);
   border-radius: 35px;
   @include flex(row, space-between);
+  cursor: pointer;
 }
 .title-desc-holder {
   height: $full;

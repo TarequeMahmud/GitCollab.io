@@ -21,6 +21,7 @@ const ProjectPage = () => {
   const [people, setPeople] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [showUserForm, setShowUserForm] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
   const [username, setUsername] = useState("");
   const [role, setRole] = useState("manager");
   //project id
@@ -51,6 +52,7 @@ const ProjectPage = () => {
         }
         setProject(projectResponse.data);
         setPeople(projectResponse.data.people);
+        setCurrentUser(projectResponse.data.current_user);
       } catch (error) {
         console.error("there was an error: ", error);
         navigate("/");
@@ -120,18 +122,21 @@ const ProjectPage = () => {
         <h1>{project.title}</h1>
         <div className={styles["description-container"]}>
           <p>{project.description}</p>
-          <button
-            className={`${styles.button} ${styles["button-edit"]}`}
-            type="button"
-          >
-            <img src={editIcon} alt="edit icon" height={20} width={20} />
-            <p>Edit</p>
-          </button>
+          {currentUser.role === "admin" && (
+            <button
+              className={`${styles.button} ${styles["button-edit"]}`}
+              type="button"
+            >
+              <img src={editIcon} alt="edit icon" height={20} width={20} />
+              <p>Edit</p>
+            </button>
+          )}
         </div>
         {/* 2. user table */}
         <div className={styles.section}>
           <h3>Collaborators Table</h3>
           <UserTable
+            currentUser={currentUser}
             projectUserData={people}
             taskState={{ tasks, setTasks }}
             peopleState={setPeople}
@@ -141,49 +146,57 @@ const ProjectPage = () => {
             }}
           />
           {/* add people to the user table */}
-          <div className={styles["input-section"]}>
-            {!showUserForm ? (
-              <button
-                className={`${styles.button} ${styles["button-add"]}`}
-                onClick={() => setShowUserForm(true)}
-                type="button"
-              >
-                <img src={addIcon} alt="add user icon" height={20} width={20} />
-                <p>Add Users</p>
-              </button>
-            ) : (
-              <div className={styles["input-container"]}>
-                <input
-                  placeholder="Enter Username"
-                  name="add-user"
-                  type="text"
-                  onChange={(e) => setUsername(e.target.value)}
-                />
-                <select
-                  name="role"
-                  id="role"
-                  onChange={(e) => setRole(e.target.value)}
-                >
-                  <option value="Manager">Manager</option>
-                  <option value="member">Member</option>
-                </select>
+          {currentUser.role === "admin" && (
+            <div className={styles["input-section"]}>
+              {!showUserForm ? (
                 <button
+                  className={`${styles.button} ${styles["button-add"]}`}
+                  onClick={() => setShowUserForm(true)}
                   type="button"
-                  name="submit"
-                  className={`${styles.button} ${styles["button-submit"]}`}
-                  onClick={handleAddUser}
                 >
-                  <p>Submit</p>
+                  <img
+                    src={addIcon}
+                    alt="add user icon"
+                    height={20}
+                    width={20}
+                  />
+                  <p>Add Users</p>
                 </button>
-              </div>
-            )}
-          </div>
+              ) : (
+                <div className={styles["input-container"]}>
+                  <input
+                    placeholder="Enter Username"
+                    name="add-user"
+                    type="text"
+                    onChange={(e) => setUsername(e.target.value)}
+                  />
+                  <select
+                    name="role"
+                    id="role"
+                    onChange={(e) => setRole(e.target.value)}
+                  >
+                    <option value="Manager">Manager</option>
+                    <option value="member">Member</option>
+                  </select>
+                  <button
+                    type="button"
+                    name="submit"
+                    className={`${styles.button} ${styles["button-submit"]}`}
+                    onClick={handleAddUser}
+                  >
+                    <p>Submit</p>
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
         {/* 3. task container */}
         <div className={styles.section}>
           <h3>Total tasks assigned</h3>
           <TaskCard
             tasks={tasks}
+            currentUser={currentUser}
             styles={{
               card_container: styles["card-container"],
               card: styles["task-card"],

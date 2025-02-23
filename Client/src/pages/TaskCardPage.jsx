@@ -52,6 +52,13 @@ const TaskPage = () => {
       setLoading(false);
     }
   }, []);
+
+  //handle The user to the task page
+  const handleClick = (taskId, projectId) => {
+    navigate(`/projects/${projectId}/tasks/${taskId}`);
+    return;
+  };
+
   return (
     <div className={styles.container}>
       <h1 className={styles.heading}>Assigned Tasks</h1>
@@ -61,7 +68,13 @@ const TaskPage = () => {
       {tasks.length > 0 && (
         <div className={styles["card-container"]}>
           {tasks.map((task) => (
-            <div className={styles.card} key={task._id}>
+            <div
+              onClick={() => {
+                handleClick(task._id, task.project.project_id);
+              }}
+              className={styles.card}
+              key={task._id}
+            >
               <div className={styles["properties-holder"]}>
                 <div className={styles.property}>
                   <img src={images.project} alt="project" />{" "}

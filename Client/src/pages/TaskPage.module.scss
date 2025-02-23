@@ -130,3 +130,63 @@
     cursor: pointer;
   }
 }
+
+.submission-form {
+  margin: 20px;
+  button[type="submit"] {
+    height: 2.7rem;
+    width: $full;
+    background-color: rgb(12, 12, 209);
+    margin: 20px auto;
+    color: #ffffff;
+    font-size: 1.5rem;
+    text-align: center;
+    font-weight: 700;
+    padding: 0;
+  }
+}
+.input-container {
+  @include flex($align: flex-start);
+  width: $full;
+  margin: 5px auto 15px;
+  input {
+    height: 2.8rem;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: 1px solid #575757;
+    border-radius: 0.8rem;
+    width: $full;
+    padding: 10px;
+  }
+  input,
+  textarea {
+    background-color: #ffffff;
+    color: #000000;
+  }
+}
+.text {
+  border-radius: 0.8rem;
+  border: 3px #595959 solid;
+  width: $full;
+  resize: none;
+  overflow-y: scroll;
+  font-size: 1rem;
+  padding: 10px;
+}
+
+.input-text {
+  font-weight: 800;
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+.action {
+  @include flex(row, space-around);
+  button {
+    background-color: rgb(12, 12, 209);
+    font-size: 1rem;
+    color: #ffffff;
+    width: 30%;
+    margin: auto;
+  }
+}

@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from "react-router";
 import formatDate from "@utils/formatDate";
 
-const TaskCard = ({ tasks, styles }) => {
+const TaskCard = ({ tasks, styles, currentUser }) => {
   const { projectId } = useParams();
   const navigate = useNavigate();
   return (
@@ -12,7 +12,8 @@ const TaskCard = ({ tasks, styles }) => {
           <hr />
           <div className={styles.features}>
             <p>
-              <strong>Assignee:</strong> Abid Hassan
+              <strong>Assignee: </strong>
+              {task.assigned_to.name}
             </p>
             <p>
               <strong>Status:</strong> {task.status}
@@ -26,11 +27,16 @@ const TaskCard = ({ tasks, styles }) => {
           </div>
 
           <hr />
-          <button
-            onClick={() => navigate(`/projects/${projectId}/tasks/${task._id}`)}
-          >
-            Show Task
-          </button>
+          {(currentUser.role === "admin" ||
+            currentUser._id === task.assigned_to._id) && (
+            <button
+              onClick={() =>
+                navigate(`/projects/${projectId}/tasks/${task._id}`)
+              }
+            >
+              Show Task
+            </button>
+          )}
         </div>
       ))}
     </div>
