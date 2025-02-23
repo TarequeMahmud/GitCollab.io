@@ -35,13 +35,22 @@ router.get("/", async (req, res, next) => {
 });
 
 router.get("/:taskId", async (req, res, next) => {
-  const { taskId } = req.params;
+  const userId = req.user._id;
+  const { taskId, projectId } = req.params;
 
   try {
+    const project = await Project.findById(projectId);
     const task = await Task.findById(taskId);
 
     if (task) {
-      return res.status(200).json(task);
+      const user = project.people.find(
+        (person) => person.user_id.toString() === userId.toString()
+      );
+
+      return res.status(200).json({
+        ...task.toObject(),
+        current_user: { _id: user.user_id, role: user.role },
+      });
     } else {
       return res.status(404).json({
         message: "No task found in the database",

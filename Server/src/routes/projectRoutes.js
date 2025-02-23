@@ -47,7 +47,14 @@ router.get("/:projectId", async (req, res, next) => {
       (person) => person.user_id.toString() === userId.toString()
     );
     if (isEnrolledUser) {
-      return res.status(200).json(project);
+      const user = project.people.find(
+        (person) => person.user_id.toString() === userId.toString()
+      );
+
+      return res.status(200).json({
+        ...project.toObject(),
+        current_user: { _id: user.user_id, role: user.role },
+      });
     } else {
       return res.status(404).json({
         message: "No project found",
@@ -182,5 +189,23 @@ router.delete("/:projectId/users/:userId", async (req, res, next) => {
 });
 
 router.get("/:projectId/users/:userId", (req, res, next) => {});
+
+router.get("/:projectId/role", async (req, res, next) => {
+  const userId = req.user._id;
+  const projectId = req.params.projectId;
+  try {
+    const project = await Project.findById(projectId);
+    if (!project)
+      return res.status(404).json({
+        message: "Project is not found",
+      });
+    const user = project.people.filter(
+      (person) => person.user_id.toString() === userId.toString()
+    );
+    return res.status(200).json(user.role);
+  } catch (error) {
+    next(error);
+  }
+});
 
 export default router;

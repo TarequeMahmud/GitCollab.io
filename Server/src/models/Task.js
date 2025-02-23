@@ -35,7 +35,7 @@ const taskSchema = new mongoose.Schema({
   submission: {
     text: { type: String, default: null },
     file: { type: String, default: null },
-    submitted_at: { type: Date, default: Date.now },
+    submitted_at: { type: Date, default: null },
   },
 
   review: {
