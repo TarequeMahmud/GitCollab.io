@@ -9,15 +9,18 @@ import Spinner from "@comp/Spinner";
 import authFetch from "@services/fetch.js";
 import { useError } from "@contexts/ErrorContex";
 import { useAuth } from "../contexts/AuthContext";
+import { useAlert } from "../contexts/AlertContext";
 
 const TaskPage = () => {
   const navigate = useNavigate();
   const { projectId, taskId } = useParams();
   const alertOnError = useError();
+  const { showAlert } = useAlert();
   //necessary states
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [task, setTask] = useState("");
+  const { setIsAuthenticated } = useAuth();
 
   //--make api request to retrieve project data from database.--
   useEffect(() => {
@@ -52,7 +55,50 @@ const TaskPage = () => {
     fetchTask();
   }, [taskId]);
 
-  const handleSubmit = () => {};
+  const handleSubmit = async (event) => {
+    const formData = new FormData(event.target);
+    const { text, file } = Object.fromEntries(formData.entries());
+    const maxSize = 2 * 1024 * 1024;
+    if (file && file.size > maxSize) {
+      alertOnError(
+        "Big file size",
+        "File size exceeds 2MB. Please upload a smaller file."
+      );
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const submitTaskResponse = await authFetch(
+        `/assignee/task/submit/${taskId}`,
+        {
+          method: "POST",
+          body: formData,
+        },
+        setIsAuthenticated
+      );
+      console.log(submitTaskResponse);
+
+      if (!submitTaskResponse) {
+        alertOnError("Submission Failed", { status: 500 });
+        return;
+      }
+      if (!submitTaskResponse.ok) {
+        alertOnError("Submission Failed", submitTaskResponse);
+        return;
+      }
+
+      showAlert("Submission Success", submitTaskResponse.data.message);
+      return;
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+      return;
+    } finally {
+      setLoading(false);
+    }
+  };
 
   //conditional rendering
   if (loading) return <Spinner />;
