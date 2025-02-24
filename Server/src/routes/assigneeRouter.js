@@ -3,6 +3,18 @@ import Project from "../models/Project.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
 import Task from "../models/Task.js";
 import User from "../models/User.js";
+import multer from "multer";
+import path from "path";
+const storage = multer.diskStorage({
+  destination: "./uploads/task_submission",
+  filename: function (req, file, cb) {
+    cb(
+      null,
+      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
+    );
+  },
+});
+const uploads = multer({ storage: storage });
 
 const router = express.Router({ mergeParams: true });
 
@@ -25,5 +37,34 @@ router.get("/tasks", async (req, res, next) => {
     next(error);
   }
 });
+
+router.post(
+  "/task/submit/:taskId",
+  uploads.single("file"),
+  async (req, res, next) => {
+    const taskId = req.params.taskId;
+    const { text } = req.body;
+
+    try {
+      const task = await Task.findById(taskId);
+      if (!task) {
+        res.status(401).json({ message: "Task not found" });
+      }
+      task.submission = {
+        text: text,
+        file_name: req.file.originalname,
+        file_path: req.file.path,
+        submitted_at: Date.now(),
+      };
+      await task.save();
+      return res.status(201).json({
+        message:
+          "Your task submitted successfully. Please wait for further approval.",
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 export default router;
