@@ -190,3 +190,33 @@
     margin: auto;
   }
 }
+
+.submission-holder {
+  width: $full;
+  height: auto;
+  min-height: 400px;
+  @include flex(column, space-around, flex-start);
+  p {
+    font-size: 1.4rem;
+    @include flex($align: flex-start);
+    margin: 0;
+    b {
+      margin: 0;
+    }
+    span {
+      margin: 10px 80px 40px;
+      text-align: justify;
+    }
+  }
+}
+
+.download {
+  margin-left: 20px;
+  background-color: rgb(11, 166, 50);
+  font-size: 1rem;
+  color: #ffffff;
+}
+
+.danger {
+  background-color: rgb(240, 52, 52);
+}

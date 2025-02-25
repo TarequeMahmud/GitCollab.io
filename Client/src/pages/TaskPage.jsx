@@ -1,7 +1,6 @@
 import styles from "./TaskPage.module.scss";
 import editIcon from "@icons/edit-text.png";
 import addIcon from "@icons/add.png";
-import formatDate from "@utils/formatDate";
 import images from "@icons/task/icons";
 import { useEffect, useState } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
@@ -10,6 +9,7 @@ import authFetch from "@services/fetch.js";
 import { useError } from "@contexts/ErrorContex";
 import { useAuth } from "../contexts/AuthContext";
 import { useAlert } from "../contexts/AlertContext";
+import formatDate from "@utils/formatDate.js";
 
 const TaskPage = () => {
   const navigate = useNavigate();
@@ -20,7 +20,9 @@ const TaskPage = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [task, setTask] = useState("");
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const { setIsAuthenticated } = useAuth();
+  //if task is already submitted.
 
   //--make api request to retrieve project data from database.--
   useEffect(() => {
@@ -44,6 +46,10 @@ const TaskPage = () => {
         }
         setTask(taskResponse.data);
         setCurrentUser(taskResponse.data.current_user);
+        setIsSubmitted(
+          taskResponse?.data?.submission?.text ||
+            taskResponse?.data?.submission?.file_name
+        );
       } catch (error) {
         console.error("there was an error: ", error);
         navigate("/");
@@ -153,10 +159,10 @@ const TaskPage = () => {
         </div>
         <h1>Submission Section</h1>
         <div className={`${styles.section} ${styles.submission}`}>
-          {currentUser.role === "admin" && (
+          {!isSubmitted && currentUser.role === "admin" && (
             <h2>Assignee has not submitted yet</h2>
           )}
-          {currentUser._id === task.assigned_to._id && (
+          {currentUser._id === task.assigned_to._id && !isSubmitted && (
             <form
               className={styles["submission-form"]}
               onSubmit={handleSubmit}
@@ -168,6 +174,7 @@ const TaskPage = () => {
                   Text to submit:
                 </label>
                 <textarea
+                  value={task.submission.text ? task.submission.text : ""}
                   name="text"
                   className={styles.text}
                   cols="30"
@@ -182,6 +189,63 @@ const TaskPage = () => {
               </div>
               <button type="submit">Submit the task</button>
             </form>
+          )}
+
+          {isSubmitted && (
+            <div className={styles["submission-holder"]}>
+              <p>
+                <b>Description: </b>
+                <span> {task.submission.text}</span>
+              </p>
+              <p>
+                <b>File: </b>
+                <span>
+                  {" "}
+                  <em>{task.submission.file_name}</em>
+                  <button className={styles.download}>Download</button>{" "}
+                </span>
+              </p>
+              <p>
+                <b>Submitted at:</b>
+                <span>{formatDate(task.submission.submitted_at)} </span>
+              </p>
+              <div className={`${styles.section} ${styles.action}`}>
+                {currentUser.role === "admin" && (
+                  <>
+                    {" "}
+                    <button
+                      onClick={() => {
+                        return navigate(`/projects/${projectId}`);
+                      }}
+                    >
+                      Approve
+                    </button>
+                    <button
+                      className={styles.danger}
+                      onClick={() => {
+                        return navigate(`/projects/${projectId}`);
+                      }}
+                    >
+                      Reject
+                    </button>
+                  </>
+                )}
+                {currentUser._id === task.assigned_to._id && (
+                  <>
+                    {" "}
+                    <button onClick={() => setIsSubmitted(false)}>Edit</button>
+                    <button
+                      className={styles.danger}
+                      onClick={() => {
+                        return navigate(`/projects/${projectId}`);
+                      }}
+                    >
+                      Delete
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
           )}
         </div>
         <h2>Personal messages from the collaborator</h2>
@@ -207,6 +271,7 @@ const TaskPage = () => {
                 Mark as in progress
               </button>
               <button
+                className={styles.danger}
                 onClick={() => {
                   return navigate(`/projects/${projectId}`);
                 }}
@@ -217,6 +282,7 @@ const TaskPage = () => {
           )}
           {currentUser.role === "admin" && (
             <button
+              className={styles.danger}
               onClick={() => {
                 return navigate(`/projects/${projectId}`);
               }}

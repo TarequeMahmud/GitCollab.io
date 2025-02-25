@@ -5,6 +5,8 @@ import dotenv from "dotenv";
 import session from "express-session";
 import passport from "passport";
 import cors from "cors";
+import path from "path";
+import { fileURLToPath } from "url";
 //import necessary routes
 import mainRouter from "./src/routes/index.js";
 
@@ -16,6 +18,13 @@ dotenv.config();
 
 // Initialize Express app
 const app = express();
+
+//static path definitions
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+//use cors
 app.use(
   cors({
     origin: "http://localhost:5173",
