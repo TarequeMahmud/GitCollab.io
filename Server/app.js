@@ -12,6 +12,7 @@ import mainRouter from "./src/routes/index.js";
 
 //Import middlewares
 import errorHandler from "./src/middlewares/errorHandler.js";
+import responseMiddleware from "./src/middlewares/responseMiddleware.js";
 
 // Load environment variables
 dotenv.config();
@@ -45,6 +46,9 @@ app.use(passport.authenticate("session"));
 
 // Middleware to parse JSON data
 app.use(express.json());
+
+//Middleware for response
+app.use(responseMiddleware);
 
 //route setup
 

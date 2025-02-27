@@ -22,10 +22,7 @@ router.get("/", async (req, res, next) => {
     }
     const projects = response.projects;
     if (!projects || projects.length === 0) {
-      return res.status(404).json({
-        loggedIn: true,
-        message: "No projects created yet.",
-      });
+      return res.notFound("No projects created yet");
     }
     const projectsArray = await Promise.all(
       projects.map((project) => Project.findById(project.project_id))
@@ -51,14 +48,12 @@ router.get("/:projectId", async (req, res, next) => {
         (person) => person.user_id.toString() === userId.toString()
       );
 
-      return res.status(200).json({
+      res.success({
         ...project.toObject(),
         current_user: { _id: user.user_id, role: user.role },
       });
     } else {
-      return res.status(404).json({
-        message: "No project found",
-      });
+      return res.notFound("No project found");
     }
   } catch (error) {
     return next(error);
@@ -95,11 +90,7 @@ router.post("/", async (req, res, next) => {
     creatorInfo.projects.push({ project_id: saveProject._id, role: "admin" });
     const updateCreatorInfo = await creatorInfo.save();
 
-    return res.status(201).json({
-      message: "Project created successfully",
-      project: saveProject.people,
-      projectsList: updateCreatorInfo.projects,
-    });
+    return res.success(201, "Project created successfully");
   } catch (error) {
     next(error);
   }
@@ -119,18 +110,11 @@ router.post("/:projectId/users", async (req, res, next) => {
     }
     const user = await User.findOne({ username: username });
 
-    if (!user) {
-      return res.status(404).json({
-        message: "User not found",
-      });
-    }
+    if (!user) res.notFound("User not found");
 
     const project = await Project.findById(projectId);
-    if (!project) {
-      return res.status(404).json({
-        message: "Project not found",
-      });
-    }
+    if (!project) res.notFound("Project not found");
+
     //if user exists in the people list:
     const isExist = project.people.some(
       (person) => person?.user_id?.toString() === user._id?.toString()
@@ -154,7 +138,7 @@ router.post("/:projectId/users", async (req, res, next) => {
     //update project
     project.people.push({ user_id: user._id, name: user.name, role: role });
     const updateProjectInfo = await project.save();
-    res.status(201).json({ people: updateProjectInfo.people });
+    res.success(201, { people: updateProjectInfo.people });
   } catch (error) {
     next(error);
   }
@@ -164,10 +148,7 @@ router.delete("/:projectId/users/:userId", async (req, res, next) => {
   const { projectId, userId } = req.params;
   try {
     const project = await Project.findById(projectId);
-    if (!project)
-      return res.status(404).json({
-        message: "Project is not found",
-      });
+    if (!project) res.notFound("Project is not found");
     const isEnrolledUser = project.people.some(
       (person) => person.user_id.toString() === userId.toString()
     );
@@ -177,11 +158,9 @@ router.delete("/:projectId/users/:userId", async (req, res, next) => {
       );
       project.people = removedUserArray;
       await project.save();
-      return res.status(200).json(removedUserArray);
+      res.success(removedUserArray);
     } else {
-      return res.status(404).json({
-        message: "User is not found in the project.",
-      });
+      return res.notFound("User is not found in the project.");
     }
   } catch (error) {
     next(error);
@@ -195,14 +174,11 @@ router.get("/:projectId/role", async (req, res, next) => {
   const projectId = req.params.projectId;
   try {
     const project = await Project.findById(projectId);
-    if (!project)
-      return res.status(404).json({
-        message: "Project is not found",
-      });
+    if (!project) res.notFound("Project is not found");
     const user = project.people.filter(
       (person) => person.user_id.toString() === userId.toString()
     );
-    return res.status(200).json(user.role);
+    res.sucess(user.role);
   } catch (error) {
     next(error);
   }

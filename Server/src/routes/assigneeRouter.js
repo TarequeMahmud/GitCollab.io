@@ -26,13 +26,10 @@ router.get("/tasks", async (req, res, next) => {
 
   try {
     const tasks = await Task.find({ "assigned_to._id": _id });
-    if (!tasks || tasks.length === 0) {
-      return res.status(404).json({
-        message: "No task you have been assigned yet",
-      });
-    }
+    if (!tasks || tasks.length === 0)
+      res.notFound("No task you have been assigned yet");
 
-    return res.status(200).json(tasks);
+    return res.success(tasks);
   } catch (error) {
     next(error);
   }
@@ -47,9 +44,7 @@ router.post(
 
     try {
       const task = await Task.findById(taskId);
-      if (!task) {
-        res.status(401).json({ message: "Task not found" });
-      }
+      if (!task) res.notFound("Task not found");
       task.submission = {
         text: text,
         file_name: req.file.originalname,
@@ -57,10 +52,10 @@ router.post(
         submitted_at: Date.now(),
       };
       await task.save();
-      return res.status(201).json({
-        message:
-          "Your task submitted successfully. Please wait for further approval.",
-      });
+      return res.success(
+        201,
+        "Your task submitted successfully. Please wait for further approval."
+      );
     } catch (error) {
       next(error);
     }
@@ -72,13 +67,10 @@ router.get("/tasks", async (req, res, next) => {
 
   try {
     const tasks = await Task.find({ "assigned_to._id": _id });
-    if (!tasks || tasks.length === 0) {
-      return res.status(404).json({
-        message: "No task you have been assigned yet",
-      });
-    }
+    if (!tasks || tasks.length === 0)
+      res.notFound("No task you have been assigned yet");
 
-    return res.status(200).json(tasks);
+    return res.success(tasks);
   } catch (error) {
     next(error);
   }
@@ -88,6 +80,7 @@ router.get("/task/:taskId/download", async (req, res, next) => {
   const taskId = req.params.taskId;
   try {
     const task = await Task.findById(taskId);
+    if (!task) res.notFound("Task is not found");
     res.download(task.submission.file_path);
   } catch (error) {
     next(error);

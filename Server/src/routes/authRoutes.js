@@ -9,11 +9,8 @@ router.get("/checkuser/:userId", async (req, res, next) => {
   const userId = req.params.userId;
   try {
     const userData = await User.findById(userId);
-    if (!userData) {
-      return res.status(404).json({
-        message: "User not found",
-      });
-    }
+    if (!userData) res.notFound("User not found");
+
     const { name, username, email, about } = userData;
     return res.status(200).json({
       name,
