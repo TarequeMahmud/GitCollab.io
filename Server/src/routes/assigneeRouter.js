@@ -67,4 +67,31 @@ router.post(
   }
 );
 
+router.get("/tasks", async (req, res, next) => {
+  const { _id } = req.user;
+
+  try {
+    const tasks = await Task.find({ "assigned_to._id": _id });
+    if (!tasks || tasks.length === 0) {
+      return res.status(404).json({
+        message: "No task you have been assigned yet",
+      });
+    }
+
+    return res.status(200).json(tasks);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/task/:taskId/download", async (req, res, next) => {
+  const taskId = req.params.taskId;
+  try {
+    const task = await Task.findById(taskId);
+    res.download(task.submission.file_path);
+  } catch (error) {
+    next(error);
+  }
+});
+
 export default router;

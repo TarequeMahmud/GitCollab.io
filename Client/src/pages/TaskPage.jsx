@@ -64,11 +64,11 @@ const TaskPage = () => {
   const handleSubmit = async (event) => {
     const formData = new FormData(event.target);
     const { text, file } = Object.fromEntries(formData.entries());
-    const maxSize = 2 * 1024 * 1024;
+    const maxSize = 5 * 1024 * 1024;
     if (file && file.size > maxSize) {
       alertOnError(
         "Big file size",
-        "File size exceeds 2MB. Please upload a smaller file."
+        "File size exceeds 5MB. Please upload a smaller file."
       );
       return;
     }
@@ -104,6 +104,11 @@ const TaskPage = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  // download the task file
+  const handleDownload = () => {
+    window.location.href = `http://localhost:5000/assignee/task/${taskId}/download/`;
   };
 
   //conditional rendering
@@ -174,7 +179,7 @@ const TaskPage = () => {
                   Text to submit:
                 </label>
                 <textarea
-                  value={task.submission.text ? task.submission.text : ""}
+                  // value={task.submission.text ? task.submission.text : ""}
                   name="text"
                   className={styles.text}
                   cols="30"
@@ -202,7 +207,9 @@ const TaskPage = () => {
                 <span>
                   {" "}
                   <em>{task.submission.file_name}</em>
-                  <button className={styles.download}>Download</button>{" "}
+                  <button onClick={handleDownload} className={styles.download}>
+                    Download
+                  </button>{" "}
                 </span>
               </p>
               <p>
