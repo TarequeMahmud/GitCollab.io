@@ -23,6 +23,12 @@ const responseMiddleware = (req, res, next) => {
     return res.status(status).json(response);
   };
 
+  res.error = async (status, msg) => {
+    return res.status(status).json({
+      message: msg,
+    });
+  };
+
   next();
 };
 

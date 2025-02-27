@@ -9,10 +9,10 @@ router.get("/checkuser/:userId", async (req, res, next) => {
   const userId = req.params.userId;
   try {
     const userData = await User.findById(userId);
-    if (!userData) res.notFound("User not found");
+    if (!userData) return res.notFound("User not found");
 
     const { name, username, email, about } = userData;
-    return res.status(200).json({
+    return res.success({
       name,
       username,
       email,
@@ -25,9 +25,9 @@ router.get("/checkuser/:userId", async (req, res, next) => {
 
 router.get("/auth/check", (req, res) => {
   if (req.isAuthenticated()) {
-    return res.status(200).json({ loggedIn: true });
+    return res.success("authenticated");
   } else {
-    return res.status(401).json({ message: "You are currently unauthorized." });
+    return res.error(401, "You are currently unauthorized.");
   }
 });
 
@@ -37,21 +37,18 @@ router.post("/register", async (req, res, next) => {
   console.log(req.body);
 
   if (!name || !username || !email || !password) {
-    return res.status(400).json({
-      message:
-        "Incomplete request. At least Name, Username, Email and Password are needed.",
-    });
+    return res.error(
+      400,
+      "Incomplete request. At least Name, Username, Email and Password are needed."
+    );
   }
 
   try {
     const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: "User already exists" });
-    }
+    if (existingUser) return res.error(400, "User already exists");
+
     const duplicateUsername = await User.findOne({ username });
-    if (duplicateUsername) {
-      return res.status(409).json({ message: "Duplicate username" });
-    }
+    if (duplicateUsername) return res.error(409, "Duplicate username");
 
     // Hash the password before saving
     const salt = await bcrypt.genSalt(10); // Generate a salt
@@ -70,7 +67,7 @@ router.post("/register", async (req, res, next) => {
       if (err) {
         return next(err);
       }
-      res.status(201).json({ message: "User registered successfully" });
+      return res.success(201, "User registered successfully");
     });
   } catch (error) {
     next(error);
@@ -90,9 +87,7 @@ router.post("/login", (req, res, next) => {
       if (err) {
         return next(err);
       }
-      return res.status(200).json({
-        message: "Logged in successfully",
-      });
+      return res.success("Logged in successfully");
     });
   })(req, res, next);
 });
@@ -101,9 +96,7 @@ router.get("/logout", (req, res, next) => {
   req.logout((err) => {
     if (err) return next(err);
     res.clearCookie("connect.sid");
-    res
-      .status(200)
-      .json({ message: "Logged out successfully", loggedIn: false });
+    return res.success("Logged out successfully");
   });
 });
 

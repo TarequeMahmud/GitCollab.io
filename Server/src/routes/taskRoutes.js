@@ -13,22 +13,16 @@ router.get("/", async (req, res, next) => {
 
   try {
     const response = await Project.findById(projectId);
-    if (!response) {
-      return res.status(404).json({
-        message: "No Project Found.",
-      });
-    }
+    if (!response) return res.notFound("No Project Found.");
+
     const tasks = response.tasks;
-    if (!tasks || tasks.length === 0) {
-      return res.status(404).json({
-        message: "No task created yet.",
-      });
-    }
+    if (!tasks || tasks.length === 0)
+      return res.notFound("No task created yet.");
     const tasksArray = await Promise.all(
       tasks.map((task) => Task.findById(task.task_id))
     );
 
-    return res.status(200).json(tasksArray);
+    return res.success(tasksArray);
   } catch (error) {
     next(error);
   }
@@ -47,14 +41,12 @@ router.get("/:taskId", async (req, res, next) => {
         (person) => person.user_id.toString() === userId.toString()
       );
 
-      return res.status(200).json({
+      res.success({
         ...task.toObject(),
         current_user: { _id: user.user_id, role: user.role },
       });
     } else {
-      return res.status(404).json({
-        message: "No task found in the database",
-      });
+      return res.notFound("No task found in the database");
     }
   } catch (error) {
     return next(error);
@@ -64,30 +56,24 @@ router.get("/:taskId", async (req, res, next) => {
 //Task submission path
 router.post("/:taskId", async (req, res, next) => {
   const { taskId } = req.params;
-  const { _id, role } = req.user;
+  const { _id } = req.user;
   const { submissionText, submissionFile } = req.body;
   try {
     const task = await Task.findById(taskId);
-    if (!task) {
-      return res.status(404).json({
-        message: "No task found in the database",
-      });
-    }
+    if (!task) return res.notFound("No task found in the database");
 
-    if (task.assigned_to._id.toString() !== _id) {
-      return res.status(401).json({
-        message:
-          "You are not authorized to submit this this task. If you think there is an error, please contact admin.",
-      });
-    }
+    if (task.assigned_to._id.toString() !== _id)
+      return res.error(
+        401,
+        "You are not authorized to submit this this task. If you think there is an error, please contact admin."
+      );
+
     task.submission = {
       text: submissionText,
       file: submissionFile,
     };
     await task.save();
-    return res.status(201).json({
-      message: "Task submitted successfully",
-    });
+    return res.success(201, "Task submitted successfully");
   } catch (error) {
     console.error(error);
     next(error);
@@ -102,31 +88,20 @@ router.post("/", async (req, res, next) => {
 
   //verify the creator, if it is valid account.
   const projectInfo = await Project.findById(projectId);
-  if (!projectInfo) {
-    return res.status(404).json({
-      message: "Project not found",
-    });
-  }
+  if (!projectInfo) return res.notFound("No Project Found.");
 
   const assineeInfo = await User.findById(user_id).select("name username");
-  if (!assineeInfo) {
-    return res.status(404).json({
-      message: "User is not found",
-    });
-  }
+  if (!assineeInfo) return res.notFound("User is not found.");
 
   const isAdmin = projectInfo.people.some(
     (person) =>
       person.user_id.toString() === creator.toString() &&
       person.role === "admin"
   );
-  if (!isAdmin) {
-    return res
-      .status(403)
-      .json({ message: "Unauthorized: Only admin can assign a task" });
-  }
+  if (!isAdmin)
+    return res.error(403, "Unauthorized: Only admin can assign a task");
 
-  if (!title) return res.status(400).json({ message: "Insert a Name" });
+  if (!title) return res.error(400, "Insert a Name");
 
   try {
     const newTask = new Task({
@@ -146,10 +121,7 @@ router.post("/", async (req, res, next) => {
     projectInfo.tasks.push({ task_id: saveTask._id });
     await projectInfo.save();
 
-    return res.status(201).json({
-      message: "Task created successfully",
-      task: saveTask,
-    });
+    return res.success(201, "Task created successfully");
   } catch (error) {
     next(error);
   }

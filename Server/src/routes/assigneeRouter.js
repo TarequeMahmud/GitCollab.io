@@ -27,7 +27,7 @@ router.get("/tasks", async (req, res, next) => {
   try {
     const tasks = await Task.find({ "assigned_to._id": _id });
     if (!tasks || tasks.length === 0)
-      res.notFound("No task you have been assigned yet");
+      return res.notFound("No task you have been assigned yet");
 
     return res.success(tasks);
   } catch (error) {
@@ -68,7 +68,7 @@ router.get("/tasks", async (req, res, next) => {
   try {
     const tasks = await Task.find({ "assigned_to._id": _id });
     if (!tasks || tasks.length === 0)
-      res.notFound("No task you have been assigned yet");
+      return res.notFound("No task you have been assigned yet");
 
     return res.success(tasks);
   } catch (error) {
@@ -80,7 +80,7 @@ router.get("/task/:taskId/download", async (req, res, next) => {
   const taskId = req.params.taskId;
   try {
     const task = await Task.findById(taskId);
-    if (!task) res.notFound("Task is not found");
+    if (!task) return res.notFound("Task is not found");
     res.download(task.submission.file_path);
   } catch (error) {
     next(error);
