@@ -1,0 +1,3 @@
+type Props = {
+  children: ReactNode;
+};
