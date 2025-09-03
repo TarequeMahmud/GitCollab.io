@@ -33,7 +33,7 @@ const ProjectCard = ({ project }: Props) => {
 
       <button
         onClick={() => handleRedirect(project)}
-        className="w-2/5 h-[40px] mt-5 mx-auto rounded-full text-white"
+        className="w-2/5 h-[40px] mt-5 mx-auto rounded-lg cursor-pointer text-white bg-[#0079ca]"
       >
         See Project
       </button>
