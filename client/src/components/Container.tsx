@@ -3,12 +3,26 @@
 import { ReactNode } from "react";
 
 type Props = {
-  title: string;
+  type?: "default" | "modal";
+  title?: string;
   children: ReactNode;
-  content: boolean;
+  content?: boolean;
 };
 
-const Container = ({ title, children, content }: Props) => {
+const Container = ({
+  type = "default",
+  title = "",
+  children,
+  content = true,
+}: Props) => {
+  if (type === "modal") {
+    return (
+      <div className="fixed top-0 left-0 w-screen h-screen bg-black/20 flex justify-center items-center z-[900] p-3">
+        {children}
+      </div>
+    );
+  }
+
   return (
     <div className="w-5/6 mx-auto min-h-[600px] py-5 bg-gray-200 rounded-2xl">
       <h1 className="text-3xl font-bold text-center mb-3">

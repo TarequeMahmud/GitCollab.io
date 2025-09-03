@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Spinner from "@/components/Spinner";
 import UserTable from "@/components/UserTable";
 import TaskCard from "@/components/TaskCard";
@@ -13,12 +13,8 @@ import addIcon from "@/assets/icons/add.png";
 import Image from "next/image";
 import Container from "@/components/Container";
 
-export default function ProjectPage({
-  params,
-}: {
-  params: { projectId: string };
-}) {
-  const { projectId } = params;
+export default function Page() {
+  const { projectId } = useParams();
   const router = useRouter();
   const { setIsAuthenticated } = useAuth();
   const { showAlert } = useAlert();

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { MdAssignmentAdd, MdInfo, MdRemoveCircle } from "react-icons/md";
 import TaskForm from "./TaskForm";
 import { useAlert } from "@/contexts/AlertContext";
+import UserdataModal from "./UserdataModal";
 
 const thClass =
   "px-2 py-1 border-2 border-[rgb(2,69,133)] bg-[#2eeb1d7e] text-left";
@@ -106,7 +107,7 @@ export default function UserTable({
         />
       )}
       {userdata && (
-        <div>{/* You can render UserdataModal here if needed */}</div>
+        <UserdataModal userObject={{ userdata, setUserdata }} tasks={tasks} />
       )}
     </div>
   );
