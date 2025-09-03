@@ -60,7 +60,7 @@ export default function ProjectsPage() {
       </div>
 
       <div
-        className="fixed bottom-12 right-12 rounded-full w-20 h-20 bg-purple-600/30 flex items-center justify-center text-white text-2xl cursor-pointer hover:bg-pink-600/80 transition-transform"
+        className="fixed bottom-10 right-10 rounded-full w-15 h-15 bg-purple-600/30 flex items-center justify-center text-white text-2xl cursor-pointer hover:bg-pink-600/80 transition-transform"
         onClick={() => router.push("/projects/create")}
       >
         <MdOutlineCreate size={32} />
