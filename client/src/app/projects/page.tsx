@@ -3,8 +3,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { MdOutlineCreate } from "react-icons/md";
-
-import CardFeatures from "@/components/CardFeatures";
 import Spinner from "@/components/Spinner";
 import authFetch from "@/services/fetch";
 import { useProjects } from "@/contexts/ProjectsContext";
