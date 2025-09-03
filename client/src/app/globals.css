@@ -79,6 +79,15 @@ body {
   min-height: 100vh;
 }
 
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 /* h1 {
   line-height: 1.1;
 } */

@@ -100,11 +100,7 @@ export default function UserTable({
       </table>
 
       {showTaskForm && userId && (
-        <TaskForm
-          isShown={setShowTaskForm}
-          userId={userId}
-          taskState={taskState}
-        />
+        <TaskForm isShown={setShowTaskForm} userId={userId} />
       )}
       {userdata && (
         <UserdataModal userObject={{ userdata, setUserdata }} tasks={tasks} />
