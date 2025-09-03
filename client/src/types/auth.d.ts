@@ -14,8 +14,8 @@ type Credentials = {
 };
 
 type AuthContextType = {
-  isAuthenticated: boolean | null;
-  setIsAuthenticated: (val: boolean | null) => void;
+  isAuthenticated: boolean;
+  setIsAuthenticated: (val: boolean) => void;
   login: (credentials: Credentials) => Promise<any>;
   register: (credentials: Credentials) => Promise<any>;
   logout: () => Promise<void>;
