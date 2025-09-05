@@ -25,11 +25,7 @@ export default function ProjectsPage() {
           alertOnError("Couldn't Fetch Projects", { status: 500 });
           return;
         }
-        if (!projectResponse.ok) {
-          alertOnError("Couldn't Fetch Projects", projectResponse);
-          return;
-        }
-        if (projectResponse.data.length === 0) return;
+        if (!projectResponse.ok || projectResponse.data.length === 0) return;
 
         setProjects(projectResponse.data);
       } catch (error) {

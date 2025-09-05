@@ -64,10 +64,9 @@ export default function Page() {
     const maxSize = 5 * 1024 * 1024;
 
     if (file && file.size > maxSize) {
-      alertOnError(
-        "Big file size",
-        "File size exceeds 5MB. Please upload a smaller file."
-      );
+      alertOnError("Big file size", {
+        message: "File size exceeds 5MB. Please upload a smaller file.",
+      });
       return;
     }
 
