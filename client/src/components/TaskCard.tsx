@@ -1,14 +1,15 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import formatDate from "@/utils/formatDate";
 
 interface TaskCardProps {
-  tasks: any[];
+  tasks: Task[];
   currentUser: any;
 }
 
 export default function TaskCard({ tasks, currentUser }: TaskCardProps) {
+  const { projectId } = useParams();
   const router = useRouter();
 
   return (
@@ -39,7 +40,9 @@ export default function TaskCard({ tasks, currentUser }: TaskCardProps) {
             currentUser._id === task.assigned_to._id) && (
             <button
               onClick={() =>
-                router.push(`/projects/${task.project_id}/tasks/${task._id}`)
+                router.push(
+                  `/projects/${task.project.project_id}/tasks/${task._id}`
+                )
               }
               className="mt-3 bg-white px-2 py-1 rounded-md text-black font-bold"
             >

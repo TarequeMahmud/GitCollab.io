@@ -22,7 +22,7 @@ export default function Page() {
   const [loading, setLoading] = useState(true);
   const [project, setProject] = useState<any>(null);
   const [people, setPeople] = useState<any[]>([]);
-  const [tasks, setTasks] = useState<any[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [showUserForm, setShowUserForm] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [username, setUsername] = useState("");
@@ -50,6 +50,7 @@ export default function Page() {
 
         if (taskResponse?.status === 200 && taskResponse.data.length !== 0) {
           setTasks(taskResponse.data);
+          console.log("Tasks: ", taskResponse.data);
         } else {
           setTasks([]);
         }
