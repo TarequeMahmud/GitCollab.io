@@ -1,18 +1,15 @@
 "use client";
 
-import { useContext } from "react";
 import Account from "./Account";
 import HeroTitle from "./HeroTitle";
-import HomeContext from "@/contexts/HomeContext";
 import Logo from "./Logo";
 import Nav from "./Nav";
 import heroBg from "@/assets/images/hero/hero-background.jpg";
+import { usePathname } from "next/navigation";
 
 const HeroSection = () => {
-  const home = useContext(HomeContext);
-  /*
+  const home = usePathname() === "/";
 
-*/
   return (
     <div
       className={`w-full flex flex-col justify-center items-center border-b border-[#05155e] transition-all duration-300 ${

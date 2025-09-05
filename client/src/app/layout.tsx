@@ -10,7 +10,6 @@ import AlertBar from "@/components/AlertBar";
 
 // Contexts
 import { ProjectsProvider } from "@/contexts/ProjectsContext";
-import HomeContext, { HomeProvider } from "@/contexts/HomeContext";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { AlertProvider } from "@/contexts/AlertContext";
 import { ErrorProvider } from "@/contexts/ErrorContex";
@@ -53,16 +52,14 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <AlertProvider>
           <ErrorProvider>
             <AuthProvider>
-              <HomeProvider>
-                <ProjectsProvider>
-                  <div id="root">
-                    <HeroSection />
-                    <AlertBar />
-                    <div id="main-container">{children}</div>
-                    <FooterSection />
-                  </div>
-                </ProjectsProvider>
-              </HomeProvider>
+              <ProjectsProvider>
+                <div id="root">
+                  <HeroSection />
+                  <AlertBar />
+                  <div id="main-container">{children}</div>
+                  <FooterSection />
+                </div>
+              </ProjectsProvider>
             </AuthProvider>
           </ErrorProvider>
         </AlertProvider>
