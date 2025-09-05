@@ -9,7 +9,9 @@ import { AuthContext } from "@/contexts/AuthContext";
 import { useProjects } from "@/contexts/ProjectsContext";
 
 const Account = () => {
-  const { isAuthenticated, logout } = useContext(AuthContext);
+  const { isAuthenticated, logout } = useContext(
+    AuthContext
+  ) as AuthContextType;
   const { setProjects } = useProjects();
   const router = useRouter();
   const ref = useRef<HTMLDivElement>(null);
