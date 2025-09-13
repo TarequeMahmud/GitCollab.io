@@ -1,11 +1,11 @@
 import os
 from pathlib import Path
+from re import A
 
 from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
-
 
 SECRET_KEY = "django-insecure-+p^ad(j#_^k+srrc!p=bk&o&19474ni2sgq%hq*25ru&!o8foj"
 
@@ -21,11 +21,26 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
-    "users",
+    "drf_spectacular",
+    "rest_framework_simplejwt",
+    "accounts",
     "projects",
     "tasks",
 ]
 
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "SaaS Manager API",
+    "DESCRIPTION": "Multi-tenant SaaS Subscription Management API",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,  # Don't serve schema with Swagger UI request
+}
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
