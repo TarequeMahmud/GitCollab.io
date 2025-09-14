@@ -36,11 +36,13 @@ REST_FRAMEWORK = {
 }
 
 SPECTACULAR_SETTINGS = {
-    "TITLE": "SaaS Manager API",
-    "DESCRIPTION": "Multi-tenant SaaS Subscription Management API",
+    "TITLE": "GitCollab API",
+    "DESCRIPTION": "GitCollab is a project management and collaboration tool.",
     "VERSION": "1.0.0",
-    "SERVE_INCLUDE_SCHEMA": False,  # Don't serve schema with Swagger UI request
+    "SERVE_INCLUDE_SCHEMA": False,
 }
+
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -52,6 +54,9 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "gitcollab.urls"
+
+AUTH_USER_MODEL = "accounts.User"
+
 
 TEMPLATES = [
     {
