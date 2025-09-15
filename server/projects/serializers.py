@@ -3,7 +3,6 @@ from .models import Project
 
 
 class ProjectSerializer(serializers.Serializer):
-    id = serializers.IntegerField(read_only=True)
     title = serializers.CharField(max_length=255)
     description = serializers.CharField(
         allow_blank=True, allow_null=True, required=False

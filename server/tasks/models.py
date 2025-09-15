@@ -1,7 +1,8 @@
+from gitcollab.commons.models import TimeStampedUUIDModel
 from django.db import models
 
 
-class Task(models.Model):
+class Task(TimeStampedUUIDModel):
     STATUS_CHOICES = [
         ("to-do", "To Do"),
         ("in-progress", "In Progress"),

@@ -1,3 +1,4 @@
+from gitcollab.commons.models import TimeStampedUUIDModel
 from django.contrib.auth.models import (
     AbstractBaseUser,
     BaseUserManager,
@@ -22,7 +23,7 @@ class UserManager(BaseUserManager):
         return self.create_user(email, username, password, **extra_fields)
 
 
-class User(AbstractBaseUser, PermissionsMixin):
+class User(AbstractBaseUser, PermissionsMixin, TimeStampedUUIDModel):
     ROLE_CHOICES = [
         ("admin", "Admin"),
         ("manager", "Manager"),
