@@ -33,7 +33,7 @@ class User(AbstractBaseUser, PermissionsMixin, TimeStampedUUIDModel):
     name = models.CharField(max_length=255)
     username = models.CharField(max_length=150, unique=True)
     email = models.EmailField(unique=True)
-    about = models.TextField(blank=True, null=True)
+    about = models.TextField(blank=True, default="")
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
