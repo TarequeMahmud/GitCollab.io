@@ -1,18 +1,40 @@
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from drf_spectacular.utils import extend_schema
 
 from .models import Project
+from .permissions import ProjectRolePermission
 from .serializers import ProjectSerializer, ProjectContributorSerializer
 
 
 class ProjectsView(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
-    permission_classes = [IsAuthenticated]
+
+    def get_permissions(self):
+        if self.action in [
+            "update",
+            "destroy",
+        ]:
+            return [IsAuthenticated(), ProjectRolePermission(["admin"])]
+
+        elif self.action in ["partial_update", "add_contributor", "remove_contributor"]:
+            return [IsAuthenticated(), ProjectRolePermission(["admin", "manager"])]
+
+        elif self.action == "list":
+            return [
+                IsAdminUser(),
+            ]
+
+        elif self.action == "retrieve":
+            return [
+                IsAuthenticated(),
+                ProjectRolePermission(["admin", "manager", "member"]),
+            ]
+
+        return [IsAuthenticated()]
 
     @extend_schema(
         request=ProjectContributorSerializer,

@@ -4,7 +4,21 @@ from accounts.models import User
 from typing import cast, Dict, Any
 
 
+class ProjectContributorDetailSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source="user.username", read_only=True)
+    email = serializers.EmailField(source="user.email", read_only=True)
+
+    class Meta:
+        model = ProjectContributor
+        fields = ["id", "username", "email", "role", "added_at"]
+        read_only_fields = fields
+
+
 class ProjectSerializer(serializers.ModelSerializer):
+    contributors = ProjectContributorDetailSerializer(
+        source="project_contributors", many=True, read_only=True
+    )
+
     class Meta:
         model = Project
         fields = [
@@ -26,8 +40,7 @@ class ProjectSerializer(serializers.ModelSerializer):
                 "User must be authenticated to create a project"
             )
         project = Project.objects.create(**validated_data)
-        if user and user.is_authenticated:
-            ProjectContributor.objects.create(project=project, user=user, role="admin")
+        ProjectContributor.objects.create(project=project, user=user, role="admin")
         return project
 
 
