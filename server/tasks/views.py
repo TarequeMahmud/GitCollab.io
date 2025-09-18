@@ -1,24 +1,33 @@
 from rest_framework import generics, mixins
 from .models import Task
 from .serializers import TaskSerializer
+from .permissions import (
+    TaskAdminPermission,
+    TaskManagerPermission,
+    TaskAllRolesPermission,
+)
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 
-class TaskList(generics.ListAPIView):
+class TaskListCreate(generics.ListCreateAPIView):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
-    permission_classes = []
 
-
-class TaskCreate(generics.CreateAPIView):
-    queryset = Task.objects.all()
-    serializer_class = TaskSerializer
-    permission_classes = []
+    def get_permissions(self):
+        if self.request.method == "GET":
+            return [IsAdminUser()]
+        elif self.request.method == "POST":
+            return [IsAuthenticated(), TaskManagerPermission()]
+        return [IsAuthenticated()]
 
 
 class TaskDetail(generics.RetrieveAPIView):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
-    permission_classes = []
+    permission_classes = [
+        IsAuthenticated,
+        TaskAllRolesPermission,
+    ]
 
 
 class TaskUpdateAndDelete(
@@ -26,7 +35,10 @@ class TaskUpdateAndDelete(
 ):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
-    permission_classes = []
+    permission_classes = [
+        IsAuthenticated,
+        TaskAdminPermission,
+    ]
 
     def put(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
