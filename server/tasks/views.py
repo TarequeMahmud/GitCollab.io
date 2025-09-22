@@ -1,6 +1,6 @@
-from rest_framework import generics, mixins
-from .models import Task
-from .serializers import TaskSerializer
+from rest_framework import generics, mixins, viewsets
+from .models import Task, Submission, Review
+from .serializers import TaskSerializer, SubmissionSerializer, ReviewSerializer
 from .permissions import (
     TaskAdminPermission,
     TaskManagerPermission,
@@ -48,3 +48,27 @@ class TaskUpdateAndDelete(
 
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
+
+
+class SubmitTaskViewSet(viewsets.ModelViewSet):
+    queryset = Submission.objects.all()
+    serializer_class = SubmissionSerializer
+    permission_classes = [
+        IsAuthenticated,
+        TaskAllRolesPermission,
+    ]
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+
+class ReviewSubmissionViewSet(viewsets.ModelViewSet):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+    permission_classes = [
+        IsAuthenticated,
+        TaskManagerPermission,
+    ]
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)

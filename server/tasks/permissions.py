@@ -24,7 +24,7 @@ class TaskRolePermission(BasePermission):
 
     def has_object_permission(self, request, view, obj):  # type: ignore[override]
         print("working on task permission")
-        project = obj.project
+        project = self._get_project_from_object(obj)
         print("project is:", project)
         if not project:
             return False
@@ -32,6 +32,19 @@ class TaskRolePermission(BasePermission):
         return ProjectContributor.objects.filter(
             project=project, user=request.user, role__in=self.allowed_roles
         ).exists()
+
+    def _get_project_from_object(self, obj):
+        if hasattr(obj, "project"):
+            return obj.project
+        elif hasattr(obj, "task") and hasattr(obj.task, "project"):
+            return obj.task.project
+        elif (
+            hasattr(obj, "submission")
+            and hasattr(obj.submission, "task")
+            and hasattr(obj.submission.task, "project")
+        ):
+            return obj.submission.task.project
+        return None
 
 
 class TaskAdminPermission(TaskRolePermission):

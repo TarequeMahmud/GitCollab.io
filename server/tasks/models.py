@@ -26,3 +26,23 @@ class Task(TimeStampedUUIDModel):
     deadline = models.DateTimeField()
     status = models.CharField(max_length=20, choices=STATUS_CHOICES)
     priority = models.CharField(max_length=20, choices=PRIORITY_CHOICES)
+
+
+class Submission(TimeStampedUUIDModel):
+    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name="submissions")
+    submitted_by = models.ForeignKey(
+        "accounts.User", on_delete=models.CASCADE, related_name="submissions"
+    )
+    submission_file = models.FileField(upload_to="task_submissions/")
+    comments = models.TextField(blank=True, null=True)
+
+
+class Review(TimeStampedUUIDModel):
+    submission = models.ForeignKey(
+        Submission, on_delete=models.CASCADE, related_name="reviews"
+    )
+    reviewed_by = models.ForeignKey(
+        "accounts.User", on_delete=models.CASCADE, related_name="reviews"
+    )
+    feedback = models.TextField()
+    approved = models.BooleanField(default=False)
