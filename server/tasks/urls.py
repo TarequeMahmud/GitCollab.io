@@ -4,19 +4,19 @@ from .views import SubmitTaskViewSet, ReviewSubmissionViewSet
 
 urlpatterns = [
     path("tasks/", views.TaskListCreate.as_view(), name="task-list-create"),
-    path("tasks/<int:pk>/", views.TaskDetail.as_view(), name="task-detail"),
+    path("tasks/<uuid:pk>/", views.TaskDetail.as_view(), name="task-detail"),
     path(
-        "tasks/<int:pk>/",
+        "tasks/<uuid:pk>/",
         views.TaskUpdateAndDelete.as_view(),
         name="task-update-delete",
     ),
     path(
-        "tasks/<int:pk>/submissions/",
+        "tasks/<uuid:pk>/submissions/",
         SubmitTaskViewSet.as_view({"post": "create", "put": "update"}),
         name="submit-task",
     ),
     path(
-        "tasks/<int:pk>/reviews/",
+        "tasks/<uuid:pk>/reviews/",
         ReviewSubmissionViewSet.as_view({"post": "create", "put": "update"}),
         name="review-submission",
     ),
