@@ -7,6 +7,7 @@ from drf_spectacular.utils import extend_schema
 from .models import Project
 from .permissions import ProjectRolePermission
 from .serializers import ProjectSerializer, ProjectContributorSerializer
+from tasks.serializers import TaskSerializer
 
 
 class ProjectsView(viewsets.ModelViewSet):
@@ -20,7 +21,12 @@ class ProjectsView(viewsets.ModelViewSet):
         ]:
             return [IsAuthenticated(), ProjectRolePermission(["admin"])]
 
-        elif self.action in ["partial_update", "add_contributor", "remove_contributor"]:
+        elif self.action in [
+            "partial_update",
+            "add_contributor",
+            "remove_contributor",
+            "get_tasks",
+        ]:
             return [IsAuthenticated(), ProjectRolePermission(["admin", "manager"])]
 
         elif self.action == "list":
@@ -35,6 +41,13 @@ class ProjectsView(viewsets.ModelViewSet):
             ]
 
         return [IsAuthenticated()]
+
+    @action(detail=True, methods=["get"], url_path="get-tasks")
+    def get_tasks(self, request, pk=None):
+        project = self.get_object()
+        tasks = project.tasks.all()
+        serializer = TaskSerializer(tasks, many=True)
+        return Response(serializer.data)
 
     @extend_schema(
         request=ProjectContributorSerializer,
