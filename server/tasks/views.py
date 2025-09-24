@@ -53,10 +53,7 @@ class TaskUpdateAndDelete(
 class SubmitTaskViewSet(viewsets.ModelViewSet):
     queryset = Submission.objects.all()
     serializer_class = SubmissionSerializer
-    permission_classes = [
-        IsAuthenticated,
-        TaskAllRolesPermission,
-    ]
+    permission_classes = [IsAuthenticated]
 
     def put(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
@@ -65,10 +62,7 @@ class SubmitTaskViewSet(viewsets.ModelViewSet):
 class ReviewSubmissionViewSet(viewsets.ModelViewSet):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
-    permission_classes = [
-        IsAuthenticated,
-        TaskManagerPermission,
-    ]
+    permission_classes = [IsAuthenticated]
 
     def put(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)

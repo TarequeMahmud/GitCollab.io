@@ -33,16 +33,26 @@ class Submission(TimeStampedUUIDModel):
     submitted_by = models.ForeignKey(
         "accounts.User", on_delete=models.CASCADE, related_name="submissions"
     )
-    submission_file = models.FileField(upload_to="task_submissions/")
+    submission_file = models.FileField(
+        upload_to="task_submissions/", blank=True, null=True
+    )
     comments = models.TextField(blank=True, null=True)
 
 
 class Review(TimeStampedUUIDModel):
-    submission = models.ForeignKey(
-        Submission, on_delete=models.CASCADE, related_name="reviews"
+    REVIEW_STATUS = [
+        ("approved", "Approved"),
+        ("rejected", "Rejected"),
+        ("needs_changes", "Needs Changes"),
+        ("pending", "Pending"),
+    ]
+    task = models.ForeignKey(
+        Task, on_delete=models.CASCADE, related_name="reviews", null=True, blank=True
     )
     reviewed_by = models.ForeignKey(
         "accounts.User", on_delete=models.CASCADE, related_name="reviews"
     )
     feedback = models.TextField()
-    approved = models.BooleanField(default=False)
+    review_status = models.CharField(
+        max_length=20, choices=REVIEW_STATUS, default="pending"
+    )

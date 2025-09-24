@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Task, Submission, Review
-from projects.models import Project
+from projects.models import Project, ProjectContributor
 from accounts.models import User
 
 
@@ -47,35 +47,51 @@ class TaskSerializer(serializers.ModelSerializer):
 class SubmissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Submission
-        fields = "__all__"
-        read_only_fields = ["id", "created_at", "updated_at"]
+        fields = [
+            "submission_file",
+            "comments",
+            "task",
+            "submitted_by",
+            "id",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = ["id", "created_at", "updated_at", "task", "submitted_by"]
+
+    def _get_task_from_url(self):
+        """Extract task instance from URL kwargs"""
+        request = self.context.get("request")
+        task_id = (
+            request.parser_context.get("kwargs", {}).get("pk") if request else None
+        )
+        if not task_id:
+            raise serializers.ValidationError({"task": "Task ID not found in URL"})
+        try:
+            return Task.objects.get(id=task_id)
+        except Task.DoesNotExist:
+            raise serializers.ValidationError({"task": "Task not found"})
 
     def validate(self, attrs):
-        task = attrs.get("task")
-        submitted_by = attrs.get("submitted_by")
+        request = self.context.get("request")
+        task = self._get_task_from_url()
 
-        if not task or not submitted_by:
-            raise serializers.ValidationError(
-                {"detail": "Task and Submitted By fields are required"}
-            )
-        if task.assignee != submitted_by:
-            raise serializers.ValidationError(
-                {"detail": "Only the assignee can submit the task"}
-            )
-
-        assigneeObj = User.objects.get(id=task.assignee.id)
-        if not assigneeObj:
-            raise serializers.ValidationError({"detail": "Assignee user not found"})
-
-        taskObj = Task.objects.get(id=task.id)
-        if not taskObj:
-            raise serializers.ValidationError({"detail": "Task not found"})
-
-        if taskObj.status == "completed":
+        if task.status == "completed":
             raise serializers.ValidationError(
                 {"detail": "Cannot submit a task that is already completed"}
             )
 
+        if not request or not request.user.is_authenticated:
+            raise serializers.ValidationError(
+                {"detail": "User must be authenticated to submit a task"}
+            )
+
+        if task.assignee != request.user:
+            raise serializers.ValidationError(
+                {"detail": "Only the assignee can submit the task"}
+            )
+
+        attrs["task"] = task
+        attrs["submitted_by"] = request.user
         return attrs
 
 
@@ -83,23 +99,45 @@ class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
         fields = "__all__"
-        read_only_fields = ["id", "created_at", "updated_at"]
+        read_only_fields = ["id", "created_at", "updated_at", "reviewed_by", "task"]
+
+    def _get_task_from_url(self):
+        """Extract task instance from URL kwargs"""
+        request = self.context.get("request")
+        task_id = (
+            request.parser_context.get("kwargs", {}).get("pk") if request else None
+        )
+        if not task_id:
+            raise serializers.ValidationError({"task": "Task ID not found in URL"})
+        try:
+            return Task.objects.select_related("project").get(id=task_id)
+        except Task.DoesNotExist:
+            raise serializers.ValidationError({"task": "Task not found"})
 
     def validate(self, attrs):
-        submission = attrs.get("submission")
-        reviewed_by = attrs.get("reviewed_by")
-
-        if not submission or not reviewed_by:
+        request = self.context.get("request")
+        if not request or not request.user.is_authenticated:
             raise serializers.ValidationError(
-                {"detail": "Submission and Reviewed By fields are required"}
+                {"detail": "User must be authenticated to review a task"}
             )
 
-        submissionObj = Submission.objects.get(id=submission.id)
-        if not submissionObj:
-            raise serializers.ValidationError({"detail": "Submission not found"})
+        task = self._get_task_from_url()
+        project = task.project
+        user = request.user
 
-        taskObj = Task.objects.get(id=submissionObj.task.id)
-        if not taskObj:
-            raise serializers.ValidationError({"detail": "Task not found"})
+        # Check if user is a project admin or manager
+        is_allowed = ProjectContributor.objects.filter(
+            project=project,
+            user=user,
+            role="admin",
+        ).exists()
 
+        if not is_allowed:
+            raise serializers.ValidationError(
+                {"detail": "Only project admins can review tasks"}
+            )
+
+        # Inject task + reviewer into validated data
+        attrs["task"] = task
+        attrs["reviewed_by"] = user
         return attrs
