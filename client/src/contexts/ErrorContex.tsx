@@ -9,7 +9,7 @@ type ErrorObject = {
   [key: string]: any;
 };
 
-type AlertOnError = (name: string, errorObject: ErrorObject) => void;
+type AlertOnError = (name: string, errorObject?: ErrorObject) => void;
 
 const ErrorContext = createContext<AlertOnError | undefined>(undefined);
 

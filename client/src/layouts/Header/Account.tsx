@@ -1,17 +1,15 @@
 "use client";
 
-import { useState, useRef, useContext } from "react";
+import { useState, useRef } from "react";
 import Image from "next/image";
 import icon from "@/assets/images/hero/user-regular.svg";
 import useHideOutsideClick from "@/hooks/useHideOutsideClick";
 import { useRouter } from "next/navigation";
-import { AuthContext } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { useProjects } from "@/contexts/ProjectsContext";
 
 const Account = () => {
-  const { isAuthenticated, logout } = useContext(
-    AuthContext
-  ) as AuthContextType;
+  const { isAuthenticated, logout } = useAuth();
   const { setProjects } = useProjects();
   const router = useRouter();
   const ref = useRef<HTMLDivElement>(null);

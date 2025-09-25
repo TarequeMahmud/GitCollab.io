@@ -19,32 +19,31 @@ export default function SignInForm({
   const alertOnError = useError();
   const router = useRouter();
 
-  const handleSignin = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    const email = formData.get("email") as string;
+    const username = formData.get("username") as string;
     const password = formData.get("password") as string;
+
+    if (!username || !password) {
+      alertOnError("Please enter both username and password.");
+      return;
+    }
 
     try {
       setLoading(true);
-      if (!email || !password) return;
 
-      const loginResponse = await login({ email, password });
-      if (!loginResponse) {
-        alertOnError("Login Failed", { status: 500 });
-        return;
-      }
-      if (!loginResponse.ok) {
-        alertOnError("Login Failed", {
-          ...loginResponse,
-          message: "Invalid login credentials.",
-        });
+      const success = await login({ username, password });
+
+      if (!success) {
+        alertOnError("Login Failed", { message: "Invalid login credentials." });
         return;
       }
 
       router.replace("/projects");
     } catch (err) {
       console.error(err);
+      alertOnError("Login Failed", { message: "Something went wrong." });
     } finally {
       setLoading(false);
     }
@@ -55,18 +54,18 @@ export default function SignInForm({
       <h1 className="text-3xl font-bold text-black mb-6">Sign In</h1>
       <form
         className="flex flex-col justify-start items-center gap-6 w-full"
-        onSubmit={handleSignin}
+        onSubmit={handleLogin}
       >
         <div className="flex flex-col items-start w-full">
-          <label htmlFor="email" className="text-lg text-black mb-1">
-            Email:
+          <label htmlFor="username" className="text-lg text-black mb-1">
+            Username:
           </label>
           <input
             className="w-full h-12 px-3 rounded-lg bg-[#45705a] text-white text-lg placeholder-white/40 focus:outline-none"
-            type="email"
-            name="email"
-            id="email"
-            placeholder="example@gmail.com"
+            type="text"
+            name="username"
+            id="username"
+            placeholder="Enter your username"
             required
           />
         </div>

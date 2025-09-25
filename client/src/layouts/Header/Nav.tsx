@@ -1,14 +1,12 @@
 "use client";
-
-import { useContext } from "react";
 import { navbarItems } from "@/assets/data/navbar.json";
 
-import { AuthContext } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { useAlert } from "@/contexts/AlertContext";
 import Link from "next/link";
 
 const Nav = () => {
-  const { isAuthenticated } = useContext(AuthContext) as AuthContextType;
+  const { isAuthenticated } = useAuth();
   const { showAlert } = useAlert();
 
   return (
@@ -20,7 +18,7 @@ const Nav = () => {
             className="m-0 list-none font-extrabold text-white cursor-pointer hover:text-[#04c289]"
           >
             <Link
-              href={isAuthenticated || item.name === "Home" ? item.link : "/"}
+              href={item.link}
               onClick={(e) => {
                 if (!isAuthenticated && item.name !== "Home") {
                   e.preventDefault();

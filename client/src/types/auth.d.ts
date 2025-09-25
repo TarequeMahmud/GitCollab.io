@@ -8,7 +8,7 @@ type AuthFetchResponse<T = any> = {
 };
 
 type Credentials = {
-  email: string;
+  username: string;
   password: string;
   [key: string]: any;
 };
