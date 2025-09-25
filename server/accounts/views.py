@@ -1,6 +1,7 @@
 from rest_framework import viewsets, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from tasks.models import Task, Submission
 from tasks.serializers import TaskSerializer, SubmissionSerializer
 from projects.models import Project
@@ -63,3 +64,33 @@ class MeViewSet(viewsets.ViewSet):
         submissions = Submission.objects.filter(submitted_by=request.user)
         serializer = SubmissionSerializer(submissions, many=True)
         return Response(serializer.data)
+
+
+class CookieTokenObtainPairView(TokenObtainPairView):
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+        if response.status_code == 200:
+            data = response.data
+            if data and "refresh" in data:
+                refresh = data.pop("refresh")
+                response.set_cookie(
+                    "refresh_token",
+                    refresh,
+                    httponly=True,
+                    secure=True,
+                    samesite="Strict",
+                    max_age=15 * 24 * 60 * 60,
+                )
+        return response
+
+
+class CookieTokenRefreshView(TokenRefreshView):
+    def post(self, request, *args, **kwargs):
+        refresh = request.COOKIES.get("refresh_token")
+        if refresh is None:
+            return Response({"detail": "No refresh token"}, status=401)
+
+        data = request.data.copy()  # type: ignore[attr-defined]
+        data["refresh"] = refresh
+        request._full_data = data  # Override the parsed data for this request
+        return super().post(request, *args, **kwargs)

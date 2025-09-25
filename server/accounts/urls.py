@@ -1,14 +1,18 @@
 from django.urls import path
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from .views import UsersView, MeViewSet
+from .views import (
+    UsersView,
+    MeViewSet,
+    CookieTokenObtainPairView,
+    CookieTokenRefreshView,
+)
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
 router.register(r"accounts", UsersView, basename="accounts")
 
 urlpatterns = router.urls + [
-    path("auth/login/", TokenObtainPairView.as_view(), name="auth-login"),
-    path("auth/refresh/", TokenRefreshView.as_view(), name="auth-refresh"),
+    path("auth/login/", CookieTokenObtainPairView.as_view(), name="auth-login"),
+    path("auth/refresh/", CookieTokenRefreshView.as_view(), name="auth-refresh"),
     path("accounts/me/tasks/", MeViewSet.as_view({"get": "tasks"}), name="me-tasks"),
     path(
         "accounts/me/projects/",
