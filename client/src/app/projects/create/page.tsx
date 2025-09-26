@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { useAlert } from "@/contexts/AlertContext";
 import { useAuth } from "@/contexts/AuthContext";
 import Spinner from "@/components/Spinner";
-import authFetch from "@/services/fetch";
 import Container from "@/components/Container";
 import { useProjects } from "@/contexts/ProjectsContext";
 
@@ -31,7 +30,7 @@ const inputContainerDivClasses = "flex flex-col my-10";
 export default function Page() {
   const [loading, setLoading] = useState(false);
   const { showAlert } = useAlert();
-  const { setIsAuthenticated } = useAuth();
+  const { fetchWithAuth } = useAuth();
   const { projects } = useProjects();
   const router = useRouter();
 
@@ -42,34 +41,34 @@ export default function Page() {
     const { title, day, month, year, description } = Object.fromEntries(
       formData.entries()
     ) as Record<string, string>;
-    const deadline = new Date(Number(year), Number(month), Number(day));
+    const formattedMonth = String(Number(month) + 1).padStart(2, "0");
+    const formattedDay = String(Number(day)).padStart(2, "0");
+    const deadline = `${year}-${formattedMonth}-${formattedDay}`;
     const formObject = { title, deadline, description };
 
     try {
       setLoading(true);
 
-      const response = await authFetch(
-        "/project/",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formObject),
-        },
-        setIsAuthenticated
-      );
+      const response = await fetchWithAuth("/projects/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formObject),
+      });
 
-      if (response?.status === 400) {
+      if (response.status === 400) {
         showAlert("Missing Fields", "Please insert required fields");
         return;
       }
 
-      if (response?.status === 201) {
+      if (response.status === 201) {
         showAlert(
           "Creation Success",
           "Your Project created successfully. Redirecting to projects page..."
         );
-        console.log("Response data was:" + response);
-        window.location.href = "/projects";
+
+        const projectData = await response.json();
+        projects.push(projectData);
+        router.push("/projects");
       }
     } catch (error) {
       console.error(error);

@@ -9,9 +9,10 @@ type Props = {
 
 const ProjectCard = ({ project }: Props) => {
   const router = useRouter();
-  const handleRedirect = (project: any) => {
-    router.push(`/projects/${project._id}`);
+  const handleRedirect = (project: Project) => {
+    router.push(`/projects/${project.id}`);
   };
+
   return (
     <div className="h-[400px] w-[450px] bg-white/70 rounded-[45px] border-2 border-[#ffffffb6] p-4 flex flex-col justify-start items-center shadow-[4px_4px_4px_rgba(0,0,0,0.5)]">
       <h2 className="text-black text-2xl font-bold">{project.title}</h2>

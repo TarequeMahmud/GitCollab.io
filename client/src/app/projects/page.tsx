@@ -4,13 +4,14 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { MdOutlineCreate } from "react-icons/md";
 import Spinner from "@/components/Spinner";
-import authFetch from "@/services/fetch";
 import { useProjects } from "@/contexts/ProjectsContext";
 import { useError } from "@/contexts/ErrorContex";
 import Container from "@/components/Container";
 import ProjectCard from "@/components/ProjectCard";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function ProjectsPage() {
+  const { fetchWithAuth } = useAuth();
   const { projects, setProjects } = useProjects();
   const alertOnError = useError();
   const [loading, setLoading] = useState(true);
@@ -19,15 +20,21 @@ export default function ProjectsPage() {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const projectResponse = await authFetch("/project", { method: "get" });
+        const projectResponse = await fetchWithAuth("/projects", {
+          method: "get",
+        });
 
         if (!projectResponse) {
           alertOnError("Couldn't Fetch Projects", { status: 500 });
           return;
         }
-        if (!projectResponse.ok || projectResponse.data.length === 0) return;
+        if (!projectResponse.ok) return;
 
-        setProjects(projectResponse.data);
+        const responseData = await projectResponse.json();
+
+        if (!responseData || responseData.length === 0) return;
+
+        setProjects(responseData);
       } catch (error) {
         console.error("There was an error: ", error);
         router.push("/");

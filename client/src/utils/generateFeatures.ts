@@ -2,18 +2,20 @@ import cardIcons from "@/assets/data/cardFeatures";
 import formatDate from "./formatDate";
 
 const generateFeatures = (data: Project): Feature[] => {
+  const admin = data.contributors.find((person) => person.role === "admin");
+
   const features: Feature[] = [
     {
       icon: cardIcons.admin,
-      info: data.people.find((person) => person.role === "admin")!.name,
+      info: admin ? admin.username : "No Admin",
     },
     {
       icon: cardIcons.total,
-      info: `${data.people.length} Collaborator/s`,
+      info: `${data.contributors.length} Collaborator/s`,
     },
     {
       icon: cardIcons.start,
-      info: formatDate(data.createdAt),
+      info: formatDate(data.created_at),
     },
     {
       icon: cardIcons.deadline,

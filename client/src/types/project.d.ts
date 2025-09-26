@@ -1,14 +1,18 @@
-type Person = {
+type Contributor = {
+  userId: number;
+  username: string;
+  email: string;
   role: string;
-  name: string;
+  added_at: string | Date;
 };
 
 type Project = {
   id: string;
   title: string;
   description: string;
-  people: Person[];
-  createdAt: string | Date;
+  contributors: Contributor[];
+  created_at: string | Date;
+  updated_at: string | Date;
   deadline: string | Date;
 };
 
