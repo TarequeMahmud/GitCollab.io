@@ -25,7 +25,7 @@ export default async function authFetch(
     console.warn("Access token expired. Refreshing...");
 
     const refreshRes = await fetch(
-      `${process.env.NEXT_PUBLIC_URL}/api/auth/refresh`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/refresh/`,
       {
         method: "POST",
         credentials: "include",
@@ -46,7 +46,7 @@ export default async function authFetch(
       }
     } else {
       console.error("Refresh token invalid/expired.");
-      throw new Error("Unauthorized -- please login again.");
+      throw new Error("Unauthorized - please login again.");
     }
   }
 
