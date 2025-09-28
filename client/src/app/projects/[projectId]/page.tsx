@@ -5,19 +5,20 @@ import { useParams, useRouter } from "next/navigation";
 import Spinner from "@/components/Spinner";
 import UserTable from "@/components/UserTable";
 import TaskCard from "@/components/TaskCard";
-import authFetch from "@/services/fetch";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAlert } from "@/contexts/AlertContext";
-import editIcon from "@/assets/icons/edit-text.png";
-import addIcon from "@/assets/icons/add.png";
 import Image from "next/image";
 import Container from "@/components/Container";
+import { useProjects } from "@/contexts/ProjectsContext";
+import editIcon from "@/assets/icons/edit-text.png";
+import addIcon from "@/assets/icons/add.png";
 
 export default function Page() {
   const { projectId } = useParams();
   const router = useRouter();
-  const { setIsAuthenticated } = useAuth();
+  const { fetchWithAuth } = useAuth();
   const { showAlert } = useAlert();
+  const { projects } = useProjects();
 
   const [loading, setLoading] = useState(true);
   const [project, setProject] = useState<any>(null);
@@ -28,74 +29,86 @@ export default function Page() {
   const [username, setUsername] = useState("");
   const [role, setRole] = useState("manager");
 
-  //-- Fetch project & tasks
+  // --- Load project either from context or backend ---
   useEffect(() => {
     if (!projectId) return;
 
+    // const existingProject = projects.find(
+    //   (proj) => String(proj.id) === String(projectId)
+    // );
+
+    // if (existingProject) {
+    //   setProject(existingProject);
+    //   setPeople(existingProject.contributors || []);
+    //   setLoading(false);
+    //   return;
+    // }
+
     const fetchProject = async () => {
       try {
-        const [projectResponse, taskResponse] = await Promise.all([
-          authFetch(`/project/${projectId}`, { method: "GET" }),
-          authFetch(`/project/${projectId}/task`, { method: "GET" }),
+        const [userRes, projectRes, taskRes] = await Promise.all([
+          fetchWithAuth("/accounts/me"),
+          fetchWithAuth(`/projects/${projectId}`),
+          fetchWithAuth(`/projects/${projectId}/get-tasks`),
         ]);
 
-        if (!projectResponse?.data) {
-          router.push("/");
+        if (!projectRes.ok) {
+          router.replace("/");
           return;
         }
 
-        setProject(projectResponse.data);
-        setPeople(projectResponse.data.people);
-        setCurrentUser(projectResponse.data.current_user);
+        const userData = userRes.ok ? await userRes.json() : null;
+        const projectData = await projectRes.json();
+        const taskData = taskRes.ok ? await taskRes.json() : [];
 
-        if (taskResponse?.status === 200 && taskResponse.data.length !== 0) {
-          setTasks(taskResponse.data);
-          console.log("Tasks: ", taskResponse.data);
-        } else {
-          setTasks([]);
+        if (!projectData) {
+          router.replace("/");
+          return;
         }
-      } catch (error) {
-        console.error("Error fetching project: ", error);
-        router.push("/");
+        console.log("Fetched project data:", projectData);
+        console.log("Fetched task data:", taskData);
+        console.log("Fetched user data:", userData);
+
+        setCurrentUser(projectData.contributors?.find((u: Contributor) => u.user === userData.id));
+        setProject(projectData);
+        setPeople(projectData.contributors || []);
+        setTasks(taskData);
+      } catch (err) {
+        console.error("Error fetching project:", err);
+        router.replace("/");
       } finally {
         setLoading(false);
       }
     };
 
     fetchProject();
-  }, [projectId]);
+  }, [projectId, projects, fetchWithAuth, router]);
 
-  //-- Add user to project
+  // --- Add user to project ---
   const handleAddUser = async () => {
-    if (!username) return;
+    if (!username.trim()) return;
 
     try {
-      const response = await authFetch(
-        `/project/${projectId}/users`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username, role }),
-        },
-        setIsAuthenticated
-      );
+      const response = await fetchWithAuth(`/project/${projectId}/users`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, role }),
+      });
 
-      if (!response) {
-        showAlert("Error", "Server seems not to be working.");
-        return;
-      }
-      if (response.status === 404) {
-        showAlert("Not Found", "User not found.");
-        return;
-      }
-      if (response.status === 409) {
-        showAlert("Already Exists", "User already exists in project.");
+      if (!response.ok) {
+        if (response.status === 404)
+          showAlert("Not Found", "User not found.");
+        else if (response.status === 409)
+          showAlert("Already Exists", "User already exists in project.");
+        else showAlert("Error", "Failed to add user.");
         return;
       }
 
-      setPeople(response.data.people);
-    } catch (error) {
-      console.error(error);
+      const updatedProject = await response.json();
+      setPeople(updatedProject.contributors || []);
+    } catch (err) {
+      console.error("Add user failed:", err);
+      showAlert("Error", "Server error.");
     } finally {
       setShowUserForm(false);
       setUsername("");
@@ -107,24 +120,22 @@ export default function Page() {
   if (!project) return <h1>Project not found</h1>;
 
   return (
-    <Container
-      title={project ? project.title : "Project Details"}
-      content={true}
-    >
+    <Container title={project.title} content>
       <div className="w-4/5 mx-auto p-10 mb-6 rounded-lg text-black">
-        <div className="bg-white rounded-md px-5 py-3 my-2.5 mx-auto">
+        {/* Project Description */}
+        <div className="bg-white rounded-md px-5 py-3 my-2.5">
           <p className="text-start">{project.description}</p>
           {currentUser?.role === "admin" && (
-            <button className="flex items-center gap-2 bg-[#04c977]  px-3 py-1 mt-3 rounded-sm">
+            <button className="flex items-center gap-2 bg-[#04c977] px-3 py-1 mt-3 rounded-sm">
               <Image src={editIcon} alt="edit icon" width={20} height={20} />
               <p className="font-bold">Edit</p>
             </button>
           )}
         </div>
 
-        {/* Collaborators Table */}
+        {/* Collaborators */}
         <div className="bg-white rounded-md p-8 pt-4 mb-6">
-          <h3 className="font-bold text-xl mb-6">Collaborators Table</h3>
+          <h3 className="font-bold text-xl mb-6">Collaborators</h3>
           <UserTable
             currentUser={currentUser}
             projectUserData={people}
@@ -155,7 +166,7 @@ export default function Page() {
                     onChange={(e) => setRole(e.target.value)}
                     className="px-2 py-1 rounded-md border border-gray-300"
                   >
-                    <option value="Manager">Manager</option>
+                    <option value="manager">Manager</option>
                     <option value="member">Member</option>
                   </select>
                   <button
@@ -170,7 +181,7 @@ export default function Page() {
           )}
         </div>
 
-        {/* Tasks Section */}
+        {/* Tasks */}
         <div className="bg-white rounded-md p-4">
           <h3 className="font-bold text-xl mb-2">Total Tasks Assigned</h3>
           <TaskCard tasks={tasks} currentUser={currentUser} />

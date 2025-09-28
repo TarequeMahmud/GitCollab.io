@@ -1,5 +1,5 @@
 type Contributor = {
-  userId: number;
+  user: number;
   username: string;
   email: string;
   role: string;
