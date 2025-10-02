@@ -20,10 +20,10 @@ export default function Page() {
 
   const [loading, setLoading] = useState(true);
   const [project, setProject] = useState<Project | null>(null);
-  const [people, setPeople] = useState<any[]>([]);
+  const [people, setPeople] = useState<Contributor[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [showUserForm, setShowUserForm] = useState(false);
-  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [currentUser, setCurrentUser] = useState<Contributor | null>(null);
   const [username, setUsername] = useState("");
   const [role, setRole] = useState("manager");
 

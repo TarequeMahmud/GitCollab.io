@@ -27,37 +27,24 @@ type ProjectsContextType = {
   setProjects: React.Dispatch<React.SetStateAction<Project[]>>;
 };
 
-type Task = {
-  _id: string;
+type CreateTask = {
+  project: string;
+  assignee: string;
   title: string;
   description: string;
-  deadline: string; // ISO date string
-  status: "pending" | "in-progress" | "completed" | "to-do"; // adjust as needed
-  priority: "low" | "medium" | "high"; // adjust if you support more
-  comments: any[]; // refine if you have a comment type
-  __v: number;
+  deadline: string;
+  status: "pending" | "in-progress" | "completed" | "to-do";
+  priority: "low" | "medium" | "high";
+};
 
-  project: {
-    project_id: string;
-    project_title: string;
-  };
-
-  assignee: {
+type Task = CreateTask & {
+  id: string;
+  assignee_details: {
     id: string;
-    name: string;
     username: string;
+    name: string;
+    email: string;
   };
-
-  submission: {
-    text: string | null;
-    file_name: string | null;
-    file_path: string | null;
-    submitted_at: string | null; // ISO date string or null
-  };
-
-  review: {
-    reviewed_by: string | null;
-    review_status: "pending" | "approved" | "rejected"; // extend if needed
-    feedback: string | null;
-  };
+  created_at: string;
+  updated_at: string;
 };

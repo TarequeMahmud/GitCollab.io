@@ -23,7 +23,7 @@ export default function TaskCard({ tasks, currentUser }: TaskCardProps) {
           <hr className="w-4/5 my-2 border-[#727272]" />
           <div className="w-4/5 flex flex-col items-start gap-1">
             <p>
-              <strong>Assignee:</strong> {task.assigned_to.name}
+              <strong>Assignee:</strong> {task.assignee_details.name}
             </p>
             <p>
               <strong>Status:</strong> {task.status}
@@ -37,18 +37,18 @@ export default function TaskCard({ tasks, currentUser }: TaskCardProps) {
           </div>
           <hr className="w-4/5 my-2 border-[#727272]" />
           {(currentUser.role === "admin" ||
-            currentUser._id === task.assigned_to._id) && (
-            <button
-              onClick={() =>
-                router.push(
-                  `/projects/${task.project.project_id}/tasks/${task._id}`
-                )
-              }
-              className="mt-3 bg-white px-2 py-1 rounded-md text-black font-bold"
-            >
-              Show Task
-            </button>
-          )}
+            currentUser._id === task.assignee_details.id) && (
+              <button
+                onClick={() =>
+                  router.push(
+                    `/projects/${projectId}/tasks/${task.id}`
+                  )
+                }
+                className="mt-3 bg-white px-2 py-1 rounded-md text-black font-bold"
+              >
+                Show Task
+              </button>
+            )}
         </div>
       ))}
     </div>

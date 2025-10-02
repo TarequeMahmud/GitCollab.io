@@ -1,24 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import { useParams } from "next/navigation";
 import { IoMdCloseCircle } from "react-icons/io";
-
 import { useAlert } from "@/contexts/AlertContext";
+import { useParams } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import Spinner from "@/components/Spinner";
-import authFetch from "@/services/fetch";
 import Container from "./Container";
 
-type TaskState = {
-  tasks: any[];
-  setTasks: React.Dispatch<React.SetStateAction<any[]>>;
-};
+
 
 type TaskFormProps = {
   isShown: (value: boolean) => void;
   userId: string;
-  // taskState: TaskState;
+  setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
 };
 
 const months = [
@@ -132,12 +127,11 @@ const TextareaField = ({
   </div>
 );
 
-const TaskForm = ({ isShown, userId }: TaskFormProps) => {
+const TaskForm = ({ isShown, userId, setTasks }: TaskFormProps) => {
+  const { projectId } = useParams();
   const [loading, setLoading] = useState(false);
   const { showAlert } = useAlert();
-  const { projectId } = useParams() as { projectId: string };
-  // const { tasks, setTasks } = taskState;
-  const { setIsAuthenticated } = useAuth();
+  const { fetchWithAuth } = useAuth();
 
   const handleClose = () => isShown(false);
 
@@ -152,22 +146,22 @@ const TaskForm = ({ isShown, userId }: TaskFormProps) => {
       title,
       status,
       priority,
-      user_id: userId,
+      project: projectId,
+      assignee: userId,
       deadline,
       description,
     };
 
     try {
       setLoading(true);
-      const createTaskResponse = (await authFetch(
-        `/project/${projectId}/task`,
+      const createTaskResponse = await fetchWithAuth(
+        '/tasks/',
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(formObject),
-        },
-        setIsAuthenticated
-      )) as AuthFetchResponse;
+        }
+      )
 
       console.log(createTaskResponse);
 
@@ -181,6 +175,9 @@ const TaskForm = ({ isShown, userId }: TaskFormProps) => {
           "Creation Success",
           "Task assigned successfully. You will show the task card following the collaborators' table."
         );
+
+        const newTask: Task = await createTaskResponse.json();
+        setTasks((prev) => [...prev, newTask]);
 
         isShown(false);
       }

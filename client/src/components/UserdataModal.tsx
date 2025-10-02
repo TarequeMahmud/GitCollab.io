@@ -26,7 +26,7 @@ const UserdataModal = ({ userObject, tasks }: UserdataModalProps) => {
   const [loading, setLoading] = useState(false);
 
   const taskForUser = tasks.filter(
-    (task) => task.assignee.id === userdata.user
+    (task) => task.assignee_details.id === userdata.user
   );
 
   const countByStatus = (status: string) =>

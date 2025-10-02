@@ -14,8 +14,8 @@ const tdClass = "text-left px-2 py-1 border-2 border-[rgb(2,69,133)] bg-white";
 
 interface UserTableProps {
   projectUserData: Contributor[];
-  currentUser: Contributor;
-  taskState: { tasks: Task[]; setTasks: (tasks: Task[]) => void };
+  currentUser: Contributor | null;
+  taskState: { tasks: Task[]; setTasks: React.Dispatch<React.SetStateAction<Task[]>> };
   peopleState: (people: Contributor[]) => void;
 }
 
@@ -62,7 +62,7 @@ export default function UserTable({
           <tr>
             <th className={thClass}>Person</th>
             <th className={thClass}>Role</th>
-            {currentUser.role === "admin" && (
+            {currentUser!.role === "admin" && (
               <th className={thClass}>Operation</th>
             )}
           </tr>
@@ -74,7 +74,7 @@ export default function UserTable({
               <td className={tdClass}>{userData.name}</td>
               <td className={tdClass}>{userData.role}</td>
 
-              {currentUser.role === "admin" && (
+              {currentUser!.role === "admin" && (
                 <td className={tdClass}>
                   <div className="flex flex-row justify-around items-center gap-2">
                     {userData.role !== "admin" && (
@@ -105,7 +105,7 @@ export default function UserTable({
       </table>
 
       {showTaskForm && userId && (
-        <TaskForm isShown={setShowTaskForm} userId={userId} />
+        <TaskForm isShown={setShowTaskForm} setTasks={taskState.setTasks} userId={userId} />
       )}
       {userdata && (
         <UserdataModal userObject={{ userdata, setUserdata }} tasks={tasks} />
