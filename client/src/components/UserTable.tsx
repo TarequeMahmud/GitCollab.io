@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { useParams } from "next/navigation";
 import { MdAssignmentAdd, MdInfo, MdRemoveCircle } from "react-icons/md";
 import TaskForm from "./TaskForm";
+import { useAuth } from "@/contexts/AuthContext";
 import { useAlert } from "@/contexts/AlertContext";
 import UserdataModal from "./UserdataModal";
 
@@ -11,10 +13,10 @@ const thClass =
 const tdClass = "text-left px-2 py-1 border-2 border-[rgb(2,69,133)] bg-white";
 
 interface UserTableProps {
-  projectUserData: any[];
-  currentUser: any;
-  taskState: { tasks: any[]; setTasks: (tasks: any[]) => void };
-  peopleState: (people: any[]) => void;
+  projectUserData: Contributor[];
+  currentUser: Contributor;
+  taskState: { tasks: Task[]; setTasks: (tasks: Task[]) => void };
+  peopleState: (people: Contributor[]) => void;
 }
 
 export default function UserTable({
@@ -24,9 +26,11 @@ export default function UserTable({
   peopleState,
 }: UserTableProps) {
   const { tasks } = taskState;
+  const { projectId } = useParams();
+  const { fetchWithAuth } = useAuth();
   const [showTaskForm, setShowTaskForm] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
-  const [userdata, setUserdata] = useState<any>(null);
+  const [userdata, setUserdata] = useState<Contributor | null>(null);
   const { showAlert } = useAlert();
 
   const handleAssignTask = (userId: string) => {
@@ -36,7 +40,7 @@ export default function UserTable({
 
   const handleRemovePerson = async (userId: string) => {
     try {
-      const deleteResponse = await fetch(`/project/${userId}`, {
+      const deleteResponse = await fetchWithAuth(`/projects/${projectId}/remove-contributor/${userId}/`, {
         method: "DELETE",
       }).then((res) => res.json());
 
@@ -44,7 +48,8 @@ export default function UserTable({
         showAlert("Error", "Failed to delete person.");
         return;
       }
-      peopleState(deleteResponse.data);
+
+      peopleState(deleteResponse);
     } catch (error) {
       console.log("Error deleting user:", error);
     }
@@ -81,13 +86,13 @@ export default function UserTable({
                     )}
                     <MdAssignmentAdd
                       title="Assign a task to him."
-                      onClick={() => handleAssignTask(userData.user_id)}
+                      onClick={() => handleAssignTask(userData.user)}
                       className="text-[#08b86f] cursor-pointer"
                     />
                     {userData.role !== "admin" && (
                       <MdRemoveCircle
                         title="Remove from the project."
-                        onClick={() => handleRemovePerson(userData.user_id)}
+                        onClick={() => handleRemovePerson(userData.user)}
                         className="text-[#e41010] cursor-pointer"
                       />
                     )}

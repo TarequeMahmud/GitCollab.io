@@ -3,10 +3,11 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from drf_spectacular.utils import extend_schema
-
-from .models import Project
+from django.shortcuts import get_object_or_404
+from accounts.models import User
+from .models import Project, ProjectContributor
 from .permissions import ProjectRolePermission
-from .serializers import ProjectSerializer, ProjectContributorSerializer
+from .serializers import ProjectSerializer, ProjectContributorSerializer, ProjectContributorDetailSerializer
 from tasks.serializers import TaskSerializer
 
 
@@ -64,15 +65,25 @@ class ProjectsView(viewsets.ModelViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @extend_schema(
-        request=ProjectContributorSerializer,
-        responses={200: ProjectContributorSerializer},
-        description="Remove a contributor from the project by username.",
+        request=None,
+        responses={200: ProjectContributorDetailSerializer(many=True)},
+        description="Remove a contributor from the project by user ID (UUID).",
     )
-    @action(detail=True, methods=["post"], url_path="remove-contributor")
-    def remove_contributor(self, request, pk=None):
+    @action(
+        detail=True,
+        methods=["delete"],
+        url_path=r"remove-contributor/(?P<user_id>[0-9a-f-]+)",
+    )
+    def remove_contributor(self, request, pk=None, user_id=None):
         project = self.get_object()
-        serializer = ProjectContributorSerializer(data=request.data)
-        if serializer.is_valid():
-            result = serializer.modify_contributors(project, action="remove")
-            return Response(result, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        user = get_object_or_404(User, id=user_id)
+
+        # Remove contributor
+        ProjectContributor.objects.filter(project=project, user=user).delete()
+
+        contributors = ProjectContributor.objects.filter(
+            project=project
+        ).select_related("user")
+
+        serializer = ProjectContributorDetailSerializer(contributors, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

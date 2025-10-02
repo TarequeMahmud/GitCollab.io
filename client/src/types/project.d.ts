@@ -1,5 +1,6 @@
 type Contributor = {
-  user: number;
+  user: string;
+  name: string;
   username: string;
   email: string;
   role: string;
@@ -41,8 +42,8 @@ type Task = {
     project_title: string;
   };
 
-  assigned_to: {
-    _id: string;
+  assignee: {
+    id: string;
     name: string;
     username: string;
   };

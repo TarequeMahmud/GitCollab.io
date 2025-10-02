@@ -1,15 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import authFetch from "@/services/fetch";
+import { useAuth } from "@/contexts/AuthContext";
 import Container from "./Container";
 
 type UserdataModalProps = {
   userObject: {
-    userdata: { user_id: string; role: string };
+    userdata: Contributor;
     setUserdata: (value: null) => void;
   };
-  tasks: Array<{ assigned_to: string; status: string }>;
+  tasks: Task[];
 };
 
 type UserInfo = {
@@ -20,27 +20,28 @@ type UserInfo = {
 };
 
 const UserdataModal = ({ userObject, tasks }: UserdataModalProps) => {
+  const { fetchWithAuth } = useAuth();
   const { userdata, setUserdata } = userObject;
   const [userinfo, setUserinfo] = useState<UserInfo | null>(null);
   const [loading, setLoading] = useState(false);
 
   const taskForUser = tasks.filter(
-    (task) => task.assigned_to === userdata.user_id
+    (task) => task.assignee.id === userdata.user
   );
 
   const countByStatus = (status: string) =>
     taskForUser.filter((t) => t.status === status).length;
 
   useEffect(() => {
-    if (!userdata?.user_id) return;
+    if (!userdata?.user) return;
 
     const fetchUser = async () => {
       setLoading(true);
       try {
-        const userResponse = await authFetch(`/checkuser/${userdata.user_id}`, {
+        const userResponse = await fetchWithAuth(`/accounts/${userdata.user}`, {
           method: "get",
         });
-        setUserinfo(userResponse!.data);
+        setUserinfo(userResponse!.ok ? await userResponse.json() : null);
       } catch (error) {
         console.error("there was an error: ", error);
       } finally {
@@ -53,21 +54,21 @@ const UserdataModal = ({ userObject, tasks }: UserdataModalProps) => {
 
   const propertyItems = userinfo
     ? [
-        { label: "Username:", value: userinfo.username },
-        { label: "Email:", value: userinfo.email },
-        { label: "Role:", value: userdata.role.toUpperCase() },
-        { label: "Total Tasks Assigned:", value: taskForUser.length },
-        {
-          label: "Tasks Stats:",
-          value: (
-            <>
-              <b>{countByStatus("completed")}</b> completed;{" "}
-              <b>{countByStatus("in-progress")}</b> in progress;{" "}
-              <b>{countByStatus("to-do")}</b> to-do;
-            </>
-          ),
-        },
-      ]
+      { label: "Username:", value: userinfo.username },
+      { label: "Email:", value: userinfo.email },
+      { label: "Role:", value: userdata.role.toUpperCase() },
+      { label: "Total Tasks Assigned:", value: taskForUser.length },
+      {
+        label: "Tasks Stats:",
+        value: (
+          <>
+            <b>{countByStatus("completed")}</b> completed;{" "}
+            <b>{countByStatus("in-progress")}</b> in progress;{" "}
+            <b>{countByStatus("to-do")}</b> to-do;
+          </>
+        ),
+      },
+    ]
     : [];
 
   return (

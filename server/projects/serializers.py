@@ -51,6 +51,10 @@ class ProjectContributorSerializer(serializers.Serializer):
         choices=ProjectContributor.ROLE_CHOICES, required=True
     )
 
+    class Meta:
+        model = ProjectContributor
+        fields = "__all__"
+
     def validate_username(self, value):
         """Check if user exists and return the user object."""
         try:
@@ -62,42 +66,25 @@ class ProjectContributorSerializer(serializers.Serializer):
         self, project: Project, action: str = "add"
     ) -> Dict[str, Any]:
         """
-        Add, update, or remove a contributor from a project.
+        Add or update a contributor in a project.
         """
         validated: Dict[str, Any] = cast(Dict[str, Any], self.validated_data)
         user: User = validated["username"]
         role: str = validated["role"]
 
-        if action == "add":
-            contributor, created = ProjectContributor.objects.get_or_create(
-                project=project,
-                user=user,
-                defaults={"role": role},
-            )
-            if not created:
-                contributor.role = role
-                contributor.save()
-            message = f"User {user.username} added/updated as {role}"
-
-        elif action == "remove":
-            deleted, _ = ProjectContributor.objects.filter(
-                project=project, user=user
-            ).delete()
-            if deleted:
-                message = f"User {user.username} removed from contributors"
-            else:
-                message = f"User {user.username} was not a contributor"
-
-        else:
-            raise ValueError("Invalid action")
+        # Add or update contributor
+        contributor, created = ProjectContributor.objects.get_or_create(
+            project=project,
+            user=user,
+            defaults={"role": role},
+        )
+        if not created:
+            contributor.role = role
+            contributor.save()
 
         contributors = ProjectContributor.objects.filter(
             project=project
         ).select_related("user")
 
-        return {
-            "message": message,
-            "contributors": [
-                {"username": c.user.username, "role": c.role} for c in contributors
-            ],
-        }
+        serializer = ProjectContributorDetailSerializer(contributors, many=True)
+        return serializer.data

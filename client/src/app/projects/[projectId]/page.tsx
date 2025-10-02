@@ -9,7 +9,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useAlert } from "@/contexts/AlertContext";
 import Image from "next/image";
 import Container from "@/components/Container";
-import { useProjects } from "@/contexts/ProjectsContext";
 import editIcon from "@/assets/icons/edit-text.png";
 import addIcon from "@/assets/icons/add.png";
 
@@ -18,10 +17,9 @@ export default function Page() {
   const router = useRouter();
   const { fetchWithAuth } = useAuth();
   const { showAlert } = useAlert();
-  const { projects } = useProjects();
 
   const [loading, setLoading] = useState(true);
-  const [project, setProject] = useState<any>(null);
+  const [project, setProject] = useState<Project | null>(null);
   const [people, setPeople] = useState<any[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [showUserForm, setShowUserForm] = useState(false);
@@ -32,17 +30,6 @@ export default function Page() {
   // --- Load project either from context or backend ---
   useEffect(() => {
     if (!projectId) return;
-
-    // const existingProject = projects.find(
-    //   (proj) => String(proj.id) === String(projectId)
-    // );
-
-    // if (existingProject) {
-    //   setProject(existingProject);
-    //   setPeople(existingProject.contributors || []);
-    //   setLoading(false);
-    //   return;
-    // }
 
     const fetchProject = async () => {
       try {
@@ -65,9 +52,6 @@ export default function Page() {
           router.replace("/");
           return;
         }
-        console.log("Fetched project data:", projectData);
-        console.log("Fetched task data:", taskData);
-        console.log("Fetched user data:", userData);
 
         setCurrentUser(projectData.contributors?.find((u: Contributor) => u.user === userData.id));
         setProject(projectData);
@@ -82,14 +66,14 @@ export default function Page() {
     };
 
     fetchProject();
-  }, [projectId, projects, fetchWithAuth, router]);
+  }, [projectId, fetchWithAuth, router]);
 
   // --- Add user to project ---
   const handleAddUser = async () => {
     if (!username.trim()) return;
 
     try {
-      const response = await fetchWithAuth(`/project/${projectId}/users`, {
+      const response = await fetchWithAuth(`/projects/${projectId}/add-contributor/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, role }),
@@ -104,8 +88,11 @@ export default function Page() {
         return;
       }
 
-      const updatedProject = await response.json();
-      setPeople(updatedProject.contributors || []);
+      if (response.status === 200) {
+        const contributors = await response.json();
+        setPeople(contributors);
+        showAlert("Success", "User added to project.");
+      }
     } catch (err) {
       console.error("Add user failed:", err);
       showAlert("Error", "Server error.");
@@ -183,8 +170,8 @@ export default function Page() {
 
         {/* Tasks */}
         <div className="bg-white rounded-md p-4">
-          <h3 className="font-bold text-xl mb-2">Total Tasks Assigned</h3>
-          <TaskCard tasks={tasks} currentUser={currentUser} />
+          <h3 className="font-bold text-xl mb-2">Tasks Assigned</h3>
+          {tasks.length > 0 ? <TaskCard tasks={tasks} currentUser={currentUser} /> : <p className="text-center my-10">No tasks assigned yet.</p>}
         </div>
       </div>
     </Container>
