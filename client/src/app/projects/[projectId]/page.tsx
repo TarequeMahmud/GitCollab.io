@@ -15,15 +15,14 @@ import addIcon from "@/assets/icons/add.png";
 export default function Page() {
   const { projectId } = useParams();
   const router = useRouter();
-  const { fetchWithAuth } = useAuth();
+  const { fetchWithAuth, currentUser } = useAuth();
   const { showAlert } = useAlert();
-
   const [loading, setLoading] = useState(true);
   const [project, setProject] = useState<Project | null>(null);
   const [people, setPeople] = useState<Contributor[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [showUserForm, setShowUserForm] = useState(false);
-  const [currentUser, setCurrentUser] = useState<Contributor | null>(null);
+  const [currentContributor, setCurrentContributor] = useState<Contributor | null>(null);
   const [username, setUsername] = useState("");
   const [role, setRole] = useState("manager");
 
@@ -33,8 +32,7 @@ export default function Page() {
 
     const fetchProject = async () => {
       try {
-        const [userRes, projectRes, taskRes] = await Promise.all([
-          fetchWithAuth("/accounts/me"),
+        const [projectRes, taskRes] = await Promise.all([
           fetchWithAuth(`/projects/${projectId}`),
           fetchWithAuth(`/projects/${projectId}/get-tasks`),
         ]);
@@ -44,7 +42,6 @@ export default function Page() {
           return;
         }
 
-        const userData = userRes.ok ? await userRes.json() : null;
         const projectData = await projectRes.json();
         const taskData = taskRes.ok ? await taskRes.json() : [];
 
@@ -53,7 +50,7 @@ export default function Page() {
           return;
         }
 
-        setCurrentUser(projectData.contributors?.find((u: Contributor) => u.user === userData.id));
+        setCurrentContributor(projectData.contributors?.find((u: Contributor) => u.user === currentUser!.id));
         setProject(projectData);
         setPeople(projectData.contributors || []);
         setTasks(taskData);
@@ -112,7 +109,7 @@ export default function Page() {
         {/* Project Description */}
         <div className="bg-white rounded-md px-5 py-3 my-2.5">
           <p className="text-start">{project.description}</p>
-          {currentUser?.role === "admin" && (
+          {currentContributor?.role === "admin" && (
             <button className="flex items-center gap-2 bg-[#04c977] px-3 py-1 mt-3 rounded-sm">
               <Image src={editIcon} alt="edit icon" width={20} height={20} />
               <p className="font-bold">Edit</p>
@@ -124,13 +121,13 @@ export default function Page() {
         <div className="bg-white rounded-md p-8 pt-4 mb-6">
           <h3 className="font-bold text-xl mb-6">Collaborators</h3>
           <UserTable
-            currentUser={currentUser}
+            currentUser={currentContributor}
             projectUserData={people}
             taskState={{ tasks, setTasks }}
             peopleState={setPeople}
           />
 
-          {currentUser?.role === "admin" && (
+          {currentContributor?.role === "admin" && (
             <div className="flex flex-col mt-4">
               {!showUserForm ? (
                 <button
@@ -171,7 +168,7 @@ export default function Page() {
         {/* Tasks */}
         <div className="bg-white rounded-md p-4">
           <h3 className="font-bold text-xl mb-2">Tasks Assigned</h3>
-          {tasks.length > 0 ? <TaskCard tasks={tasks} currentUser={currentUser} /> : <p className="text-center my-10">No tasks assigned yet.</p>}
+          {tasks.length > 0 ? <TaskCard tasks={tasks} currentUser={currentContributor} /> : <p className="text-center my-10">No tasks assigned yet.</p>}
         </div>
       </div>
     </Container>

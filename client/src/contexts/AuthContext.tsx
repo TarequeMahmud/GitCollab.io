@@ -1,6 +1,12 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect,
+} from "react";
 import authFetch from "@/services/fetch";
 
 interface Credentials {
@@ -12,6 +18,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   login: (credentials: Credentials) => Promise<boolean>;
   logout: () => void;
+  currentUser: User | null;
   fetchWithAuth: (path: string, options?: RequestInit) => Promise<Response>;
 }
 
@@ -30,8 +37,43 @@ interface Props {
 export const AuthProvider = ({ children }: Props) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
     typeof window !== "undefined" &&
-      !!window.sessionStorage.getItem("access_token")
+    !!window.sessionStorage.getItem("access_token")
   );
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+
+  // ✅ helper to fetch user profile
+  const fetchCurrentUser = async () => {
+    try {
+      const response = await fetchWithAuth("/accounts/me/", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      });
+
+      console.log("Fetch current user response:", response);
+
+      if (response.ok) {
+        const data = await response.json();
+        setCurrentUser(data);
+        setIsAuthenticated(true);
+        return true;
+      }
+    } catch (error) {
+      console.error("Failed to fetch current user", error);
+    }
+
+    // fallback if failed
+    setCurrentUser(null);
+    setIsAuthenticated(false);
+    return false;
+  };
+
+  // ✅ run on reload to restore session
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchCurrentUser();
+    }
+  }, []);
 
   const login = async (credentials: Credentials) => {
     try {
@@ -47,6 +89,7 @@ export const AuthProvider = ({ children }: Props) => {
 
       if (!response.ok) {
         setIsAuthenticated(false);
+        setCurrentUser(null);
         return false;
       }
 
@@ -55,14 +98,17 @@ export const AuthProvider = ({ children }: Props) => {
       if (data.access) {
         sessionStorage.setItem("access_token", data.access);
         setIsAuthenticated(true);
-        return true;
+        // fetch user profile right after login
+        return await fetchCurrentUser();
       }
 
       setIsAuthenticated(false);
+      setCurrentUser(null);
       return false;
     } catch (error) {
       console.error("Login failed", error);
       setIsAuthenticated(false);
+      setCurrentUser(null);
       return false;
     }
   };
@@ -70,6 +116,7 @@ export const AuthProvider = ({ children }: Props) => {
   const logout = () => {
     sessionStorage.removeItem("access_token");
     setIsAuthenticated(false);
+    setCurrentUser(null);
   };
 
   const fetchWithAuth = async (path: string, options?: RequestInit) => {
@@ -77,7 +124,6 @@ export const AuthProvider = ({ children }: Props) => {
       return await authFetch(path, options);
     } catch (error: any) {
       if (error.unauthenticated) {
-        setIsAuthenticated(false);
         logout();
       }
       throw error;
@@ -86,7 +132,7 @@ export const AuthProvider = ({ children }: Props) => {
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, login, logout, fetchWithAuth }}
+      value={{ isAuthenticated, currentUser, login, logout, fetchWithAuth }}
     >
       {children}
     </AuthContext.Provider>

@@ -18,6 +18,7 @@ class TaskSerializer(serializers.ModelSerializer):
         if obj.assignee:
             return {
                 "id": str(obj.assignee.id),
+                "name": obj.assignee.name,
                 "username": obj.assignee.username,
                 "email": obj.assignee.email,
             }
