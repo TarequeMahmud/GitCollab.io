@@ -1,9 +1,15 @@
+enum Role {
+  Admin = "admin",
+  Manager = "manager",
+  Member = "member",
+}
+
 type Contributor = {
   user: string;
   name: string;
   username: string;
   email: string;
-  role: string;
+  role: Role;
   added_at: string | Date;
 };
 
@@ -37,14 +43,11 @@ type CreateTask = {
   priority: "low" | "medium" | "high";
 };
 
-type Task = CreateTask & {
+type AssigneeDetails = Omit<Contributor, 'added_at'>;
+
+type Task = Omit<CreateTask, 'assignee'> & {
   id: string;
-  assignee_details: {
-    id: string;
-    username: string;
-    name: string;
-    email: string;
-  };
+  assignee_details: AssigneeDetails;
   created_at: string;
   updated_at: string;
 };

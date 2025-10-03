@@ -16,12 +16,19 @@ class TaskSerializer(serializers.ModelSerializer):
 
     def get_assignee_details(self, obj):
         if obj.assignee:
-            return {
-                "id": str(obj.assignee.id),
-                "name": obj.assignee.name,
-                "username": obj.assignee.username,
-                "email": obj.assignee.email,
-            }
+            contributor = ProjectContributor.objects.filter(
+            project=obj.project, user=obj.assignee
+            ).values(
+            "user", "user__username", "user__name", "user__email", "role"
+            ).first()
+            if contributor:
+                return {
+                    "user": contributor["user"],
+                    "username": contributor["user__username"],
+                    "name": contributor["user__name"],
+                    "email": contributor["user__email"],
+                    "role": contributor["role"],
+                }
         return None
     
 

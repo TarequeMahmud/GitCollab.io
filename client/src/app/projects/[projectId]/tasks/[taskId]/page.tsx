@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Spinner from "@/components/Spinner";
-import authFetch from "@/services/fetch";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAlert } from "@/contexts/AlertContext";
 import { useError } from "@/contexts/ErrorContex";
@@ -17,34 +16,40 @@ export default function Page() {
   const router = useRouter();
   const { projectId, taskId } = useParams();
   const { showAlert } = useAlert();
-  const { setIsAuthenticated } = useAuth();
+  const { fetchWithAuth } = useAuth();
   const alertOnError = useError();
-  const [task, setTask] = useState<any>(null);
-  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [task, setTask] = useState<Task | null>(null);
+  const [currentContributor, setCurrentContributor] = useState<AssigneeDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [isSubmitted, setIsSubmitted] = useState(false);
+
+  console.log(taskId);
+
 
   // fetch task
   useEffect(() => {
     if (!taskId) return;
     const fetchTask = async () => {
       try {
-        const taskResponse = await authFetch(
-          `/project/${projectId}/task/${taskId}`,
+        const taskResponse = await fetchWithAuth(
+          `/tasks/${taskId}`,
           {
             method: "GET",
           }
         );
 
+
+
         if (!taskResponse) return alertOnError("Server Error", { status: 500 });
         if (!taskResponse.ok)
           return alertOnError("Error Retrieving Task", taskResponse);
 
-        setTask(taskResponse.data);
-        setCurrentUser(taskResponse.data.current_user);
+        const taskData = await taskResponse.json();
+        setTask(taskData);
+        setCurrentContributor(taskData.assignee_details);
         setIsSubmitted(
-          taskResponse.data.submission?.text ||
-            taskResponse.data.submission?.file_name
+          taskData.submission?.text ||
+          taskData.submission?.file_name
         );
       } catch (error) {
         console.error("Fetch task error: ", error);
@@ -72,19 +77,19 @@ export default function Page() {
 
     try {
       setLoading(true);
-      const response = await authFetch(
+      const response = await fetchWithAuth(
         `/assignee/task/submit/${taskId}`,
         {
           method: "POST",
           body: formData,
         },
-        setIsAuthenticated
+
       );
 
       if (!response) return alertOnError("Submission Failed", { status: 500 });
       if (!response.ok) return alertOnError("Submission Failed", response);
 
-      showAlert("Submission Success", response.data.message);
+      showAlert("Submission Success", "Your task has been submitted.");
       setIsSubmitted(true);
     } catch (error) {
       console.error(error);
@@ -94,7 +99,7 @@ export default function Page() {
   };
 
   const handleDownload = () => {
-    window.location.href = `http://localhost:5000/assignee/task/${taskId}/download/`;
+    window.location.href = `http://localhost:5000/assignee/tasks/${taskId}/downloads/`;
   };
 
   if (loading || !task) return <Spinner />;
@@ -102,14 +107,14 @@ export default function Page() {
   return (
     <Container title={task.title}>
       <div className="w-4/5 flex flex-col justify-start items-center mx-auto">
-        {currentUser.role === "admin" && (
-          <div className="flex flex-row items-center gap-4 mb-4">
-            <h2 className="text-2xl font-bold">Assigned To:</h2>
-            <p className="text-xl">
-              {task.assigned_to.name} <em>(@{task.assigned_to.username})</em>
-            </p>
-          </div>
-        )}
+
+        <div className="flex flex-row items-center gap-4 mb-4">
+          <h2 className="text-2xl font-bold">Assigned To:</h2>
+          <p className="text-xl">
+            {task.assignee_details.name} <em>(@{task.assignee_details.username})</em>
+          </p>
+        </div>
+
 
         {/* Task Info */}
         <div className="w-full flex justify-around bg-gray-100 p-4 rounded-md mb-4">
@@ -136,7 +141,7 @@ export default function Page() {
         {/* Description */}
         <div className="w-full bg-gray-100 p-4 rounded-md mb-4">
           <p className="text-start">{task.description}</p>
-          {currentUser.role === "admin" && (
+          {currentContributor!.role === "admin" && (
             <button className="flex items-center gap-2 bg-[#04c977]  px-3 py-1 mt-3 rounded-sm">
               <Image src={editIcon} alt="edit" className="w-5 h-5" /> Edit
             </button>
@@ -146,11 +151,11 @@ export default function Page() {
         {/* Submission Section */}
         <h2 className="text-xl font-bold mb-2">Submission Section</h2>
         <div className="w-full min-h-[200px] bg-gray-100 p-4 rounded-md mb-4">
-          {!isSubmitted && currentUser.role === "admin" && (
+          {!isSubmitted && currentContributor!.role === "admin" && (
             <h2>Assignee has not submitted yet</h2>
           )}
 
-          {currentUser._id === task.assigned_to._id && !isSubmitted && (
+          {/* {currentContributor!.user === task.assignee_details.user && !isSubmitted && (
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
               <div className="flex flex-col">
                 <label htmlFor="text" className="font-bold">
@@ -158,7 +163,7 @@ export default function Page() {
                 </label>
                 <textarea
                   name="text"
-                  defaultValue={task.submission?.text || ""}
+                  defaultValue={task.submission!.text || ""}
                   className="border rounded-md p-2 h-32 resize-y"
                 />
               </div>
@@ -226,7 +231,7 @@ export default function Page() {
                     </button>
                   </>
                 )}
-                {currentUser._id === task.assigned_to._id && (
+                {currentUser.id === task.assignee_details.id && (
                   <>
                     <button
                       onClick={() => setIsSubmitted(false)}
@@ -244,7 +249,7 @@ export default function Page() {
                 )}
               </div>
             </div>
-          )}
+          )} */}
         </div>
 
         {/* Personal messages */}
@@ -263,7 +268,7 @@ export default function Page() {
           >
             Go to project
           </button>
-          {currentUser._id === task.assigned_to._id && (
+          {currentContributor!.user === task.assignee_details.user && (
             <>
               <button
                 onClick={() => router.push(`/projects/${projectId}`)}
@@ -279,7 +284,7 @@ export default function Page() {
               </button>
             </>
           )}
-          {currentUser.role === "admin" && (
+          {currentContributor!.role === "admin" && (
             <button
               onClick={() => router.push(`/projects/${projectId}`)}
               className="bg-red-600 text-white px-2 py-1 rounded-md"

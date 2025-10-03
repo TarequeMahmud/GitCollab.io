@@ -5,10 +5,10 @@ import formatDate from "@/utils/formatDate";
 
 interface TaskCardProps {
   tasks: Task[];
-  currentUser: any;
+  currentContributor: Contributor | null;
 }
 
-export default function TaskCard({ tasks, currentUser }: TaskCardProps) {
+export default function TaskCard({ tasks, currentContributor }: TaskCardProps) {
   const { projectId } = useParams();
   const router = useRouter();
 
@@ -36,8 +36,8 @@ export default function TaskCard({ tasks, currentUser }: TaskCardProps) {
             </p>
           </div>
           <hr className="w-4/5 my-2 border-[#727272]" />
-          {(currentUser.role === "admin" ||
-            currentUser._id === task.assignee_details.id) && (
+          {(currentContributor!.role === "admin" ||
+            currentContributor!.user === task.assignee_details.user) && (
               <button
                 onClick={() =>
                   router.push(
