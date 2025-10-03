@@ -7,12 +7,22 @@ from accounts.models import User
 class TaskSerializer(serializers.ModelSerializer):
     project = serializers.UUIDField(write_only=True)
     assignee = serializers.UUIDField(write_only=True, required=False, allow_null=True)
+
+    project_details = serializers.SerializerMethodField(read_only=True)
     assignee_details = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Task
         fields = "__all__"
         read_only_fields = ["id", "created_at", "updated_at"]
+
+    def get_project_details(self, obj):
+        if obj.project:
+            return {
+                "id": obj.project.id,
+                "title": obj.project.title,
+            }
+        return None
 
     def get_assignee_details(self, obj):
         if obj.assignee:

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Spinner from "@/components/Spinner";
-import authFetch from "@/services/fetch";
+import { useAuth } from "@/contexts/AuthContext";
 import formatDate from "@/utils/formatDate";
 import images from "@/assets/icons/task/icons";
 import { useError } from "@/contexts/ErrorContex";
@@ -12,37 +12,42 @@ import Container from "@/components/Container";
 
 export default function Page() {
   const [tasks, setTasks] = useState<any[]>([]);
+  const { fetchWithAuth, currentUser } = useAuth();
   const [loading, setLoading] = useState(true);
   const alertOnError = useError();
   const router = useRouter();
 
-  useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        const taskResponse = await authFetch("/assignee/tasks", {
-          method: "GET",
-        });
-        if (!taskResponse) {
-          alertOnError("Couldn't Fetch Tasks", { status: 500 });
-          return;
-        }
-        if (taskResponse.status === 404) return;
-        if (!taskResponse.ok) {
-          alertOnError("Task Fetch Problem", taskResponse);
-          return;
-        }
-        setTasks(taskResponse.data);
-      } catch (error) {
-        console.error("Error fetching tasks:", error);
-        router.push("/");
-      } finally {
-        setLoading(false);
+  async function fetchTasks() {
+    try {
+      const taskResponse = await fetchWithAuth("/accounts/me/tasks", {
+        method: "GET",
+      });
+      if (!taskResponse) {
+        alertOnError("Couldn't Fetch Tasks", { status: 500 });
+        return;
       }
-    };
+      if (taskResponse.status === 404) return;
+      if (!taskResponse.ok) {
+        alertOnError("Task Fetch Problem", taskResponse);
+        return;
+      }
+      const taskData = await taskResponse.json();
+      setTasks(taskData);
+    } catch (error) {
+      console.error("Error fetching tasks:", error);
+      router.push("/");
+    } finally {
+      setLoading(false);
+    }
+  }
 
+  useEffect(() => {
+    if (!currentUser) return
     if (tasks.length === 0) fetchTasks();
     else setLoading(false);
-  }, []);
+
+  }, [currentUser, tasks]);
+
 
   const handleClick = (taskId: string, projectId: string) => {
     router.push(`/projects/${projectId}/tasks/${taskId}`);
@@ -56,14 +61,14 @@ export default function Page() {
         <div className="my-12 mx-auto w-11/12 flex flex-col items-center gap-8">
           {tasks.map((task) => (
             <div
-              onClick={() => handleClick(task._id, task.project.project_id)}
+              onClick={() => handleClick(task.id, task.project_details.id)}
               className="w-5/6 h-[250px] bg-gradient-to-r from-[#32ade6] to-[#1c6080] rounded-[35px] flex flex-row justify-between items-center cursor-pointer"
-              key={task._id}
+              key={task.id}
             >
               {/* Left side properties */}
               <div className="flex flex-col justify-center items-center h-full w-2/5 gap-1.5 p-2">
                 <TaskProperty icon={images.project} alt="project">
-                  {task.project.project_title}
+                  {task.project_details.title}
                 </TaskProperty>
 
                 <TaskProperty icon={images.status} alt="status">
@@ -79,17 +84,17 @@ export default function Page() {
                     task.priority === "high"
                       ? "text-red-500"
                       : task.priority === "medium"
-                      ? "text-lime-300"
-                      : ""
+                        ? "text-lime-300"
+                        : ""
                   }
-                >
-                  {task.priority === "high" && "Priority High"}
-                  {task.priority === "medium" && "Priority Medium"}
-                  {task.priority === "low" && "Priority Low"}
+                >Priority:{" "}
+                  {task.priority === "high" && "High"}
+                  {task.priority === "medium" && "Medium"}
+                  {task.priority === "low" && "Low"}
                 </TaskProperty>
 
                 <TaskProperty icon={images.deadline} alt="deadline">
-                  Deadline {formatDate(task.deadline)}
+                  Deadline: {formatDate(task.deadline)}
                 </TaskProperty>
               </div>
 
@@ -102,7 +107,7 @@ export default function Page() {
                   paddingRight: "20px",
                 }}
               >
-                <div className="flex flex-col justify-center items-center ml-[15%] h-[90%] w-4/5">
+                <div className="flex flex-col justify-start items-center ml-[15%] h-[90%] w-4/5">
                   <h2 className="w-full text-white text-xl font-semibold mb-2">
                     {task.title}
                   </h2>
@@ -134,6 +139,6 @@ const TaskProperty = ({
 }) => (
   <div className="flex flex-row justify-start items-center gap-2 w-4/5 h-[20%] rounded-[11px] bg-black/60 p-1">
     <Image src={icon} alt={alt} className="w-[30px] h-[30px] ml-2 mr-2.5" />
-    <h3 className={`text-white self-center ${textClass}`}>{children}</h3>
+    <h3 className={`text-white font-bold self-center ${textClass}`}>{children}</h3>
   </div>
 );
