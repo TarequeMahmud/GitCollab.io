@@ -45,7 +45,9 @@ type CreateTask = {
 
 type AssigneeDetails = Omit<Contributor, 'added_at'>;
 
-type ProjectDetails = Pick<Project, 'id' | 'title'>;
+type ProjectDetails = Pick<Project, 'id' | 'title'> & {
+  contributors?: Contributor[];
+};
 
 type Task = Omit<CreateTask, 'assignee' | 'project'> & {
   id: string;

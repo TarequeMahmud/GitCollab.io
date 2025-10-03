@@ -1,6 +1,7 @@
-from rest_framework import serializers
+from rest_framework import serializers, generics
 from .models import Task, Submission, Review
 from projects.models import Project, ProjectContributor
+from projects.serializers import ProjectContributorDetailSerializer
 from accounts.models import User
 
 
@@ -10,6 +11,7 @@ class TaskSerializer(serializers.ModelSerializer):
 
     project_details = serializers.SerializerMethodField(read_only=True)
     assignee_details = serializers.SerializerMethodField(read_only=True)
+    
 
     class Meta:
         model = Task
@@ -17,28 +19,30 @@ class TaskSerializer(serializers.ModelSerializer):
         read_only_fields = ["id", "created_at", "updated_at"]
 
     def get_project_details(self, obj):
-        if obj.project:
-            return {
-                "id": obj.project.id,
-                "title": obj.project.title,
-            }
-        return None
+        if not obj.project:
+            return None
+
+        data = {
+            "id": obj.project.id,
+            "title": obj.project.title,
+        }
+
+        view = self.context.get("view")
+        if view and isinstance(view, generics.RetrieveAPIView):
+            contributors = ProjectContributor.objects.filter(project=obj.project)
+            data["contributors"] = ProjectContributorDetailSerializer(
+                contributors, many=True
+            ).data
+
+        return data
 
     def get_assignee_details(self, obj):
         if obj.assignee:
             contributor = ProjectContributor.objects.filter(
             project=obj.project, user=obj.assignee
-            ).values(
-            "user", "user__username", "user__name", "user__email", "role"
             ).first()
-            if contributor:
-                return {
-                    "user": contributor["user"],
-                    "username": contributor["user__username"],
-                    "name": contributor["user__name"],
-                    "email": contributor["user__email"],
-                    "role": contributor["role"],
-                }
+            return (ProjectContributorDetailSerializer(contributor).data if contributor else None)
+
         return None
     
 

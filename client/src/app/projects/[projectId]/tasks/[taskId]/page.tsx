@@ -16,7 +16,7 @@ export default function Page() {
   const router = useRouter();
   const { projectId, taskId } = useParams();
   const { showAlert } = useAlert();
-  const { fetchWithAuth } = useAuth();
+  const { fetchWithAuth, currentUser } = useAuth();
   const alertOnError = useError();
   const [task, setTask] = useState<Task | null>(null);
   const [currentContributor, setCurrentContributor] = useState<AssigneeDetails | null>(null);
@@ -28,7 +28,7 @@ export default function Page() {
 
   // fetch task
   useEffect(() => {
-    if (!taskId) return;
+    if (!taskId || !currentUser) return;
     const fetchTask = async () => {
       try {
         const taskResponse = await fetchWithAuth(
@@ -46,7 +46,9 @@ export default function Page() {
 
         const taskData = await taskResponse.json();
         setTask(taskData);
-        setCurrentContributor(taskData.assignee_details);
+        console.log("Task Data: ", taskData);
+
+        setCurrentContributor(taskData.project_details.contributors.find((contributor: Contributor) => contributor.user === currentUser.id) || null);
         setIsSubmitted(
           taskData.submission?.text ||
           taskData.submission?.file_name
@@ -59,7 +61,7 @@ export default function Page() {
       }
     };
     fetchTask();
-  }, [taskId]);
+  }, [taskId, currentUser]);
 
   // submit handler
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
