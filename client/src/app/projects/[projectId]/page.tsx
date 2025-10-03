@@ -28,7 +28,7 @@ export default function Page() {
 
   // --- Load project either from context or backend ---
   useEffect(() => {
-    if (!projectId) return;
+    if (!projectId || !currentUser) return;
 
     const fetchProject = async () => {
       try {
@@ -63,7 +63,7 @@ export default function Page() {
     };
 
     fetchProject();
-  }, [projectId, fetchWithAuth, router]);
+  }, [projectId, fetchWithAuth, currentUser, router]);
 
   // --- Add user to project ---
   const handleAddUser = async () => {
@@ -168,7 +168,7 @@ export default function Page() {
         {/* Tasks */}
         <div className="bg-white rounded-md p-4">
           <h3 className="font-bold text-xl mb-2">Tasks Assigned</h3>
-          {tasks.length > 0 ? <TaskCard tasks={tasks} currentUser={currentContributor} /> : <p className="text-center my-10">No tasks assigned yet.</p>}
+          {tasks.length > 0 ? <TaskCard tasks={tasks} currentContributor={currentContributor} /> : <p className="text-center my-10">No tasks assigned yet.</p>}
         </div>
       </div>
     </Container>
