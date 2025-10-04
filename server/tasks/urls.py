@@ -16,6 +16,12 @@ urlpatterns = [
         name="submit-task",
     ),
     path(
+        "tasks/<uuid:task_id>/submissions/<uuid:pk>/download/",
+        SubmitTaskViewSet.as_view({"get": "download_file"}),
+        name="submission-download",
+    ),
+
+    path(
         "tasks/<uuid:pk>/reviews/",
         ReviewSubmissionViewSet.as_view({"post": "create", "put": "update"}),
         name="review-submission",

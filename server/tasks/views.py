@@ -1,4 +1,6 @@
 from rest_framework import generics, mixins, viewsets
+from rest_framework.decorators import action
+from django.http import FileResponse, Http404
 from .models import Task, Submission, Review
 from .serializers import TaskSerializer, SubmissionSerializer, ReviewSerializer
 from .permissions import (
@@ -57,6 +59,16 @@ class SubmitTaskViewSet(viewsets.ModelViewSet):
 
     def put(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
+    
+    @action(detail=True, methods=["get"])
+    def download_file(self, request, pk=None, task_id=None):
+        submission = self.get_object() 
+        file = submission.submission_file
+        if not file:
+            return Response({"detail": "No file uploaded"}, status=404)
+
+        response = FileResponse(file.open("rb"), as_attachment=True, filename=file.name)
+        return response
 
 
 class ReviewSubmissionViewSet(viewsets.ModelViewSet):
