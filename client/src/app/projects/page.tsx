@@ -20,7 +20,7 @@ export default function ProjectsPage() {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const projectResponse = await fetchWithAuth("/projects", {
+        const projectResponse = await fetchWithAuth("/accounts/me/projects", {
           method: "get",
         });
 
