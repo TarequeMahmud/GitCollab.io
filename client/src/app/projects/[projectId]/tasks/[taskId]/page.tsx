@@ -21,7 +21,7 @@ export default function Page() {
   const [task, setTask] = useState<Task | null>(null);
   const [currentContributor, setCurrentContributor] = useState<AssigneeDetails | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submission, setSubmission] = useState<Submission | null>(null);
 
   console.log(taskId);
 
@@ -49,10 +49,7 @@ export default function Page() {
         console.log("Task Data: ", taskData);
 
         setCurrentContributor(taskData.project_details.contributors.find((contributor: Contributor) => contributor.user === currentUser.id) || null);
-        setIsSubmitted(
-          taskData.submission?.text ||
-          taskData.submission?.file_name
-        );
+        setSubmission(taskData.submission || null);
       } catch (error) {
         console.error("Fetch task error: ", error);
         router.push("/");
@@ -67,12 +64,12 @@ export default function Page() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    const { file } = Object.fromEntries(formData.entries()) as { file: File };
-    const maxSize = 5 * 1024 * 1024;
+    const file = formData.get("submission_file") as File | null;
+    const maxSize = 1024 * 1024;
 
     if (file && file.size > maxSize) {
       alertOnError("Big file size", {
-        message: "File size exceeds 5MB. Please upload a smaller file.",
+        message: "File size exceeds 1MB. Please upload a smaller file.",
       });
       return;
     }
@@ -80,9 +77,9 @@ export default function Page() {
     try {
       setLoading(true);
       const response = await fetchWithAuth(
-        `/assignee/task/submit/${taskId}`,
+        `/tasks/${taskId}/submissions/`,
         {
-          method: "POST",
+          method: submission ? "PUT" : "POST",
           body: formData,
         },
 
@@ -92,7 +89,7 @@ export default function Page() {
       if (!response.ok) return alertOnError("Submission Failed", response);
 
       showAlert("Submission Success", "Your task has been submitted.");
-      setIsSubmitted(true);
+
     } catch (error) {
       console.error(error);
     } finally {
@@ -101,7 +98,7 @@ export default function Page() {
   };
 
   const handleDownload = () => {
-    window.location.href = `http://localhost:5000/assignee/tasks/${taskId}/downloads/`;
+    window.location.href = `http://localhost:5000/tasks/${taskId}/downloads`;
   };
 
   if (loading || !task) return <Spinner />;
@@ -110,6 +107,8 @@ export default function Page() {
     <Container title={task.title}>
       <div className="w-4/5 flex flex-col justify-start items-center mx-auto">
 
+
+        {/* Title */}
         <div className="flex flex-row items-center gap-4 mb-4">
           <h2 className="text-2xl font-bold">Assigned To:</h2>
           <p className="text-xl">
@@ -151,108 +150,64 @@ export default function Page() {
         </div>
 
         {/* Submission Section */}
-        <h2 className="text-xl font-bold mb-2">Submission Section</h2>
-        <div className="w-full min-h-[200px] bg-gray-100 p-4 rounded-md mb-4">
-          {!isSubmitted && currentContributor!.role === "admin" && (
-            <h2>Assignee has not submitted yet</h2>
+        <h2 className="text-xl font-bold mb-4">Submission Section</h2>
+
+        <div className="w-full p-6 rounded-lg border border-gray-200 shadow-sm bg-white mb-6">
+          {/* Case: No submission yet */}
+          {!submission && currentContributor?.role === "admin" && (
+            <div className="text-gray-600 italic text-center py-6">
+              Assignee has not submitted yet.
+            </div>
           )}
 
-          {/* {currentContributor!.user === task.assignee_details.user && !isSubmitted && (
-            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-              <div className="flex flex-col">
-                <label htmlFor="text" className="font-bold">
+          {/* Case: Assignee can submit */}
+          {currentContributor?.user === task.assignee_details.user && (
+            <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+              {/* Textarea */}
+              <div>
+                <label htmlFor="comment" className="block font-semibold mb-2 text-gray-700">
                   Text to submit:
                 </label>
                 <textarea
-                  name="text"
-                  defaultValue={task.submission!.text || ""}
-                  className="border rounded-md p-2 h-32 resize-y"
+                  name="comment"
+                  defaultValue={submission?.comment ?? ""}
+                  className="w-full border border-gray-300 rounded-lg p-3 h-32 resize-y focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Write your submission text here..."
                 />
               </div>
-              <div className="flex flex-col">
-                <label htmlFor="file" className="font-bold">
+
+              {/* File input */}
+              <div>
+                <label htmlFor="submission_file" className="block font-semibold mb-2 text-gray-700">
                   File to submit:
                 </label>
                 <input
                   type="file"
-                  name="file"
+                  name="submission_file"
                   required
-                  className="border rounded-md p-1"
+                  className="w-full border border-gray-300 rounded-lg p-2 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                 />
-                {task.submission?.file_name && (
-                  <p className="mt-1">
-                    <b>Current file:</b> <em>{task.submission.file_name}</em>
+                {task.submission?.submission_file && (
+                  <p className="mt-2 text-sm text-gray-600">
+                    <b>Current file:</b>{" "}
+                    <em className="text-blue-700">{task.submission.submission_file}</em>
                   </p>
                 )}
               </div>
-              <button
-                type="submit"
-                className="bg-blue-700 text-white p-2 rounded-md font-bold"
-              >
-                Submit the task
-              </button>
+
+              {/* Submit button */}
+              <div className="flex justify-end">
+                <button
+                  type="submit"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg font-semibold shadow transition-colors"
+                >
+                  Submit Task
+                </button>
+              </div>
             </form>
           )}
-
-          {isSubmitted && (
-            <div className="flex flex-col gap-2">
-              <p>
-                <b>Description:</b> <span>{task.submission.text}</span>
-              </p>
-              <p>
-                <b>File:</b>{" "}
-                <span>
-                  <em>{task.submission.file_name}</em>
-                  <button
-                    onClick={handleDownload}
-                    className="ml-2 bg-green-600 text-white px-2 py-1 rounded-md"
-                  >
-                    Download
-                  </button>
-                </span>
-              </p>
-              <p>
-                <b>Submitted at:</b>{" "}
-                <span>{formatDate(task.submission.submitted_at)}</span>
-              </p>
-
-              <div className="flex gap-2 mt-4">
-                {currentUser.role === "admin" && (
-                  <>
-                    <button
-                      onClick={() => router.push(`/projects/${projectId}`)}
-                      className="bg-blue-700 text-white px-2 py-1 rounded-md"
-                    >
-                      Approve
-                    </button>
-                    <button
-                      onClick={() => router.push(`/projects/${projectId}`)}
-                      className="bg-red-600 text-white px-2 py-1 rounded-md"
-                    >
-                      Reject
-                    </button>
-                  </>
-                )}
-                {currentUser.id === task.assignee_details.id && (
-                  <>
-                    <button
-                      onClick={() => setIsSubmitted(false)}
-                      className="bg-yellow-500 text-white px-2 py-1 rounded-md"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => router.push(`/projects/${projectId}`)}
-                      className="bg-red-600 text-white px-2 py-1 rounded-md"
-                    >
-                      Delete
-                    </button>
-                  </>
-                )}
-              </div>
-            </div>
-          )} */}
         </div>
+
 
         {/* Personal messages */}
         <h2 className="text-xl font-bold mb-2">

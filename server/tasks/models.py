@@ -29,14 +29,16 @@ class Task(TimeStampedUUIDModel):
 
 
 class Submission(TimeStampedUUIDModel):
-    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name="submissions")
+    task = models.OneToOneField(
+        Task, on_delete=models.CASCADE, related_name="submission"
+    )
     submitted_by = models.ForeignKey(
         "accounts.User", on_delete=models.CASCADE, related_name="submissions"
     )
     submission_file = models.FileField(
         upload_to="task_submissions/", blank=True, null=True
     )
-    comments = models.TextField(blank=True, null=True)
+    comment = models.TextField(blank=True, null=True)
 
 
 class Review(TimeStampedUUIDModel):

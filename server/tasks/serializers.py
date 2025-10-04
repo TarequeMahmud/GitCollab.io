@@ -5,9 +5,63 @@ from projects.serializers import ProjectContributorDetailSerializer
 from accounts.models import User
 
 
+class SubmissionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Submission
+        fields = [
+            "submission_file",
+            "comment",
+            "task",
+            "submitted_by",
+            "id",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = ["id", "created_at", "updated_at", "task", "submitted_by"]
+
+    def _get_task_from_url(self):
+        """Extract task instance from URL kwargs"""
+        request = self.context.get("request")
+        task_id = (
+            request.parser_context.get("kwargs", {}).get("pk") if request else None
+        )
+        if not task_id:
+            raise serializers.ValidationError({"task": "Task ID not found in URL"})
+        try:
+            return Task.objects.get(id=task_id)
+        except Task.DoesNotExist:
+            raise serializers.ValidationError({"task": "Task not found"})
+
+    def validate(self, attrs):
+        request = self.context.get("request")
+        task = self._get_task_from_url()
+
+        if task.status == "completed":
+            raise serializers.ValidationError(
+                {"detail": "Cannot submit a task that is already completed"}
+            )
+
+        if not request or not request.user.is_authenticated:
+            raise serializers.ValidationError(
+                {"detail": "User must be authenticated to submit a task"}
+            )
+
+        if task.assignee != request.user:
+            raise serializers.ValidationError(
+                {"detail": "Only the assignee can submit the task"}
+            )
+
+        attrs["task"] = task
+        attrs["submitted_by"] = request.user
+        return attrs
+
+
+
 class TaskSerializer(serializers.ModelSerializer):
     project = serializers.UUIDField(write_only=True)
     assignee = serializers.UUIDField(write_only=True, required=False, allow_null=True)
+    submission = SubmissionSerializer(read_only=True)
+
 
     project_details = serializers.SerializerMethodField(read_only=True)
     assignee_details = serializers.SerializerMethodField(read_only=True)
@@ -76,56 +130,6 @@ class TaskSerializer(serializers.ModelSerializer):
             )
         return Task.objects.create(**validated_data)
 
-
-class SubmissionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Submission
-        fields = [
-            "submission_file",
-            "comments",
-            "task",
-            "submitted_by",
-            "id",
-            "created_at",
-            "updated_at",
-        ]
-        read_only_fields = ["id", "created_at", "updated_at", "task", "submitted_by"]
-
-    def _get_task_from_url(self):
-        """Extract task instance from URL kwargs"""
-        request = self.context.get("request")
-        task_id = (
-            request.parser_context.get("kwargs", {}).get("pk") if request else None
-        )
-        if not task_id:
-            raise serializers.ValidationError({"task": "Task ID not found in URL"})
-        try:
-            return Task.objects.get(id=task_id)
-        except Task.DoesNotExist:
-            raise serializers.ValidationError({"task": "Task not found"})
-
-    def validate(self, attrs):
-        request = self.context.get("request")
-        task = self._get_task_from_url()
-
-        if task.status == "completed":
-            raise serializers.ValidationError(
-                {"detail": "Cannot submit a task that is already completed"}
-            )
-
-        if not request or not request.user.is_authenticated:
-            raise serializers.ValidationError(
-                {"detail": "User must be authenticated to submit a task"}
-            )
-
-        if task.assignee != request.user:
-            raise serializers.ValidationError(
-                {"detail": "Only the assignee can submit the task"}
-            )
-
-        attrs["task"] = task
-        attrs["submitted_by"] = request.user
-        return attrs
 
 
 class ReviewSerializer(serializers.ModelSerializer):

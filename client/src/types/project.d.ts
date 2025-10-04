@@ -49,10 +49,21 @@ type ProjectDetails = Pick<Project, 'id' | 'title'> & {
   contributors?: Contributor[];
 };
 
+interface Submission {
+  id: string;
+  task: string;
+  submitted_by: string;
+  submission_file?: string | null;
+  comment: string;
+  created_at: string;
+  updated_at: string;
+};
+
 type Task = Omit<CreateTask, 'assignee' | 'project'> & {
   id: string;
   project_details: ProjectDetails;
   assignee_details: AssigneeDetails;
+  submission?: Submission;
   created_at: string;
   updated_at: string;
 };

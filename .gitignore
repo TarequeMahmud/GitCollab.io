@@ -130,7 +130,7 @@ dist
 .pnp.*
 
 # file upload directories
-Server/uploads/task_submission/
+server/task_submissions
 
 
 # Python cache
