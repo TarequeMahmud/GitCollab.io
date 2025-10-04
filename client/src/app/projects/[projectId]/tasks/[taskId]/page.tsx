@@ -67,7 +67,7 @@ export default function Page() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    const { file } = Object.fromEntries(formData.entries()) as any;
+    const { file } = Object.fromEntries(formData.entries()) as { file: File };
     const maxSize = 5 * 1024 * 1024;
 
     if (file && file.size > maxSize) {

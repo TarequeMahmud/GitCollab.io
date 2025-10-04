@@ -1,23 +1,13 @@
-type FetchOptions = RequestInit & { [key: string]: any };
-
-type AuthFetchResponse<T = any> = {
-  status: number;
-  ok: boolean;
-  data?: T;
-  message?: string;
-};
-
 type Credentials = {
   username: string;
   password: string;
-  [key: string]: any;
 };
 
 type AuthContextType = {
   isAuthenticated: boolean;
   setIsAuthenticated: (val: boolean) => void;
-  login: (credentials: Credentials) => Promise<any>;
-  register: (credentials: Credentials) => Promise<any>;
+  login: (credentials: Credentials) => Promise<void>;
+  register: (credentials: Credentials) => Promise<void>;
   logout: () => Promise<void>;
 };
 

@@ -11,7 +11,7 @@ import Image, { StaticImageData } from "next/image";
 import Container from "@/components/Container";
 
 export default function Page() {
-  const [tasks, setTasks] = useState<any[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
   const { fetchWithAuth, currentUser } = useAuth();
   const [loading, setLoading] = useState(true);
   const alertOnError = useError();

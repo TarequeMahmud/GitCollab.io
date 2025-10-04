@@ -34,15 +34,6 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// A wrapper for protecting pages
-const ProtectedWrapper = ({ children }: { children: ReactNode }) => {
-  const { isAuthenticated } = useAuth();
-
-  if (isAuthenticated === null) return <Spinner />; // loading state
-  if (!isAuthenticated) return <div>You must log in to access this page.</div>; // fallback
-  return <>{children}</>;
-};
-
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">

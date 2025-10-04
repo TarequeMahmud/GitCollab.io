@@ -122,8 +122,13 @@ export const AuthProvider = ({ children }: Props) => {
   const fetchWithAuth = async (path: string, options?: RequestInit) => {
     try {
       return await authFetch(path, options);
-    } catch (error: any) {
-      if (error.unauthenticated) {
+    } catch (error: unknown) {
+      if (
+        typeof error === "object" &&
+        error !== null &&
+        "unauthenticated" in error &&
+        error.unauthenticated
+      ) {
         logout();
       }
       throw error;

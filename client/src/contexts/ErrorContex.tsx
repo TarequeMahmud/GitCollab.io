@@ -6,7 +6,6 @@ import { useAlert } from "./AlertContext";
 type ErrorObject = {
   status?: number;
   message?: string;
-  [key: string]: any;
 };
 
 type AlertOnError = (name: string, errorObject?: ErrorObject) => void;
@@ -43,7 +42,7 @@ export const ErrorProvider = ({ children }: Props) => {
   const alertOnError: AlertOnError = (name, errorObject) => {
     const message =
       errorObject?.message ||
-      errorMap[errorObject?.status!] ||
+      (typeof errorObject?.status === "number" ? errorMap[errorObject.status] : undefined) ||
       "An unexpected error occurred. Please try again.";
     showAlert(name, message);
   };

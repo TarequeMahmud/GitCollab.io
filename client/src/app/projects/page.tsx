@@ -48,7 +48,7 @@ export default function ProjectsPage() {
     } else {
       setLoading(false);
     }
-  }, []);
+  }, [fetchWithAuth, alertOnError, projects.length, setProjects, router]);
 
   return (
     <Container title="PROJECTS" content={projects.length > 0}>
