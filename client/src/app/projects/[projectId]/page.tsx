@@ -32,18 +32,17 @@ export default function Page() {
 
     const fetchProject = async () => {
       try {
-        const [projectRes, taskRes] = await Promise.all([
-          fetchWithAuth(`/projects/${projectId}`),
-          fetchWithAuth(`/projects/${projectId}/get-tasks`),
-        ]);
+        const projectResponse = await
+          fetchWithAuth(`/projects/${projectId}`)
 
-        if (!projectRes.ok) {
+
+
+        if (!projectResponse.ok) {
           router.replace("/");
           return;
         }
 
-        const projectData = await projectRes.json();
-        const taskData = taskRes.ok ? await taskRes.json() : [];
+        const projectData = await projectResponse.json();
 
         if (!projectData) {
           router.replace("/");
@@ -53,7 +52,7 @@ export default function Page() {
         setCurrentContributor(projectData.contributors?.find((u: Contributor) => u.user === currentUser!.id));
         setProject(projectData);
         setPeople(projectData.contributors || []);
-        setTasks(taskData);
+        setTasks(projectData.tasks || []);
       } catch (err) {
         console.error("Error fetching project:", err);
         router.replace("/");

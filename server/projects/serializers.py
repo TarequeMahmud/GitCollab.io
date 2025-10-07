@@ -19,6 +19,7 @@ class ProjectSerializer(serializers.ModelSerializer):
     contributors = ProjectContributorDetailSerializer(
         source="project_contributors", many=True, read_only=True
     )
+    tasks = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Project
@@ -27,11 +28,21 @@ class ProjectSerializer(serializers.ModelSerializer):
             "title",
             "description",
             "deadline",
+            "tasks",
             "contributors",
             "created_at",
             "updated_at",
         ]
         read_only_fields = ["id", "created_at", "updated_at"]
+
+    def get_tasks(self, obj):
+        """Return all tasks belonging to this project"""
+        view = self.context.get("view")
+        if not view or getattr(view, "action", None) != "retrieve":
+            return None
+        from tasks.serializers import TaskSerializer 
+        tasks = obj.tasks.all()
+        return TaskSerializer(tasks, many=True, context=self.context).data
 
     def create(self, validated_data):
         request = self.context.get("request")
