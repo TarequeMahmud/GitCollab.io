@@ -13,6 +13,7 @@ import Image from "next/image";
 import Container from "@/components/Container";
 import ActionButton from "@/components/ActionButton";
 
+
 export default function Page() {
   const router = useRouter();
   const { projectId, taskId } = useParams();
@@ -23,8 +24,9 @@ export default function Page() {
   const [currentContributor, setCurrentContributor] = useState<AssigneeDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [submission, setSubmission] = useState<Submission | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
 
-  console.log(taskId);
+
 
   // fetch task
   useEffect(() => {
@@ -41,6 +43,8 @@ export default function Page() {
 
         const taskData = await taskResponse.json();
         setTask(taskData);
+        setSubmission(taskData.submission || null);
+        setIsEditing(false);
         console.log("Task Data: ", taskData);
 
         setCurrentContributor(
@@ -48,7 +52,6 @@ export default function Page() {
             (contributor: Contributor) => contributor.user === currentUser.id
           ) || null
         );
-        setSubmission(taskData.submission || null);
       } catch (error) {
         console.error("Fetch task error: ", error);
         router.push("/");
@@ -82,6 +85,12 @@ export default function Page() {
 
       if (!response) return alertOnError("Submission Failed", { status: 500 });
       if (!response.ok) return alertOnError("Submission Failed", response);
+
+      // update local state with returned submission
+      const data = await response.json();
+      setSubmission(data);
+      setTask((prev) => (prev ? { ...prev, submission: data } : prev));
+      setIsEditing(false);
 
       showAlert("Submission Success", "Your task has been submitted.");
     } catch (error) {
@@ -130,7 +139,7 @@ export default function Page() {
         <div className="flex flex-row items-center gap-4 mb-4">
           <h2 className="text-2xl font-bold">Assigned To:</h2>
           <p className="text-xl">
-            {task.assignee_details.name}{" "}
+            {task.assignee_details.name} {" "}
             <em>(@{task.assignee_details.username})</em>
           </p>
         </div>
@@ -164,7 +173,7 @@ export default function Page() {
         <div className="w-full bg-gray-100 p-4 rounded-md mb-4">
           <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 shadow-sm">
             <p className="text-start">{task.description}</p>
-            {currentContributor!.role === "admin" && (
+            {currentContributor?.role === "admin" && (
               <ActionButton variant="success" className="mt-3 flex items-center gap-2">
                 <Image src={editIcon} alt="edit" className="w-5 h-5" /> Edit
               </ActionButton>
@@ -176,15 +185,15 @@ export default function Page() {
         <h2 className="text-xl font-bold mb-4">Submission Section</h2>
 
         <div className="w-full p-6 rounded-lg border border-gray-200 shadow-sm bg-white mb-6">
-          {/* Case: No submission yet */}
+          {/* Case: No submission yet (admin view) */}
           {!submission && currentContributor?.role === "admin" && (
             <div className="text-gray-600 italic text-center py-6">
               Assignee has not submitted yet.
             </div>
           )}
 
-          {/* Case: Assignee can submit */}
-          {currentContributor?.user === task.assignee_details.user && (
+          {/* Case: Assignee can submit or edit -> show form only when no submission OR when explicitly editing */}
+          {currentContributor?.user === task.assignee_details.user && (!submission || isEditing) && (
             <form onSubmit={handleSubmit} className="flex flex-col gap-6">
               {/* Textarea */}
               <div>
@@ -213,29 +222,38 @@ export default function Page() {
                 <input
                   type="file"
                   name="submission_file"
-                  required
+                  required={!submission}
                   className="w-full border border-gray-300 rounded-lg p-2 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                 />
-                {task.submission?.submission_file && (
+                {submission?.submission_file && (
                   <p className="mt-2 text-sm text-gray-600">
                     <b>Current file:</b>{" "}
-                    <em className="text-blue-700">
-                      {task.submission.submission_file}
-                    </em>
+                    <em className="text-blue-700">{submission.submission_file}</em>
                   </p>
                 )}
               </div>
 
-              {/* Submit button */}
-              <div className="flex justify-end">
-                <ActionButton type="submit" variant="primary" size="lg">
-                  Submit Task
+              {/* Submit + optional cancel while editing */}
+              <div className="flex justify-start items-center gap-3">
+                <ActionButton type="submit" variant="primary">
+                  {submission && isEditing ? "Save Changes" : "Submit Task"}
                 </ActionButton>
+
+                {isEditing && (
+                  <ActionButton
+                    type="button"
+                    variant="secondary"
+                    onClick={() => setIsEditing(false)}
+                  >
+                    Cancel
+                  </ActionButton>
+                )}
               </div>
             </form>
           )}
 
-          {submission && (
+          {/* Submission view */}
+          {submission && !isEditing && (
             <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 shadow-sm">
               <div className="space-y-3 flex flex-col items-start">
                 <p className="text-md text-gray-700">
@@ -245,15 +263,9 @@ export default function Page() {
 
                 <p className="text-md text-gray-700 flex items-center">
                   <b className="font-semibold text-gray-900 mr-1">File:</b>{" "}
-                  <em className="truncate max-w-xs">
-                    {submission.submission_file}
-                  </em>
-
+                  <em className="truncate max-w-xs">{submission.submission_file}</em>
                 </p>
-                <ActionButton
-                  onClick={handleDownload}
-                  variant="success"
-                >
+                <ActionButton onClick={handleDownload} variant="success">
                   Download
                 </ActionButton>
 
@@ -269,14 +281,12 @@ export default function Page() {
                     <ActionButton
                       onClick={() => router.push(`/projects/${projectId}`)}
                       variant="primary"
-
                     >
                       Approve
                     </ActionButton>
                     <ActionButton
                       onClick={() => router.push(`/projects/${projectId}`)}
                       variant="danger"
-
                     >
                       Reject
                     </ActionButton>
@@ -285,16 +295,14 @@ export default function Page() {
                 {currentContributor?.user === task.assignee_details.user && (
                   <>
                     <ActionButton
-                      onClick={() => setSubmission(null)}
+                      onClick={() => setIsEditing(true)}
                       variant="warning"
-
                     >
                       Edit
                     </ActionButton>
                     <ActionButton
                       onClick={() => router.push(`/projects/${projectId}`)}
                       variant="danger"
-
                     >
                       Delete
                     </ActionButton>

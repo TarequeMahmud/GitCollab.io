@@ -63,8 +63,7 @@ export const AuthProvider = ({ children }: Props) => {
       if (
         typeof error === "object" &&
         error !== null &&
-        "unauthenticated" in error &&
-        (error as any).unauthenticated
+        "unauthenticated" in error && error.unauthenticated
       ) {
         logout();
       }
