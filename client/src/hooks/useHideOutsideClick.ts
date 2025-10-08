@@ -1,7 +1,7 @@
 import { useEffect, RefObject } from "react";
 
 export default function useHideOutsideClick<T extends HTMLElement>(
-  ref: RefObject<T>,
+  ref: RefObject<T | null>,
   handler: () => void
 ) {
   useEffect(() => {

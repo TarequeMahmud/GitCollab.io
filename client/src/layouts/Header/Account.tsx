@@ -10,7 +10,7 @@ import { useAuth } from "@/contexts/AuthContext";
 const Account = () => {
   const { isAuthenticated, logout } = useAuth();
   const router = useRouter();
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLDivElement | null>(null);
 
   const [showOptions, setShowOptions] = useState(false);
 
