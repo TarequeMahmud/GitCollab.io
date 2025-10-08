@@ -1,6 +1,7 @@
 "use client";
 
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
+import { useAuth } from "./AuthContext";
 
 export const ProjectsContext = createContext<ProjectsContextType | undefined>(
   undefined
@@ -15,7 +16,15 @@ export const useProjects = (): ProjectsContextType => {
 };
 
 export const ProjectsProvider = ({ children }: Props) => {
+  const { isAuthenticated } = useAuth();
   const [projects, setProjects] = useState<Project[]>([]);
+
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setProjects([]);
+    }
+  }, [isAuthenticated]);
 
   return (
     <ProjectsContext.Provider value={{ projects, setProjects }}>
