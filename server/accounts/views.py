@@ -1,4 +1,5 @@
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, status
+from rest_framework.views import APIView
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
@@ -94,3 +95,12 @@ class CookieTokenRefreshView(TokenRefreshView):
         data["refresh"] = refresh
         request._full_data = data  # Override the parsed data for this request
         return super().post(request, *args, **kwargs)
+
+
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        response = Response({"detail": "Logout successful"}, status=status.HTTP_200_OK)
+        response.delete_cookie("refresh_token")
+        return response

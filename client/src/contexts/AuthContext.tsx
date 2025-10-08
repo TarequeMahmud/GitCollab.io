@@ -40,11 +40,22 @@ export const AuthProvider = ({ children }: Props) => {
 
   const [currentUser, setCurrentUser] = useState<User | null>(null);
 
-  const logout = () => {
-    sessionStorage.removeItem("access_token");
-    setIsAuthenticated(false);
-    setCurrentUser(null);
+
+  const logout = async () => {
+    try {
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/logout/`, {
+        method: "POST",
+        credentials: "include",
+      });
+    } catch (err) {
+      console.error("Logout failed:", err);
+    } finally {
+      sessionStorage.removeItem("access_token");
+      setIsAuthenticated(false);
+      setCurrentUser(null);
+    }
   };
+
 
   const fetchWithAuth = async (path: string, options?: RequestInit) => {
     try {
