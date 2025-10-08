@@ -6,11 +6,9 @@ import icon from "@/assets/images/hero/user-regular.svg";
 import useHideOutsideClick from "@/hooks/useHideOutsideClick";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
-import { useProjects } from "@/contexts/ProjectsContext";
 
 const Account = () => {
   const { isAuthenticated, logout } = useAuth();
-  const { setProjects } = useProjects();
   const router = useRouter();
   const ref = useRef<HTMLDivElement>(null);
 
@@ -22,7 +20,6 @@ const Account = () => {
     try {
       setShowOptions(false);
       logout();
-      setProjects([]);
       router.push("/auth");
     } catch (error) {
       console.error(error);

@@ -8,7 +8,6 @@ import {
   useEffect,
 } from "react";
 import authFetch from "@/services/fetch";
-import { useProjects } from "./ProjectsContext";
 
 
 interface AuthContextType {
@@ -43,7 +42,7 @@ export const AuthProvider = ({ children }: Props) => {
 
   const logout = async () => {
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/logout/`, {
+      await authFetch('/auth/logout/', {
         method: "POST",
         credentials: "include",
       });

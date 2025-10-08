@@ -15,7 +15,7 @@ from .serializers import UserSerializer
 class IsSelfOrAdmin(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         return request.user.is_staff or obj == request.user
-
+    
 
 class UsersView(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -97,9 +97,15 @@ class CookieTokenRefreshView(TokenRefreshView):
         return super().post(request, *args, **kwargs)
 
 
-class LogoutView(APIView):
-    permission_classes = [IsAuthenticated]
+class IsSelf(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return request.user.is_authenticated
 
+    def has_object_permission(self, request, view, obj):
+        return obj == request.user
+
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated, IsSelf]
     def post(self, request):
         response = Response({"detail": "Logout successful"}, status=status.HTTP_200_OK)
         response.delete_cookie("refresh_token")
