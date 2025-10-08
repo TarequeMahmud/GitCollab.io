@@ -8,15 +8,13 @@ import {
   useEffect,
 } from "react";
 import authFetch from "@/services/fetch";
+import { useProjects } from "./ProjectsContext";
 
-interface Credentials {
-  username: string;
-  password: string;
-}
 
 interface AuthContextType {
   isAuthenticated: boolean;
   login: (credentials: Credentials) => Promise<boolean>;
+  register: (data: User) => Promise<boolean>;
   logout: () => void;
   currentUser: User | null;
   fetchWithAuth: (path: string, options?: RequestInit) => Promise<Response>;
@@ -39,9 +37,31 @@ export const AuthProvider = ({ children }: Props) => {
     typeof window !== "undefined" &&
     !!window.sessionStorage.getItem("access_token")
   );
+
   const [currentUser, setCurrentUser] = useState<User | null>(null);
 
-  // ✅ helper to fetch user profile
+  const logout = () => {
+    sessionStorage.removeItem("access_token");
+    setIsAuthenticated(false);
+    setCurrentUser(null);
+  };
+
+  const fetchWithAuth = async (path: string, options?: RequestInit) => {
+    try {
+      return await authFetch(path, options);
+    } catch (error: unknown) {
+      if (
+        typeof error === "object" &&
+        error !== null &&
+        "unauthenticated" in error &&
+        (error as any).unauthenticated
+      ) {
+        logout();
+      }
+      throw error;
+    }
+  };
+
   const fetchCurrentUser = async () => {
     try {
       const response = await fetchWithAuth("/accounts/me/", {
@@ -49,8 +69,6 @@ export const AuthProvider = ({ children }: Props) => {
         headers: { "Content-Type": "application/json" },
         credentials: "include",
       });
-
-      console.log("Fetch current user response:", response);
 
       if (response.ok) {
         const data = await response.json();
@@ -62,13 +80,11 @@ export const AuthProvider = ({ children }: Props) => {
       console.error("Failed to fetch current user", error);
     }
 
-    // fallback if failed
     setCurrentUser(null);
     setIsAuthenticated(false);
     return false;
   };
 
-  // ✅ run on reload to restore session
   useEffect(() => {
     if (isAuthenticated) {
       fetchCurrentUser();
@@ -98,7 +114,6 @@ export const AuthProvider = ({ children }: Props) => {
       if (data.access) {
         sessionStorage.setItem("access_token", data.access);
         setIsAuthenticated(true);
-        // fetch user profile right after login
         return await fetchCurrentUser();
       }
 
@@ -113,31 +128,42 @@ export const AuthProvider = ({ children }: Props) => {
     }
   };
 
-  const logout = () => {
-    sessionStorage.removeItem("access_token");
-    setIsAuthenticated(false);
-    setCurrentUser(null);
-  };
+  // ✅ Register method
+  const register = async (data: User) => {
+    console.log(data);
 
-  const fetchWithAuth = async (path: string, options?: RequestInit) => {
     try {
-      return await authFetch(path, options);
-    } catch (error: unknown) {
-      if (
-        typeof error === "object" &&
-        error !== null &&
-        "unauthenticated" in error &&
-        error.unauthenticated
-      ) {
-        logout();
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/accounts/`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        }
+      );
+
+      if (!response.ok) {
+        console.error("Registration failed");
+        return false;
       }
-      throw error;
+
+      return true;
+    } catch (error) {
+      console.error("Register failed", error);
+      return false;
     }
   };
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, currentUser, login, logout, fetchWithAuth }}
+      value={{
+        isAuthenticated,
+        currentUser,
+        login,
+        register,
+        logout,
+        fetchWithAuth,
+      }}
     >
       {children}
     </AuthContext.Provider>

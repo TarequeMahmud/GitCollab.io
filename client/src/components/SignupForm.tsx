@@ -16,7 +16,7 @@ export default function SignUpForm({
   setShowSignin,
   setLoading,
 }: Props) {
-  const { register } = useAuth();
+  const { register, login } = useAuth();
   const alertOnError = useError();
   const { showAlert } = useAlert();
   const router = useRouter();
@@ -24,37 +24,42 @@ export default function SignUpForm({
   const handleRegister = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    const formObject = Object.fromEntries(formData.entries()) as {
-      email: string;
-      password: string;
-      name: string;
-      confirmPassword: string;
-    };
+    const formObject = Object.fromEntries(formData.entries()) as User & { password: string };
 
     try {
       setLoading(true);
+
       if (Object.keys(formObject).length < 4) {
         showAlert("Fill The Form", "Mandatory data are missing.");
         return;
       }
 
       const registerResponse = await register(formObject);
+
       if (!registerResponse) {
         alertOnError("Register Failed", { status: 500 });
         return;
       }
-      if (!registerResponse.ok) {
-        alertOnError("Registration Failed", registerResponse);
+
+      const loginResponse = await login({
+        username: formObject.username,
+        password: formObject.password,
+      });
+
+      if (!loginResponse) {
+        alertOnError("Auto-login failed", { status: 401 });
         return;
       }
 
-      router.replace("/projects");
+      router.push("/projects");
+
     } catch (err) {
       console.error(err);
     } finally {
       setLoading(false);
     }
   };
+
 
   return (
     <>
@@ -123,7 +128,7 @@ export default function SignUpForm({
             rows={5}
           />
         </div>
-        <div className="flex flex-col items-start w-full">
+        {/* <div className="flex flex-col items-start w-full">
           <label htmlFor="avatar" className="text-lg text-black mb-1">
             Avatar:
           </label>
@@ -133,7 +138,7 @@ export default function SignUpForm({
             name="avatar"
             id="avatar"
           />
-        </div>
+        </div> */}
         <button
           type="submit"
           className="w-full bg-blue-800 text-white text-xl py-3 rounded-lg mt-6"
