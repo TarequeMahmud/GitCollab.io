@@ -9,7 +9,6 @@ import {
 } from "react";
 import authFetch from "@/services/fetch";
 
-
 interface AuthContextType {
   isAuthenticated: boolean;
   login: (credentials: Credentials) => Promise<boolean>;
@@ -36,13 +35,33 @@ export const AuthProvider = ({ children }: Props) => {
     typeof window !== "undefined" &&
     !!window.sessionStorage.getItem("access_token")
   );
-
   const [currentUser, setCurrentUser] = useState<User | null>(null);
 
+  /** ---------------------------
+   *  🔐 Authenticated fetch
+   * --------------------------- */
+  const fetchWithAuth = async (path: string, options?: RequestInit) => {
+    try {
+      return await authFetch(path, options);
+    } catch (error: unknown) {
+      if (
+        typeof error === "object" &&
+        error !== null &&
+        "unauthenticated" in error &&
+        error.unauthenticated
+      ) {
+        logout();
+      }
+      throw error;
+    }
+  };
 
+  /** ---------------------------
+   *  🚪 Logout
+   * --------------------------- */
   const logout = async () => {
     try {
-      await authFetch('/auth/logout/', {
+      await authFetch("/auth/logout/", {
         method: "POST",
         credentials: "include",
       });
@@ -55,22 +74,9 @@ export const AuthProvider = ({ children }: Props) => {
     }
   };
 
-
-  const fetchWithAuth = async (path: string, options?: RequestInit) => {
-    try {
-      return await authFetch(path, options);
-    } catch (error: unknown) {
-      if (
-        typeof error === "object" &&
-        error !== null &&
-        "unauthenticated" in error && error.unauthenticated
-      ) {
-        logout();
-      }
-      throw error;
-    }
-  };
-
+  /** ---------------------------
+   *  👤 Fetch Current User
+   * --------------------------- */
   const fetchCurrentUser = async () => {
     try {
       const response = await fetchWithAuth("/accounts/me/", {
@@ -100,26 +106,26 @@ export const AuthProvider = ({ children }: Props) => {
     }
   }, []);
 
+  /** ---------------------------
+   *  🔑 Login via Public Proxy
+   * --------------------------- */
   const login = async (credentials: Credentials) => {
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/login/`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(credentials),
-          credentials: "include",
-        }
-      );
+      const response = await fetch("/api/public/auth/login/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(credentials),
+        credentials: "include",
+      });
 
       if (!response.ok) {
+        console.error("Login failed", await response.text());
         setIsAuthenticated(false);
         setCurrentUser(null);
         return false;
       }
 
       const data = await response.json();
-
       if (data.access) {
         sessionStorage.setItem("access_token", data.access);
         setIsAuthenticated(true);
@@ -130,35 +136,33 @@ export const AuthProvider = ({ children }: Props) => {
       setCurrentUser(null);
       return false;
     } catch (error) {
-      console.error("Login failed", error);
+      console.error("Login error:", error);
       setIsAuthenticated(false);
       setCurrentUser(null);
       return false;
     }
   };
 
-  // ✅ Register method
-  const register = async (data: User) => {
-    console.log(data);
 
+  /** ---------------------------
+   *  📝 Register via Public Proxy
+   * --------------------------- */
+  const register = async (data: User) => {
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/accounts/`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        }
-      );
+      const response = await fetch("/api/public/accounts/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
 
       if (!response.ok) {
-        console.error("Registration failed");
+        console.error("Registration failed:", await response.text());
         return false;
       }
 
       return true;
     } catch (error) {
-      console.error("Register failed", error);
+      console.error("Register error:", error);
       return false;
     }
   };

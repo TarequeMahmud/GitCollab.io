@@ -61,7 +61,7 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "https://gitcollab-io.vercel.app"
+    "https://gitcollab-io.vercel.app",
     "http://127.0.0.1:8000",
 ]
 
